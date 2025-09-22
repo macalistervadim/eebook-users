@@ -1,6 +1,7 @@
 import abc
 
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.model import User
 
@@ -11,12 +12,12 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self, user_id: str) -> User | None:
+    async def get_by_email(self, email: str) -> User | None:
         raise NotImplementedError
 
 
 class SqlAlchemyRepository(AbstractRepository):
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
     def add(self, user: User) -> None:
@@ -28,12 +29,14 @@ class SqlAlchemyRepository(AbstractRepository):
         """
         self.session.add(user)
 
-    def get(self, user_id: str) -> User | None:
+    async def get_by_email(self, email: str) -> User | None:
         """
-        Get a user by id.
+        Get a user by email.
 
-        :param user_id: str
-        :return:
+        :param email: user email
+        :return: User | None
         """
-        user_id = str(user_id)  # Ensure user_id is a string
-        return self.session.query(User).filter(User.id == user_id).first()
+        result = await self.session.execute(
+            select(User).where(User.email == email),
+        )
+        return result.scalars().first()

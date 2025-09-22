@@ -1,7 +1,10 @@
 import abc
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from src import config
 from src.adapters import repository
@@ -11,47 +14,52 @@ from src.adapters.repository import AbstractRepository
 class AbstractUnitOfWork(abc.ABC):
     users: AbstractRepository
 
-    def __enter__(self) -> "AbstractUnitOfWork":
+    async def __aenter__(self) -> "AbstractUnitOfWork":
         return self
 
-    def __exit__(self, *args) -> None:
-        self.rollback()
+    async def __aexit__(self, *args) -> None:
+        await self.rollback()
 
-    def commit(self) -> None:
-        self._commit()
+    async def commit(self) -> None:
+        await self._commit()
 
     @abc.abstractmethod
-    def _commit(self) -> None:
+    async def _commit(self) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rollback(self) -> None:
+    async def rollback(self) -> None:
         raise NotImplementedError
 
 
-DEFAULT_SESSION_FACTORY = sessionmaker(
-    bind=create_engine(
+DEFAULT_SESSION_FACTORY = async_sessionmaker(
+    bind=create_async_engine(
         config.get_postgres_uri(),
         isolation_level="REPEATABLE READ",
     ),
+    expire_on_commit=False,
 )
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
-    def __init__(self, session_factory=DEFAULT_SESSION_FACTORY):
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]):
         self.session_factory = session_factory
 
-    def __enter__(self):
-        self.session = self.session_factory()
+    async def __aenter__(self):
+        self.session: AsyncSession = self.session_factory()
         self.users = repository.SqlAlchemyRepository(self.session)
-        return super().__enter__()
+        return await super().__aenter__()
 
-    def __exit__(self, *args):
-        super().__exit__(*args)
-        self.session.close()
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            await self.rollback()
+        else:
+            await self._commit()
+        await self.session.close()
+        return await super().__aexit__(exc_type, exc_val, exc_tb)
 
-    def _commit(self):
-        self.session.commit()
+    async def _commit(self):
+        await self.session.commit()
 
-    def rollback(self):
-        self.session.rollback()
+    async def rollback(self):
+        await self.session.rollback()
