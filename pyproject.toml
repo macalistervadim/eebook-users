@@ -3,4 +3,30 @@ name = "eebook-users"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "fastapi[standard]>=0.117.1",
+    "sqlalchemy>=2.0.43",
+]
+
+[dependency-groups]
+dev = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.20",
+    "mypy>=1.18.2",
+    "ruff>=0.13.1",
+]
+
+[tool.ruff]
+exclude = [
+    "*/migrations/*",
+    "venv/",
+    "__init__.py",
+    "apps.py",
+]
+line-length = 79
+indent-width = 4
+[tool.ruff.lint]
+select = ["E", "W", "C", "F", "N", "COM", "I", "Q", "U", "N", "A", "M"]
+ignore = ["F405"]
+fixable = ["ALL"]
+unfixable = []

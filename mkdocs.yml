@@ -1,0 +1,74 @@
+site_name: eebook
+site_description: Документация проекта eebook
+site_author: macalistervadim
+site_url: https://macalistervadim.github.io/online-shop/
+
+repo_url: https://github.com/macalistervadim/online-shop
+repo_name: macalistervadim/online-shop
+
+copyright: Copyright &copy; 2023 Macalister Vadim
+
+theme:
+  name: material
+  language: ru
+  
+  languages:
+    en: English
+    ru: Русский
+
+  palette:
+    - scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/weather-night
+        name: Тёмная тема
+    - scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Светлая тема
+
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - toc.integrate
+    - content.tabs.link
+    - content.code.annotate
+    - lang.switch
+
+extra_css:
+  - css/extra.css
+
+extra_javascript:
+  - js/extra.js
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.emoji
+
+nav:
+  - Русский:
+      - Оглавление: ru/index.md
+      - Архитектура и паттерны: ru/archeticture/components.md
+      - Гайд по установке: ru/install.md
+      - REST API: ru/api/rest.md
+      - FAQ: ru/faq.md
+  - English:
+      - Table of Contents: en/index.md
+      - Architecture & Patterns: en/archeticture/components.md
+      - Installation & Launch Guide: en/install.md
+      - REST API: en/api/rest.md
+      - FAQ: en/faq.md
+  - Лицензия: LICENCE.md
