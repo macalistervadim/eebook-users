@@ -1,10 +1,12 @@
+version: "3.9"
+
 services:
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: allocation
-      POSTGRES_PASSWORD: abc123
-      POSTGRES_DB: eebook
+      POSTGRES_USER: ""
+      POSTGRES_PASSWORD: ""
+      POSTGRES_DB: ""
     ports:
       - "54321:5432"
     volumes:
@@ -14,12 +16,20 @@ services:
     build: .
     depends_on:
       - postgres
-    environment:
-      DATABASE_URL: postgresql+asyncpg://allocation:abc123@postgres:5432/eebook
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./src:/app/src
+      - ./tests:/app/tests
+    secrets:
+      - vault_token
+    environment:
+      VAULT_ADDR: http://vault-prod:8200
+      VAULT_TOKEN_FILE: /run/secrets/vault_token
+
+secrets:
+  vault_token:
+    file: ./secret-token.txt
 
 volumes:
   pgdata:
