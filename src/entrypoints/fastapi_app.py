@@ -2,32 +2,19 @@ from datetime import datetime, timedelta
 
 import jwt
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 
 from src.domain.model import User
+from src.entity import models
 from src.service_layer.uow import DEFAULT_SESSION_FACTORY, SqlAlchemyUnitOfWork
 
 SECRET_KEY = "supersecretkey"
 
-app = FastAPI()
-
-
-# Pydantic модели
-class RegisterSchema(BaseModel):
-    first_name: str
-    last_name: str
-    email: str
-    password: str
-
-
-class LoginSchema(BaseModel):
-    email: str
-    password: str
+app = FastAPI(title="eebook")
 
 
 # Регистрация
 @app.post("/register")
-async def register(data: RegisterSchema):
+async def register(data: models.RegisterModel):
     async with SqlAlchemyUnitOfWork(DEFAULT_SESSION_FACTORY) as uow:
         existing = await uow.users.get_by_email(data.email)
         if existing:
@@ -50,7 +37,7 @@ async def register(data: RegisterSchema):
 
 # Логин
 @app.post("/login")
-async def login(data: LoginSchema):
+async def login(data: models.LoginModel):
     async with SqlAlchemyUnitOfWork(DEFAULT_SESSION_FACTORY) as uow:
         user = await uow.users.get_by_email(data.email)
         if not user or not user.check_password(data.password):
