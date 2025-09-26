@@ -8,6 +8,7 @@ dependencies = [
     "fastapi[standard]>=0.117.1",
     "hvac>=2.3.0",
     "passlib[bcrypt]>=1.7.4",
+    "pydantic-settings>=2.11.0",
     "pyjwt>=2.10.1",
     "sqlalchemy>=2.0.43",
 ]
@@ -29,8 +30,9 @@ exclude = [
     "__init__.py",
     "apps.py",
 ]
-line-length = 79
+line-length = 100
 indent-width = 4
+
 [tool.ruff.lint]
 select = ["E", "W", "C", "F", "N", "COM", "I", "Q", "U", "N", "A", "M"]
 ignore = ["F405"]

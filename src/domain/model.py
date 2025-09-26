@@ -15,19 +15,7 @@ class User:
         self.hashed_password = hashed_password
 
     def check_password(self, password: str) -> bool:
-        """
-        Check if the provided password matches the hashed password.
-
-        :param password: user-password
-        :return:
-        """
         return bcrypt.verify(password, self.hashed_password)
 
     def set_password(self, password: str):
-        """
-        Set the user's password.
-
-        :param password: user-password
-        :return:
-        """
         self.hashed_password = bcrypt.hash(password)

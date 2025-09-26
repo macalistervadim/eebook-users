@@ -21,21 +21,9 @@ class SqlAlchemyRepository(AbstractRepository):
         self.session = session
 
     def add(self, user: User) -> None:
-        """
-        Add a new user to the repository.
-
-        :param user: User
-        :return:
-        """
         self.session.add(user)
 
     async def get_by_email(self, email: str) -> User | None:
-        """
-        Get a user by email.
-
-        :param email: user email
-        :return: User | None
-        """
         result = await self.session.execute(
             select(User).where(User.email == email),
         )

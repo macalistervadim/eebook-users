@@ -2,14 +2,34 @@ from datetime import datetime, timedelta
 
 import jwt
 from fastapi import FastAPI, HTTPException
+from sqlalchemy.ext.asyncio import (
+    async_sessionmaker,
+    create_async_engine,
+)
 
+from src.bootstrap import async_bootstrap, bootstrap
+from src.config import get_postgres_uri
 from src.domain.model import User
 from src.entity import models
-from src.service_layer.uow import DEFAULT_SESSION_FACTORY, SqlAlchemyUnitOfWork
+from src.service_layer.uow import SqlAlchemyUnitOfWork
 
-SECRET_KEY = "supersecretkey"
+settings = bootstrap()
+
+# Создаём session factory здесь, после инициализации
+DEFAULT_SESSION_FACTORY = async_sessionmaker(
+    bind=create_async_engine(
+        get_postgres_uri(),
+        isolation_level="REPEATABLE READ",
+    ),
+    expire_on_commit=False,
+)
 
 app = FastAPI(title="eebook")
+
+
+@app.on_event("startup")
+async def on_startup():
+    await async_bootstrap(settings)
 
 
 # Регистрация
@@ -31,7 +51,7 @@ async def register(data: models.RegisterModel):
         )
         user.set_password(data.password)
         uow.users.add(user)
-        uow.commit()
+        await uow.commit()
         return {"msg": "User created"}
 
 
@@ -45,7 +65,7 @@ async def login(data: models.LoginModel):
 
         token = jwt.encode(
             {"sub": user.email, "exp": datetime.utcnow() + timedelta(hours=1)},
-            SECRET_KEY,
+            settings.FASTAPI_SECRET,
             algorithm="HS256",
         )
         return {"access_token": token}
