@@ -32,13 +32,13 @@ class VaultClient(ISecretsProvider):
             ValueError: Если не указаны параметры addr/token_file и соответствующие
                 переменные окружения отсутствуют.
         """
-        self._addr = addr or os.environ.get("VAULT_ADDR")
-        self._token_file = token_file or os.environ.get("VAULT_TOKEN_FILE")
+        self._addr = addr or os.environ.get('VAULT_ADDR')
+        self._token_file = token_file or os.environ.get('VAULT_TOKEN_FILE')
         self._client = self._init_client()
 
     def _init_client(self) -> hvac.Client:
         """
-        Инициализирует и аутентифицирует клиент Vault.
+        Инициализирует и аутентифицирует клиент Vauflt.
 
         Returns:
             hvac.Client: Аутентифицированный экземпляр клиента Vault.
@@ -50,7 +50,7 @@ class VaultClient(ISecretsProvider):
         """
         if not self._addr or not self._token_file:
             raise ValueError(
-                "VAULT_ADDR и VAULT_TOKEN_FILE должны быть заданы",
+                'VAULT_ADDR и VAULT_TOKEN_FILE должны быть заданы',
             )
 
         with open(self._token_file) as f:
@@ -58,7 +58,7 @@ class VaultClient(ISecretsProvider):
 
         client = hvac.Client(url=self._addr, token=token)
         if not client.is_authenticated():
-            raise ConnectionError("Vault authentication failed")
+            raise ConnectionError('Vault authentication failed')
 
         return client
 
@@ -77,4 +77,4 @@ class VaultClient(ISecretsProvider):
             Данные секрета должны находиться в поле 'data.data' ответа.
         """
         secret = self._client.secrets.kv.v2.read_secret_version(path=path)
-        return secret["data"]["data"]
+        return secret['data']['data']

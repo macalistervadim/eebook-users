@@ -15,9 +15,9 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int
 
     class Config:
-        env_prefix = ""
-        env_file_encoding = "utf-8"
-        extra = "allow"
+        env_prefix = ''
+        env_file_encoding = 'utf-8'
+        extra = 'allow'
 
 
 class SettingsLoader:
@@ -34,7 +34,7 @@ class SettingsLoader:
         Загружает секреты из Vault и кладёт их в окружение.
         """
         secret_paths = [
-            "eebook/users",
+            'eebook/users',
         ]
 
         for path in secret_paths:
@@ -49,8 +49,8 @@ def get_postgres_uri() -> str:
 
     :return: str - строка подключения к postgres (asyncpg)
     """
-    db_name = os.environ.get("POSTGRES_DB")
-    db_user = os.environ.get("POSTGRES_USER")
-    db_pass = os.environ.get("POSTGRES_PASSWORD")
-    db_port = os.environ.get("POSTGRES_PORT")
-    return f"postgresql+asyncpg://{db_user}:{db_pass}@postgres:{db_port}/{db_name}"
+    db_name = os.environ.get('POSTGRES_DB')
+    db_user = os.environ.get('POSTGRES_USER')
+    db_pass = os.environ.get('POSTGRES_PASSWORD')
+    db_port = os.environ.get('POSTGRES_PORT')
+    return f'postgresql+asyncpg://{db_user}:{db_pass}@postgres:{db_port}/{db_name}'

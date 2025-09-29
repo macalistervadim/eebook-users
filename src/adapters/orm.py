@@ -8,12 +8,12 @@ from src.domain.model import User
 metadata = MetaData()
 
 users = Table(
-    "users",
+    'users',
     metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("first_name", String),
-    Column("last_name", String),
-    Column("email", String),
+    Column('id', UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+    Column('first_name', String),
+    Column('last_name', String),
+    Column('email', String),
 )
 
 

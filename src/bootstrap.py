@@ -17,7 +17,7 @@ def bootstrap():
     Возвращает settings.
     """
     SettingsLoader().load()
-    settings = Settings()
+    settings = Settings()  # type: ignore
     start_mappers()
     return settings
 

@@ -21,7 +21,7 @@ class AbstractUnitOfWork(abc.ABC):
 
     users: AbstractRepository
 
-    async def __aenter__(self) -> "AbstractUnitOfWork":
+    async def __aenter__(self) -> 'AbstractUnitOfWork':
         """
         Вход в контекстный менеджер.
 
