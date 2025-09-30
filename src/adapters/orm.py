@@ -1,4 +1,6 @@
-from sqlalchemy import Column, MetaData, String, Table
+import uuid
+
+from sqlalchemy import UUID, Column, MetaData, String, Table
 from sqlalchemy.orm import registry
 
 from src.domain.model import User
@@ -6,14 +8,12 @@ from src.domain.model import User
 metadata = MetaData()
 
 users = Table(
-    name="users",
-    metadata=metadata,
-    columns=[
-        Column("id", String, primary_key=True),
-        Column("first_name", String),
-        Column("last_name", String),
-        Column("email", String),
-    ],
+    'users',
+    metadata,
+    Column('id', UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+    Column('first_name', String),
+    Column('last_name', String),
+    Column('email', String),
 )
 
 

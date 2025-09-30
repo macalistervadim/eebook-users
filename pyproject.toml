@@ -4,16 +4,30 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
+    "asyncpg>=0.30.0",
     "fastapi[standard]>=0.117.1",
+    "hvac>=2.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "pydantic-settings>=2.11.0",
+    "pyjwt>=2.10.1",
+    "setuptools>=80.9.0",
     "sqlalchemy>=2.0.43",
 ]
 
 [dependency-groups]
 dev = [
+    "bandit>=1.8.6",
+    "detect-secrets>=1.5.0",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.20",
+    "mkdocstrings[python]>=0.30.1",
     "mypy>=1.18.2",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.2",
     "ruff>=0.13.1",
+    "types-hvac>=2.3.0.20250914",
+    "types-passlib>=1.7.7.20250602",
+    "types-setuptools>=80.9.0.20250822",
 ]
 
 [tool.ruff]
@@ -23,10 +37,14 @@ exclude = [
     "__init__.py",
     "apps.py",
 ]
-line-length = 79
+line-length = 100
 indent-width = 4
+
+[tool.ruff.format]
+quote-style = "single"
+
 [tool.ruff.lint]
-select = ["E", "W", "C", "F", "N", "COM", "I", "Q", "U", "N", "A", "M"]
+select = ["E", "W", "C", "F", "N", "COM", "I", "U", "N", "A", "M"]
 ignore = ["F405"]
 fixable = ["ALL"]
 unfixable = []

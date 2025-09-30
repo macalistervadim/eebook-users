@@ -1,17 +1,17 @@
 site_name: eebook
-site_description: Документация проекта eebook
+site_description: Документация проекта eebook-users
 site_author: macalistervadim
-site_url: https://macalistervadim.github.io/online-shop/
+site_url: https://macalistervadim.github.io/eebook-users/
 
-repo_url: https://github.com/macalistervadim/online-shop
-repo_name: macalistervadim/online-shop
+repo_url: https://github.com/macalistervadim/eebook-users
+repo_name: macalistervadim/eebook-users
 
 copyright: Copyright &copy; 2023 Macalister Vadim
 
 theme:
   name: material
   language: ru
-  
+
   languages:
     en: English
     ru: Русский
@@ -59,16 +59,33 @@ markdown_extensions:
   - pymdownx.emoji
 
 nav:
-  - Русский:
-      - Оглавление: ru/index.md
-      - Архитектура и паттерны: ru/archeticture/components.md
-      - Гайд по установке: ru/install.md
-      - REST API: ru/api/rest.md
-      - FAQ: ru/faq.md
-  - English:
-      - Table of Contents: en/index.md
-      - Architecture & Patterns: en/archeticture/components.md
-      - Installation & Launch Guide: en/install.md
-      - REST API: en/api/rest.md
-      - FAQ: en/faq.md
+  - Главная: index.md
+  - Архитектура:
+      - Компоненты: architecture.md/components.md
+      - Последовательность: architecture.md/sequence.md
+  - Руководство:
+      - Установка: installation/guide.md
+  - API:
+      - REST: api/rest.md
+      - Python:
+          - Vault: api/python/vault_client.md
+          - Repository: api/python/repository.md
+          - UnitOfWork: api/python/unit_of_work.md
+  - FAQ:
+      - Главная: faq/index.md
+      - Кодинг и стиль: faq/coding_guidelines.md
+      - Git и коммиты: faq/git_commits.md
+      - Тестирование: faq/testing.md
+      - Контрибьют: faq/contributing.md
+  - История изменений: changelog.md
   - Лицензия: LICENCE.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            extra:
+              search_path:
+                - src
