@@ -191,4 +191,6 @@ src/media/
 #staticfiles
 staticfiles/
 
+# secret-tokens
 keys_and_token.txt
+secret-token.txt
