@@ -5,42 +5,78 @@ site_url: https://macalistervadim.github.io/eebook-users/
 
 repo_url: https://github.com/macalistervadim/eebook-users
 repo_name: macalistervadim/eebook-users
+edit_uri: edit/main/docs/
 
-copyright: Copyright &copy; 2023 Macalister Vadim
+copyright: >
+  Copyright © 2023 — 2025 <a href="https://github.com/macalistervadim" target="_blank">Macalister Vadim</a>
 
 theme:
   name: material
   language: ru
 
-  languages:
-    en: English
-    ru: Русский
+
+  features:
+    - navigation.top
+    - navigation.tabs
+    - toc.integrate
+    - navigation.instant
+    - navigation.expand
+    - navigation.instant.progress
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.footer
+    - content.feedback
+    - navigation.instant
+    - navigation.prev-next
 
   palette:
     - scheme: default
-      primary: blue
+      primary: black
       accent: light blue
       toggle:
         icon: material/weather-night
         name: Тёмная тема
     - scheme: slate
-      primary: blue
+      primary: black
       accent: light blue
       toggle:
         icon: material/weather-sunny
         name: Светлая тема
 
-  features:
-    - navigation.tabs
-    - navigation.tabs.sticky
-    - navigation.sections
-    - navigation.top
-    - search.highlight
-    - search.suggest
-    - toc.integrate
-    - content.tabs.link
-    - content.code.annotate
-    - lang.switch
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  copyright: >
+    Последнее обновление: {{ git-revision-date }}
+    Автор: {{ git-revision-author }}
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/macalistervadim
+      name: GitHub
+    - icon: material/email
+      link: mailto:macalistervadim@ya.ru
+      name: Email
+  generator: false
+  consent:
+    title: 🍪 Cookies
+    description: >
+      Мы используем cookies для улучшения качества документации.
+    actions:
+      - accept
+      - reject
+  feedback:
+    title: Было ли это полезно?
+    ratings:
+      - icon: material/thumb-up-outline
+        name: Да, всё понятно
+        data: 1
+        note: 🎉 Спасибо за отзыв!
+      - icon: material/thumb-down-outline
+        name: Можно улучшить
+        data: 0
+        note: 🙏 Помоги нам улучшить статью — создай issue на GitHub.
 
 extra_css:
   - css/extra.css
@@ -50,19 +86,44 @@ extra_javascript:
 
 markdown_extensions:
   - admonition
-  - codehilite:
-      guess_lang: false
+  - codehilite
   - toc:
       permalink: true
   - pymdownx.superfences
   - pymdownx.highlight
   - pymdownx.emoji
+  - attr_list
+  - footnotes
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.tabbed
+  - admonition
+  - attr_list
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+      fallback_to_build_date: true
+      type: date
+      locale: ru
+      timezone: Europe/Moscow
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            docstring_style: google
+            search_path:
+              - src
 
 nav:
   - Главная: index.md
   - Архитектура:
-      - Компоненты: architecture.md/components.md
-      - Последовательность: architecture.md/sequence.md
+      - Компоненты: architecture/components.md
+      - Последовательность: architecture/sequence.md
   - Руководство:
       - Установка: installation/guide.md
   - API:
@@ -79,13 +140,3 @@ nav:
       - Контрибьют: faq/contributing.md
   - История изменений: changelog.md
   - Лицензия: LICENCE.md
-
-plugins:
-  - search
-  - mkdocstrings:
-      handlers:
-        python:
-          options:
-            extra:
-              search_path:
-                - src
