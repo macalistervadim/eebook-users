@@ -7,6 +7,11 @@ services:
       - "54321:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   app:
     build: .
@@ -22,6 +27,11 @@ services:
     environment:
       VAULT_ADDR: http://vault-prod:8200
       VAULT_TOKEN_FILE: /run/secrets/vault_token
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 secrets:
   vault_token:

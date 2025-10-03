@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
+    "async-hvac>=0.7.3",
     "asyncpg>=0.30.0",
     "fastapi[standard]>=0.117.1",
     "hvac>=2.3.0",
@@ -46,7 +47,7 @@ quote-style = "single"
 
 [tool.ruff.lint]
 select = ["E", "W", "C", "F", "N", "COM", "I", "U", "N", "A", "M"]
-ignore = ["F405"]
+ignore = ["F405", "W293"]
 fixable = ["ALL"]
 unfixable = []
 

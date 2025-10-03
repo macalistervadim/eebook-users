@@ -128,10 +128,24 @@ nav:
       - Установка: installation/guide.md
   - API:
       - REST: api/rest.md
-      - Python:
-          - Vault: api/python/vault_client.md
-          - Repository: api/python/repository.md
-          - UnitOfWork: api/python/unit_of_work.md
+      - Python API:
+          - Bootstrap: api/python/bootstrap.md
+          - Конфигурация:
+              - Настройки: api/python/config/settings.md
+              - Загрузчик: api/python/config/loader.md
+          - Доменная модель: api/python/domain/model.md
+          - Сущности:
+              - Модели: api/python/entity/models.md
+          - Точки входа:
+              - FastAPI приложение: api/python/entrypoints/fastapi_app.md
+              - API эндпоинты: api/python/entrypoints/api/endpoints.md
+          - Инфраструктура:
+              - База данных:
+                  - Движок: api/python/infrastucture/database/engine.md
+              - Жизненный цикл: api/python/infrastucture/lifespan.md
+          - Сервисный слой:
+              - Зависимости: api/python/serivce_layer/dependencies.md
+              - Unit of Work: api/python/serivce_layer/uow.md
   - FAQ:
       - Главная: faq/index.md
       - Кодинг и стиль: faq/coding_guidelines.md

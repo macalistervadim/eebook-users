@@ -770,6 +770,29 @@
 
 
 
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="python/settings/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+    Settings
+
+  </span>
+
+
+      </a>
+    </li>
+
+
+
+
           </ul>
         </nav>
 
@@ -1040,40 +1063,34 @@
               Bases: <code><span title="src.adapters.interfaces.ISecretsProvider">ISecretsProvider</span></code></p>
 
 
-        <p>Клиент для взаимодействия с key-value хранилищем секретов HashiCorp Vault.</p>
-<p>Этот класс реализует интерфейс ISecretsProvider и предоставляет методы для
-безопасного получения секретов с сервера Vault. Поддерживает аутентификацию
-с использованием токена.</p>
+        <p>Клиент для работы с HashiCorp Vault - системой для безопасного хранения секретов.</p>
+<p>Позволяет получать секреты из Vault с использованием токена аутентификации.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>ISecretsProvider</code>
-            </td>
-            <td>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Интерфейс, определяющий контракт для провайдеров секретов.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<details class="пример-использования" open>
+  <summary>Пример использования</summary>
+  <h2 id="src.adapters.vault.VaultClient--_1">Инициализация клиента<a class="headerlink" href="#src.adapters.vault.VaultClient--_1" title="Permanent link">&para;</a></h2>
+<p>vault = VaultClient(
+    addr='http://localhost:8200',  # Адрес Vault сервера
+    token_file='/path/to/token'    # Файл с токеном доступа
+)</p>
+<h2 id="src.adapters.vault.VaultClient--_2">Получение секрета<a class="headerlink" href="#src.adapters.vault.VaultClient--_2" title="Permanent link">&para;</a></h2>
+<p>secret = vault.read_secret('путь/к/секрету')</p>
+</details>
+
+<details class="примечание" open>
+  <summary>Примечание</summary>
+  <ul>
+<li>Для работы требуется настроенный и запущенный сервер Vault</li>
+<li>Токен доступа должен иметь права на чтение запрашиваемых секретов</li>
+<li>По умолчанию используется KV Secrets Engine версии 2</li>
+</ul>
+</details>        <p>:param addr: Адрес Vault сервера (например, 'http://localhost:8200')
+:param token_file: Путь к файлу, содержащему токен аутентификации</p>
+<p>:raises VaultError: Общая ошибка при работе с Vault
+:raises VaultConnectionError: Ошибка подключения к Vault
+:raises VaultAuthenticationError: Ошибка аутентификации
+:raises VaultTokenError: Ошибка с токеном доступа</p>
 
 
 
@@ -1084,87 +1101,152 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/adapters/vault.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VaultClient</span><span class="p">(</span><span class="n">ISecretsProvider</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VaultClient</span><span class="p">(</span><span class="n">ISecretsProvider</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Клиент для взаимодействия с key-value хранилищем секретов HashiCorp Vault.</span>
+<span class="sd">    Клиент для работы с HashiCorp Vault - системой для безопасного хранения секретов.</span>
 
-<span class="sd">    Этот класс реализует интерфейс ISecretsProvider и предоставляет методы для</span>
-<span class="sd">    безопасного получения секретов с сервера Vault. Поддерживает аутентификацию</span>
-<span class="sd">    с использованием токена.</span>
+<span class="sd">    Позволяет получать секреты из Vault с использованием токена аутентификации.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        ISecretsProvider: Интерфейс, определяющий контракт для провайдеров секретов.</span>
+<span class="sd">    Пример использования:</span>
+<span class="sd">        # Инициализация клиента</span>
+<span class="sd">        vault = VaultClient(</span>
+<span class="sd">            addr=&#39;http://localhost:8200&#39;,  # Адрес Vault сервера</span>
+<span class="sd">            token_file=&#39;/path/to/token&#39;    # Файл с токеном доступа</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # Получение секрета</span>
+<span class="sd">        secret = vault.read_secret(&#39;путь/к/секрету&#39;)</span>
+
+<span class="sd">    Примечание:</span>
+<span class="sd">        - Для работы требуется настроенный и запущенный сервер Vault</span>
+<span class="sd">        - Токен доступа должен иметь права на чтение запрашиваемых секретов</span>
+<span class="sd">        - По умолчанию используется KV Secrets Engine версии 2</span>
+
+<span class="sd">    :param addr: Адрес Vault сервера (например, &#39;http://localhost:8200&#39;)</span>
+<span class="sd">    :param token_file: Путь к файлу, содержащему токен аутентификации</span>
+
+<span class="sd">    :raises VaultError: Общая ошибка при работе с Vault</span>
+<span class="sd">    :raises VaultConnectionError: Ошибка подключения к Vault</span>
+<span class="sd">    :raises VaultAuthenticationError: Ошибка аутентификации</span>
+<span class="sd">    :raises VaultTokenError: Ошибка с токеном доступа</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">token_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -1187,46 +1269,75 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_init_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">hvac</span><span class="o">.</span><span class="n">Client</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Инициализирует и аутентифицирует клиент Vauflt.</span>
+<span class="sd">        Создает и настраивает клиент для работы с Vault.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            hvac.Client: Аутентифицированный экземпляр клиента Vault.</span>
+<span class="sd">        :return: Аутентифицированный клиент Vault</span>
 
-<span class="sd">        Raises:</span>
-<span class="sd">            ValueError: Если отсутствует обязательная конфигурация.</span>
-<span class="sd">            ConnectionError: Если не удалось аутентифицироваться в Vault.</span>
-<span class="sd">            FileNotFoundError: Если не удалось прочитать файл с токеном.</span>
+<span class="sd">        :raises VaultError: Если не удалось инициализировать клиент</span>
+<span class="sd">        :raises VaultConnectionError: Если не удалось подключиться к серверу</span>
+<span class="sd">        :raises VaultTokenError: Если возникла проблема с токеном</span>
+<span class="sd">        :raises VaultAuthenticationError: Если аутентификация не удалась</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addr</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token_file</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;VAULT_ADDR и VAULT_TOKEN_FILE должны быть заданы&#39;</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">VaultError</span><span class="p">(</span><span class="s1">&#39;VAULT_ADDR и VAULT_TOKEN_FILE должны быть заданы&#39;</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
-        <span class="n">client</span> <span class="o">=</span> <span class="n">hvac</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_addr</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s1">&#39;Vault authentication failed&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">VaultTokenError</span><span class="p">(</span><span class="s1">&#39;Токен не может быть пустым&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">client</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">hvac</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_addr</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">VaultAuthenticationError</span><span class="p">(</span><span class="s1">&#39;Не удалось аутентифицироваться в Vault&#39;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">client</span>
+
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">VaultTokenError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Файл с токеном не найден: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">VaultPermissionError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Нет прав на чтение токена: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;connection&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">VaultConnectionError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Не удалось подключиться к Vault: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">VaultError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ошибка при инициализации клиента Vault: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Читает секрет из key-value хранилища Vault.</span>
+<span class="sd">        Получает секрет из Vault по указанному пути.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            path: Путь к секрету в Vault (например, &#39;secret/data/myapp/config&#39;).</span>
+<span class="sd">        Пример:</span>
+<span class="sd">            # Получение секрета</span>
+<span class="sd">            secret = vault.read_secret(&#39;eebook/users/database&#39;)</span>
+<span class="sd">            # Результат: {&#39;username&#39;: &#39;admin&#39;, &#39;password&#39;: &#39;s3cr3t&#39;}</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            dict[str, Any]: Словарь с данными секрета.</span>
+<span class="sd">            # Использование полученных данных</span>
+<span class="sd">            db_user = secret[&#39;username&#39;]</span>
+<span class="sd">            db_pass = secret[&#39;password&#39;]</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            Метод предполагает использование KV Secrets Engine v2.</span>
-<span class="sd">            Данные секрета должны находиться в поле &#39;data.data&#39; ответа.</span>
+<span class="sd">        :param path: Путь к секрету в формате &#39;путь/к/секрету&#39;.</span>
+<span class="sd">                     Для KV v2 автоматически добавляется префикс &#39;data/&#39; при необходимости.</span>
+
+<span class="sd">        :return: Словарь с данными секрета</span>
+
+<span class="sd">        :raises VaultSecretNotFoundError: Если секрет не найден по указанному пути</span>
+<span class="sd">        :raises VaultPermissionError: Если недостаточно прав для доступа к секрету</span>
+<span class="sd">        :raises VaultError: При других ошибках при чтении секрета</span>
+
+<span class="sd">        Примечания:</span>
+<span class="sd">            - Для KV v2 секреты хранятся в формате &#39;путь/к/секрету&#39;,</span>
+<span class="sd">              а не в полном пути &#39;secret/data/путь/к/секрету&#39;</span>
+<span class="sd">            - Метод автоматически обрабатывает версионирование KV v2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">secrets</span><span class="o">.</span><span class="n">kv</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">read_secret_version</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">secret</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">secrets</span><span class="o">.</span><span class="n">kv</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">read_secret_version</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">secret</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;404&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">VaultSecretNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Секрет не найден: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">VaultError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ошибка при чтении секрета: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1332,23 +1443,23 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/vault.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">token_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">token_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Инициализирует клиент Vault с параметрами подключения.</span>
 
@@ -1374,110 +1485,111 @@
 <div class="doc doc-object doc-function">
 
 
-<h2 id="src.adapters.vault.VaultClient.read_secret" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">read_secret</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+<h2 id="src.adapters.vault.VaultClient.get_secret" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_secret</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
-<a href="#src.adapters.vault.VaultClient.read_secret" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.adapters.vault.VaultClient.get_secret" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
 
-        <p>Читает секрет из key-value хранилища Vault.</p>
+        <p>Получает секрет из Vault по указанному пути.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>path</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Путь к секрету в Vault (например, 'secret/data/myapp/config').</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<details class="пример" open>
+  <summary>Пример</summary>
+  <h3 id="src.adapters.vault.VaultClient.get_secret--_1">Получение секрета<a class="headerlink" href="#src.adapters.vault.VaultClient.get_secret--_1" title="Permanent link">&para;</a></h3>
+<p>secret = vault.read_secret('eebook/users/database')</p>
+<h3 _admin_="'admin'," _password_:="'password':" _s3cr3t_="'s3cr3t'" _username_:="'username':" id="src.adapters.vault.VaultClient.get_secret--_2">Результат:<a class="headerlink" href="#src.adapters.vault.VaultClient.get_secret--_2" title="Permanent link">&para;</a></h3>
+<h3 id="src.adapters.vault.VaultClient.get_secret--_3">Использование полученных данных<a class="headerlink" href="#src.adapters.vault.VaultClient.get_secret--_3" title="Permanent link">&para;</a></h3>
+<p>db_user = secret['username']
+db_pass = secret['password']</p>
+</details>        <p>:param path: Путь к секрету в формате 'путь/к/секрету'.
+             Для KV v2 автоматически добавляется префикс 'data/' при необходимости.</p>
+<p>:return: Словарь с данными секрета</p>
+<p>:raises VaultSecretNotFoundError: Если секрет не найден по указанному пути
+:raises VaultPermissionError: Если недостаточно прав для доступа к секрету
+:raises VaultError: При других ошибках при чтении секрета</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>dict[str, Any]: Словарь с данными секрета.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-<details class="note" open>
-  <summary>Note</summary>
-  <p>Метод предполагает использование KV Secrets Engine v2.
-Данные секрета должны находиться в поле 'data.data' ответа.</p>
+<details class="примечания" open>
+  <summary>Примечания</summary>
+  <ul>
+<li>Для KV v2 секреты хранятся в формате 'путь/к/секрету',
+  а не в полном пути 'secret/data/путь/к/секрету'</li>
+<li>Метод автоматически обрабатывает версионирование KV v2</li>
+</ul>
 </details>
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/vault.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Читает секрет из key-value хранилища Vault.</span>
+<span class="sd">    Получает секрет из Vault по указанному пути.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        path: Путь к секрету в Vault (например, &#39;secret/data/myapp/config&#39;).</span>
+<span class="sd">    Пример:</span>
+<span class="sd">        # Получение секрета</span>
+<span class="sd">        secret = vault.read_secret(&#39;eebook/users/database&#39;)</span>
+<span class="sd">        # Результат: {&#39;username&#39;: &#39;admin&#39;, &#39;password&#39;: &#39;s3cr3t&#39;}</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        dict[str, Any]: Словарь с данными секрета.</span>
+<span class="sd">        # Использование полученных данных</span>
+<span class="sd">        db_user = secret[&#39;username&#39;]</span>
+<span class="sd">        db_pass = secret[&#39;password&#39;]</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        Метод предполагает использование KV Secrets Engine v2.</span>
-<span class="sd">        Данные секрета должны находиться в поле &#39;data.data&#39; ответа.</span>
+<span class="sd">    :param path: Путь к секрету в формате &#39;путь/к/секрету&#39;.</span>
+<span class="sd">                 Для KV v2 автоматически добавляется префикс &#39;data/&#39; при необходимости.</span>
+
+<span class="sd">    :return: Словарь с данными секрета</span>
+
+<span class="sd">    :raises VaultSecretNotFoundError: Если секрет не найден по указанному пути</span>
+<span class="sd">    :raises VaultPermissionError: Если недостаточно прав для доступа к секрету</span>
+<span class="sd">    :raises VaultError: При других ошибках при чтении секрета</span>
+
+<span class="sd">    Примечания:</span>
+<span class="sd">        - Для KV v2 секреты хранятся в формате &#39;путь/к/секрету&#39;,</span>
+<span class="sd">          а не в полном пути &#39;secret/data/путь/к/секрету&#39;</span>
+<span class="sd">        - Метод автоматически обрабатывает версионирование KV v2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">secrets</span><span class="o">.</span><span class="n">kv</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">read_secret_version</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">secret</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">secrets</span><span class="o">.</span><span class="n">kv</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">read_secret_version</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">secret</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;404&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">VaultSecretNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Секрет не найден: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">VaultError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ошибка при чтении секрета: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

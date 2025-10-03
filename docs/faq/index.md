@@ -13,7 +13,6 @@
 
 ## Содержание
 
-- [Архитектура и DDD](architecture.md)
 - [Кодинг и стиль](coding_guidelines.md)
 - [Git, коммиты и PR](git_commits.md)
 - [Тестирование](testing.md)
