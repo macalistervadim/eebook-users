@@ -6,7 +6,7 @@
 ![Release](https://img.shields.io/badge/release-v1.0.0-orange)
 ![Widgets](https://img.shields.io/badge/widgets-custom-lightgrey)
 
-`eebook-users` — Python-проект для работы с пользовательскими данными и безопасного хранения секретов через HashiCorp Vault.  
+`eebook-users` — микросервис для работы с пользователями в проекте eebook
 
 ---
 
