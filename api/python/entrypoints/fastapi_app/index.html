@@ -12,24 +12,28 @@
         <meta name="author" content="macalistervadim">
       
       
-        <link rel="canonical" href="https://macalistervadim.github.io/eebook-users/faq/architecture/">
+        <link rel="canonical" href="https://macalistervadim.github.io/eebook-users/api/python/entrypoints/fastapi_app/">
       
       
+        <link rel="prev" href="../../entity/models/">
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+        <link rel="next" href="../api/endpoints/">
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
     
     
       
-        <title>Архитектура проекта и принципы - eebook</title>
+        <title>FastAPI приложение - eebook</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.e53b48f4.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,17 +52,83 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../css/extra.css">
+      <link rel="stylesheet" href="../../../../css/landing.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
     
+  
+  <style>
+    /* === Feedback === */
+    .custom-feedback {
+      margin-top: 2rem;
+      text-align: center;
+      padding: 1rem 0;
+    }
+    .custom-feedback h3 {
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .custom-feedback-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.4rem;
+    }
+    .custom-feedback-icons .icon {
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .custom-feedback-icons .icon:hover {
+      transform: scale(1.2);
+    }
+    .feedback-note {
+      margin-top: 0.6rem;
+      color: var(--md-default-fg-color--light);
+      font-size: 0.85rem;
+    }
+
+    /* === Prev / Next === */
+    .custom-prev-next {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2.2rem;
+      padding: 1rem 0;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .custom-prev-next a {
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--md-default-fg-color--lightest);
+      color: var(--md-default-fg-color);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .custom-prev-next a:hover {
+      background: var(--md-default-fg-color--lighter);
+    }
+
+    /* Поддержка тёмной темы */
+    [data-md-color-scheme="slate"] .custom-prev-next a {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.9);
+    }
+    [data-md-color-scheme="slate"] .custom-prev-next a:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  </style>
+
   </head>
   
   
@@ -78,7 +148,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#fastapi-application" class="md-skip">
           Перейти к содержанию
         </a>
       
@@ -92,7 +162,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
-    <a href="../.." title="eebook" class="md-header__button md-logo" aria-label="eebook" data-md-component="logo">
+    <a href="../../../.." title="eebook" class="md-header__button md-logo" aria-label="eebook" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -112,7 +182,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Архитектура проекта и принципы
+              FastAPI приложение
             
           </span>
         </div>
@@ -223,7 +293,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../../.." class="md-tabs__link">
         
   
   
@@ -244,7 +314,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../architecture/components/" class="md-tabs__link">
+        <a href="../../../../architecture/components/" class="md-tabs__link">
           
   
   
@@ -264,7 +334,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../installation/guide/" class="md-tabs__link">
+        <a href="../../../../installation/guide/" class="md-tabs__link">
           
   
   
@@ -280,11 +350,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../api/rest/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../rest/" class="md-tabs__link">
           
   
   
@@ -304,7 +376,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../" class="md-tabs__link">
+        <a href="../../../../faq/" class="md-tabs__link">
           
   
   
@@ -322,7 +394,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../changelog/" class="md-tabs__link">
+      <a href="../../../../changelog/" class="md-tabs__link">
         
   
   
@@ -341,7 +413,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../LICENCE/" class="md-tabs__link">
+      <a href="../../../../LICENCE/" class="md-tabs__link">
         
   
   
@@ -374,11 +446,9 @@
   
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Навигация" data-md-level="0">
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="eebook" class="md-nav__button md-logo" aria-label="eebook" data-md-component="logo">
+    <a href="../../../.." title="eebook" class="md-nav__button md-logo" aria-label="eebook" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -408,7 +478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         
   
   
@@ -434,6 +504,8 @@
     
     
       
+      
+        
       
     
     
@@ -473,7 +545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/components/" class="md-nav__link">
+      <a href="../../../../architecture/components/" class="md-nav__link">
         
   
   
@@ -496,7 +568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sequence/" class="md-nav__link">
+      <a href="../../../../architecture/sequence/" class="md-nav__link">
         
   
   
@@ -530,6 +602,8 @@
     
     
       
+      
+        
       
     
     
@@ -569,7 +643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../installation/guide/" class="md-nav__link">
+      <a href="../../../../installation/guide/" class="md-nav__link">
         
   
   
@@ -596,26 +670,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -628,7 +707,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             API
@@ -642,7 +721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/rest/" class="md-nav__link">
+      <a href="../../../rest/" class="md-nav__link">
         
   
   
@@ -662,31 +741,36 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
         
           
+          
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
             
   
   
   <span class="md-ellipsis">
-    Python
+    Python API
     
   </span>
   
@@ -694,10 +778,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_2">
             <span class="md-nav__icon md-icon"></span>
-            Python
+            Python API
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -708,12 +792,80 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/python/vault_client/" class="md-nav__link">
+      <a href="../../bootstrap/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Vault
+    Bootstrap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_2" id="__nav_4_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Конфигурация
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Конфигурация
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config/settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Настройки
     
   </span>
   
@@ -731,12 +883,555 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/python/repository/" class="md-nav__link">
+      <a href="../../config/loader/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Repository
+    Загрузчик
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../domain/model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Доменная модель
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_4" id="__nav_4_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Сущности
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Сущности
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../entity/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Модели
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_5" id="__nav_4_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Точки входа
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Точки входа
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    FastAPI приложение
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    FastAPI приложение
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Основные компоненты
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Основные компоненты">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_app-fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_app() -&gt; FastAPI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Конфигурация приложения
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Конфигурация приложения">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Основные настройки:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Жизненный цикл приложения
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Подключенные роутеры
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.entrypoints.fastapi_app" class="md-nav__link">
+    <span class="md-ellipsis">
+      fastapi_app
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/endpoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API эндпоинты
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_6" id="__nav_4_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Инфраструктура
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            Инфраструктура
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_6_1" id="__nav_4_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    База данных
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            База данных
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastucture/database/engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Движок
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastucture/lifespan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Жизненный цикл
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_7" id="__nav_4_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Сервисный слой
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            Сервисный слой
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../serivce_layer/dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Зависимости
     
   </span>
   
@@ -754,35 +1449,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/python/unit_of_work/" class="md-nav__link">
+      <a href="../../serivce_layer/uow/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    UnitOfWork
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/python/settings/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Settings
+    Unit of Work
     
   </span>
   
@@ -807,6 +1479,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -819,6 +1499,8 @@
     
     
       
+      
+        
       
     
     
@@ -858,7 +1540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../../../faq/" class="md-nav__link">
         
   
   
@@ -881,7 +1563,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../coding_guidelines/" class="md-nav__link">
+      <a href="../../../../faq/coding_guidelines/" class="md-nav__link">
         
   
   
@@ -904,7 +1586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../git_commits/" class="md-nav__link">
+      <a href="../../../../faq/git_commits/" class="md-nav__link">
         
   
   
@@ -927,7 +1609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../testing/" class="md-nav__link">
+      <a href="../../../../faq/testing/" class="md-nav__link">
         
   
   
@@ -950,7 +1632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contributing/" class="md-nav__link">
+      <a href="../../../../faq/contributing/" class="md-nav__link">
         
   
   
@@ -980,7 +1662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../changelog/" class="md-nav__link">
+      <a href="../../../../changelog/" class="md-nav__link">
         
   
   
@@ -1002,7 +1684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../LICENCE/" class="md-nav__link">
+      <a href="../../../../LICENCE/" class="md-nav__link">
         
   
   
@@ -1024,16 +1706,118 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Основные компоненты
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Основные компоненты">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_app-fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_app() -&gt; FastAPI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Конфигурация приложения
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Конфигурация приложения">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Основные настройки:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Жизненный цикл приложения
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Подключенные роутеры
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.entrypoints.fastapi_app" class="md-nav__link">
+    <span class="md-ellipsis">
+      fastapi_app
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
+  
                   
 
 
   
-    <a href="https://github.com/macalistervadim/eebook-users/edit/main/docs/faq/architecture.md" title="Редактировать страницу" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/macalistervadim/eebook-users/edit/main/docs/api/python/entrypoints/fastapi_app.md" title="Редактировать страницу" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1042,76 +1826,81 @@
     
       
     
-    <a href="https://github.com/macalistervadim/eebook-users/raw/main/docs/faq/architecture.md" title="Посмотреть исходный код страницы" class="md-content__button md-icon">
+    <a href="https://github.com/macalistervadim/eebook-users/raw/main/docs/api/python/entrypoints/fastapi_app.md" title="Посмотреть исходный код страницы" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="_1">Архитектура проекта и принципы<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Проект <strong>eebook</strong> построен с учётом <strong>Domain-Driven Design (DDD)</strong> и <strong>Clean Architecture</strong>.</p>
-<h2 id="_2">Основные слои<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Domain Layer</strong></li>
-<li>Содержит бизнес-логику и модели: <code>domain/</code>, <code>entity/</code></li>
-<li>Примеры: <code>Portfolio</code>, <code>Asset</code>, <code>Transaction</code></li>
-<li>
-<p>Абстракции не зависят от базы данных и фреймворков</p>
-</li>
-<li>
-<p><strong>Service Layer</strong></p>
-</li>
-<li>Координирует работу domain-моделей</li>
-<li>
-<p>Реализует бизнес-процессы: пересчёт доходности, расчёт метрик</p>
-</li>
-<li>
-<p><strong>Adapters / Infrastructure Layer</strong></p>
-</li>
-<li>Работа с внешними системами (DB, Vault, API)</li>
-<li>Примеры: <code>adapters/vault.py</code>, <code>adapters/repository.py</code></li>
-<li>
-<p>Изоляция внешних зависимостей через интерфейсы</p>
-</li>
-<li>
-<p><strong>Entry Points / API Layer</strong></p>
-</li>
-<li>FastAPI приложения и эндпоинты</li>
-<li>Взаимодействие с пользователем и внешним миром</li>
-</ol>
-<hr />
-<h2 id="_3">Принципы проектирования<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h1 id="fastapi-application">FastAPI Application<a class="headerlink" href="#fastapi-application" title="Permanent link">&para;</a></h1>
+<p>Модуль <code>fastapi_app.py</code> является точкой входа в веб-приложение. Он отвечает за создание и настройку экземпляра FastAPI.</p>
+<h2 id="_1">Основные компоненты<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="create_app-fastapi"><code>create_app() -&gt; FastAPI</code><a class="headerlink" href="#create_app-fastapi" title="Permanent link">&para;</a></h3>
+<p>Фабричная функция, создающая и настраивающая экземпляр FastAPI.</p>
+<p><strong>Возвращает:</strong>
+- <code>FastAPI</code> - настроенный экземпляр приложения</p>
+<p><strong>Особенности:</strong>
+- Инициализирует FastAPI с базовыми настройками
+- Подключает все API-эндпоинты
+- Настраивает жизненный цикл приложения
+- Конфигурирует документацию</p>
+<h2 id="_2">Конфигурация приложения<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">Основные настройки:<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Separation of Concerns (SoC)</strong> — каждый слой отвечает за своё</li>
-<li><strong>Dependency Inversion Principle (DIP)</strong> — зависимости направлены внутрь, слои high-level не зависят от low-level</li>
-<li><strong>DRY (Don't Repeat Yourself)</strong> — минимизация дублирования кода</li>
-<li><strong>KISS (Keep It Simple, Stupid)</strong> — код простой и читаемый</li>
-<li><strong>YAGNI (You Aren't Gonna Need It)</strong> — не добавляем функционал без нужды</li>
-<li><strong>Unit of Work</strong> и <strong>Repository Pattern</strong> для работы с БД</li>
-<li><strong>Immutable Data Objects</strong> там, где это возможно</li>
+<li><strong>Название</strong>: eebook</li>
+<li><strong>Описание</strong>: API учета инвестиций eebook</li>
+<li><strong>Версия</strong>: 0.1.0</li>
+<li><strong>Документация</strong>:</li>
+<li>Swagger UI: <code>/api/docs</code></li>
+<li>ReDoc: <code>/api/redoc</code></li>
+<li>OpenAPI схема: <code>/api/openapi.json</code></li>
 </ul>
-<hr />
-<h2 id="_4">Структура каталогов<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>src/
-   ├─ adapters/ # инфраструктура (DB, Vault, внешние API)
-   ├─ domain/ # бизнес-логика и модели
-   ├─ entity/ # сущности проекта (Portfolio, Asset, Transaction)
-   ├─ service_layer/ # бизнес-сервисы, координация логики
-   ├─ entrypoints/ # FastAPI endpoints
-</code></pre></div>
-<hr />
-<h2 id="_5">Важные соглашения<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">Жизненный цикл приложения<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>Управление жизненным циклом реализовано через <code>lifespan</code>, который отвечает за:
+- Инициализацию ресурсов при запуске
+- Корректное освобождение ресурсов при завершении
+- Обработку ошибок при запуске</p>
+<h2 id="_5">Подключенные роутеры<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Все публичные методы должны иметь докстринги</li>
-<li>Слой domain не должен зависеть от adapters</li>
-<li>Любая работа с БД/внешним API через интерфейсы</li>
-<li>Тестируем бизнес-логику независимо от инфраструктуры</li>
+<li>API эндпоинты из <code>src.entrypoints.api.endpoints</code></li>
 </ul>
-<details class="tip">
-<summary>💡 Совет</summary>
-<p>Используй чистую архитектуру — это упростит поддержку.</p>
-</details>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="src.entrypoints.fastapi_app"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -1134,7 +1923,7 @@
     <span class="md-icon" title="Последнее обновление">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="1 октября 2025 г. 13:40:13 MSK">1 октября 2025 г.</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="3 октября 2025 г. 12:17:40 MSK">3 октября 2025 г.</span>
   </span>
 
     
@@ -1144,7 +1933,7 @@
     <span class="md-icon" title="Дата создания">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="29 сентября 2025 г. 13:59:49 MSK">29 сентября 2025 г.</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="3 октября 2025 г. 12:17:40 MSK">3 октября 2025 г.</span>
   </span>
 
     
@@ -1157,6 +1946,37 @@
 
 
                 
+
+  <!-- Feedback -->
+  <div class="custom-feedback">
+    <h3>Была ли статья полезна?</h3>
+    <div class="custom-feedback-icons">
+      <span class="icon" onclick="feedbackResponse(true)" title="Да, всё понятно">
+        🙂 
+      </span>
+      <span class="icon" onclick="feedbackResponse(false)" title="Не очень понятно">
+        🙁 
+      </span>
+    </div>
+    <p id="feedback-note" class="feedback-note"></p>
+  </div>
+
+  <!-- Prev / Next -->
+  
+    <div class="custom-prev-next">
+      
+        <a class="prev" href="../../entity/models/">
+          ⬅ Модели
+        </a>
+      
+      
+        <a class="next" href="../api/endpoints/">
+          API эндпоинты ➡
+        </a>
+      
+    </div>
+  
+
               </article>
             </div>
           
@@ -1282,13 +2102,23 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "navigation.tabs", "toc.integrate", "navigation.instant", "navigation.expand", "navigation.instant.progress", "content.action.edit", "content.action.view", "content.code.copy", "content.footer", "content.feedback", "navigation.instant", "navigation.prev-next"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.top", "navigation.tabs", "navigation.sections", "navigation.instant", "navigation.expand", "navigation.instant.progress", "content.action.edit", "content.action.view", "content.code.copy", "content.footer"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+  
+      <script src="../../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
       
-        <script src="../../js/extra.js"></script>
-      
     
+  <script>
+    function feedbackResponse(isPositive) {
+      const note = document.getElementById('feedback-note');
+      if (isPositive) {
+        note.textContent = 'Спасибо за отзыв! 🙂';
+      } else {
+        note.innerHTML = '🙏 Помоги нам улучшить статью — <a href="https://github.com/macalistervadim/eebook-users/issues/new" target="_blank">создай issue</a>.';
+      }
+    }
+  </script>
+
   </body>
 </html>
