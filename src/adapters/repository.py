@@ -55,7 +55,7 @@ class SqlAlchemyRepository(AbstractRepository):
         session: Асинхронная сессия SQLAlchemy для работы с базой данных.
     """
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         """
         Инициализирует репозиторий с указанной сессией SQLAlchemy.
 

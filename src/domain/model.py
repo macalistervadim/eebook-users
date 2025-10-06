@@ -8,7 +8,7 @@ class User:
         last_name: str,
         email: str,
         hashed_password: str,
-    ):
+    ) -> None:
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -17,5 +17,5 @@ class User:
     def check_password(self, password: str) -> bool:
         return bcrypt.verify(password, self.hashed_password)
 
-    def set_password(self, password: str):
+    def set_password(self, password: str) -> None:
         self.hashed_password = bcrypt.hash(password)

@@ -10,7 +10,6 @@ COPY src ./src
 RUN pip install --upgrade pip && pip install uv
 RUN uv pip install --system --no-cache-dir -e .
 
-# Копируем исходники
 COPY src /app/src
 COPY tests /app/tests
 

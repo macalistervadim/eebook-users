@@ -17,7 +17,7 @@ def get_engine() -> AsyncEngine:
         pool_timeout=30,
         pool_pre_ping=True,
         pool_recycle=300,
-        connect_args={'command_timeout': 10, 'connect_timeout': 5},
+        connect_args={'command_timeout': 10},
     )
 
 

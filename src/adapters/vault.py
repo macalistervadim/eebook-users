@@ -12,12 +12,11 @@ from src.adapters.exceptions.vault_exceptions import (
     VaultSecretNotFoundError,
     VaultTokenError,
 )
-from src.adapters.interfaces import ISecretsProvider
 
 logger = logging.getLogger(__name__)
 
 
-class VaultClient(ISecretsProvider):
+class VaultClient:
     """
     Клиент для работы с HashiCorp Vault - системой для безопасного хранения секретов.
 
@@ -47,7 +46,7 @@ class VaultClient(ISecretsProvider):
     :raises VaultTokenError: Ошибка с токеном доступа
     """
 
-    def __init__(self, addr: str | None = None, token_file: str | None = None):
+    def __init__(self, addr: str | None = None, token_file: str | None = None) -> None:
         """
         Инициализирует клиент Vault с параметрами подключения.
 
@@ -102,10 +101,7 @@ class VaultClient(ISecretsProvider):
                 raise VaultConnectionError(f'Не удалось подключиться к Vault: {e}')
             raise VaultError(f'Ошибка при инициализации клиента Vault: {e}')
 
-    # TODO: переписать на async, в контракте указан именно async
-    # TODO: подумать по поводу конкретного наследования от протокола -
-    #  мб стоит отказаться от лишнего наследования?
-    def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:  # type: ignore
+    async def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:  # type: ignore
         """
         Получает секрет из Vault по указанному пути.
 

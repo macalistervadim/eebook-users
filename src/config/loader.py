@@ -1,4 +1,3 @@
-# src/config/loader.py
 import logging
 import os
 
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 class SettingsLoader:
     """Загружает секреты из Vault в переменные окружения."""
 
-    def __init__(self, secrets_provider: ISecretsProvider | None = None):
+    def __init__(self, secrets_provider: ISecretsProvider | None = None) -> None:
         try:
             self._sp = secrets_provider or VaultClient()
         except Exception as e:

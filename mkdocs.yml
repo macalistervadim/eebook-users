@@ -123,6 +123,11 @@ nav:
       - REST: api/rest.md
       - Python API:
           - Bootstrap: api/python/bootstrap.md
+          - Адаптеры:
+              - Интерфейсы: api/python/adapters/interfaces.md
+              - ORM: api/python/adapters/orm.md
+              - Repository: api/python/adapters/repository.md
+              - Vault: api/python/adapters/vault_client.md
           - Конфигурация:
               - Настройки: api/python/config/settings.md
               - Загрузчик: api/python/config/loader.md
@@ -145,5 +150,7 @@ nav:
       - Git и коммиты: faq/git_commits.md
       - Тестирование: faq/testing.md
       - Контрибьют: faq/contributing.md
+  - Troubleshooting:
+      - Запуск приложения: troubleshooting/start.md
   - История изменений: changelog.md
   - Лицензия: LICENCE.md
