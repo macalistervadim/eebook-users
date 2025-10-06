@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "auto-changelog": "^2.5.0"
+  },
+  
+  "auto-changelog": {
+  "output": "docs/changelog.md",
+  "unreleased": true,
+  "commit-limit": false,
+  "ignore-commit-pattern": "chore|refactor"
+}
+
+}
