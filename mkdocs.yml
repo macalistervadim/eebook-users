@@ -12,13 +12,12 @@ copyright: >
 
 theme:
   name: material
+  custom_dir: docs/overrides
   language: ru
-
-
   features:
     - navigation.top
     - navigation.tabs
-    - toc.integrate
+    - navigation.sections
     - navigation.instant
     - navigation.expand
     - navigation.instant.progress
@@ -26,9 +25,6 @@ theme:
     - content.action.view
     - content.code.copy
     - content.footer
-    - content.feedback
-    - navigation.instant
-    - navigation.prev-next
 
   palette:
     - scheme: default
@@ -79,10 +75,7 @@ extra:
         note: 🙏 Помоги нам улучшить статью — создай issue на GitHub.
 
 extra_css:
-  - css/extra.css
-
-extra_javascript:
-  - js/extra.js
+  - css/landing.css
 
 markdown_extensions:
   - admonition

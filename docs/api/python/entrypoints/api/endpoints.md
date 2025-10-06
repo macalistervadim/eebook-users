@@ -54,7 +54,4 @@ async def health(settings: Settings = Depends(get_settings)):
 - Pydantic моделей
 - Параметров эндпоинтов
 
-::: src.entrypoints.api.endpoints.router
-    options:
-      heading_level: 2
-      show_source: true
+::: src.entrypoints.api.endpoints
