@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, status
 from starlette.responses import JSONResponse
 
@@ -5,6 +7,8 @@ from src.config.settings import Settings
 from src.service_layer.dependencies import get_settings
 
 router = APIRouter(tags=['users'])
+
+logger = logging.getLogger(__name__)
 
 
 @router.get('/health')
