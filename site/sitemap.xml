@@ -9,10 +9,6 @@
          <lastmod>2025-10-06</lastmod>
     </url>
     <url>
-         <loc>https://macalistervadim.github.io/eebook-users/api/</loc>
-         <lastmod>2025-10-06</lastmod>
-    </url>
-    <url>
          <loc>https://macalistervadim.github.io/eebook-users/changelog/</loc>
          <lastmod>2025-10-06</lastmod>
     </url>
@@ -110,6 +106,10 @@
     </url>
     <url>
          <loc>https://macalistervadim.github.io/eebook-users/installation/guide/</loc>
+         <lastmod>2025-10-06</lastmod>
+    </url>
+    <url>
+         <loc>https://macalistervadim.github.io/eebook-users/troubleshooting/start/</loc>
          <lastmod>2025-10-06</lastmod>
     </url>
 </urlset>
