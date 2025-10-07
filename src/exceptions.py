@@ -1,12 +1,5 @@
-"""
-Классы исключений для config, bootstrap
-"""
-
-
 class ConfigurationError(Exception):
-    """
-    Вызывается при неполадках в настройках проекта
-    """
+    """Вызывается при неполадках в настройках проекта."""
 
 
 class DatabaseError(Exception):

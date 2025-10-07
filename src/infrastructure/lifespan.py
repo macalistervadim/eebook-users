@@ -1,4 +1,3 @@
-# src/infrastructure/lifespan.py
 import logging
 from contextlib import asynccontextmanager
 
@@ -14,9 +13,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     try:
         await bootstrap()
-        logger.info('Application startup complete')
         yield
     finally:
         engine = get_engine()
         await engine.dispose()
-        logger.info('Application shutdown complete')
