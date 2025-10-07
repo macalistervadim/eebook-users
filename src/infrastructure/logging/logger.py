@@ -6,6 +6,7 @@ from typing import Literal
 def configure_logging(
     level: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] = 'INFO',
 ) -> None:
+    """Конфигурирование логгера для всего приложения."""
     fmt = '[{asctime}] {levelname} {name}: {message}'
     formatter = logging.Formatter(fmt, style='{', datefmt='%Y-%m-%d %H:%M:%S')
 

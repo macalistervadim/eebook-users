@@ -17,14 +17,14 @@ logger = logging.getLogger(__name__)
 
 @lru_cache
 def get_engine() -> AsyncEngine:
-    """
-    Ленивая инициализация engine. Настройки должны быть загружены до вызова.
+    """Ленивая инициализация engine. Настройки должны быть загружены до вызова.
 
     Returns:
         AsyncEngine: Инициализированный асинхронный движок SQLAlchemy
 
     Raises:
         DatabaseConnectionError: Если не удалось создать подключение к БД
+
     """
     settings = get_settings()
 

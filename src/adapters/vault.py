@@ -21,8 +21,7 @@ VAULT_TOKEN_FILE_ENV_NAME: Final[str] = 'VAULT_TOKEN_FILE'
 
 
 class VaultClient:
-    """
-    Клиент для работы с HashiCorp Vault - системой для безопасного хранения секретов.
+    """Клиент для работы с HashiCorp Vault - системой для безопасного хранения секретов.
 
     Позволяет получать секреты из Vault с использованием токена аутентификации.
 
@@ -40,45 +39,38 @@ class VaultClient:
         - Для работы требуется настроенный и запущенный сервер Vault
         - Токен доступа должен иметь права на чтение запрашиваемых секретов
         - По умолчанию используется KV Secrets Engine версии 2
-
-    :param addr: Адрес Vault сервера (например, 'http://localhost:8200')
-    :param token_file: Путь к файлу, содержащему токен аутентификации
-
-    :raises VaultError: Общая ошибка при работе с Vault
-    :raises VaultConnectionError: Ошибка подключения к Vault
-    :raises VaultAuthenticationError: Ошибка аутентификации
-    :raises VaultTokenError: Ошибка с токеном доступа
     """
 
     def __init__(self, addr: str | None = None, token_file: str | None = None) -> None:
-        f"""
-        Инициализирует клиент Vault с параметрами подключения.
+        """Инициализирует клиент Vault с параметрами подключения.
 
         Args:
-            addr: URL сервера Vault. Если не указан, будет прочитан из
-                переменной окружения {VAULT_ADDR_ENV_NAME}.
-            token_file: Путь к файлу с токеном аутентификации Vault.
-                Если не указан, будет прочитан из переменной окружения {VAULT_TOKEN_FILE_ENV_NAME}.
+            addr (str | None): URL сервера Vault. Если не указан, будет прочитан из
+            переменной окружения 'VAULT_ADDR'.
+            token_file (str | None): Путь к файлу с токеном аутентификации Vault. Если не указан,
+            будет прочитан из переменной окружения 'VAULT_TOKEN_FILE'.
 
         Raises:
             ValueError: Если не указаны параметры addr/token_file и соответствующие
-                переменные окружения отсутствуют.
-        """
+            переменные окружения отсутствуют.
 
+        """
         self._addr = addr or os.environ.get(VAULT_ADDR_ENV_NAME)
         self._token_file = token_file or os.environ.get(VAULT_TOKEN_FILE_ENV_NAME)
         self._client = self._init_client()
 
     def _init_client(self) -> hvac.Client:
-        """
-        Создает и настраивает клиент для работы с Vault.
+        """Создает и настраивает клиент для работы с Vault.
 
-        :return: Аутентифицированный клиент Vault
+        Returns:
+            Аутентифицированный клиент Vault
 
-        :raises VaultError: Если не удалось инициализировать клиент
-        :raises VaultConnectionError: Если не удалось подключиться к серверу
-        :raises VaultTokenError: Если возникла проблема с токеном
-        :raises VaultAuthenticationError: Если аутентификация не удалась
+        Raises:
+            VaultError: Если не удалось инициализировать клиент
+            VaultConnectionError: Если не удалось подключиться к серверу
+            VaultTokenError: Если возникла проблема с токеном
+            VaultAuthenticationError: Если аутентификация не удалась
+
         """
         if not self._addr or not self._token_file:
             logger.error(
@@ -107,22 +99,21 @@ class VaultClient:
             logger.info('Vault-клиент успешно аутентифицирован')
             return client
 
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             logger.exception(f'Файл с токеном для Vault-клиента не найден: {self._token_file}')
-            raise VaultTokenError(f'Файл с токеном не найден: {self._token_file}')
-        except PermissionError:
+            raise VaultTokenError(f'Файл с токеном не найден: {self._token_file}') from e
+        except PermissionError as e:
             logger.exception(f'Нет прав на чтение токена Vault-клиентом: {self._token_file}')
-            raise VaultPermissionError(f'Нет прав на чтение токена: {self._token_file}')
+            raise VaultPermissionError(f'Нет прав на чтение токена: {self._token_file}') from e
         except Exception as e:
             if 'connection' in str(e).lower():
                 logger.exception(f'Не удалось подключиться к Vault: {e}')
-                raise VaultConnectionError(f'Не удалось подключиться к Vault: {e}')
+                raise VaultConnectionError(f'Не удалось подключиться к Vault: {e}') from e
             logger.exception(f'Ошибка при инициализации клиента Vault: {e}')
-            raise VaultError(f'Ошибка при инициализации клиента Vault: {e}')
+            raise VaultError(f'Ошибка при инициализации клиента Vault: {e}') from e
 
     async def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:  # type: ignore
-        """
-        Получает секрет из Vault по указанному пути.
+        """Получает секрет из Vault по указанному пути.
 
         Пример:
             # Получение секрета
@@ -133,19 +124,23 @@ class VaultClient:
             db_user = secret['username']
             db_pass = secret['password']
 
-        :param path: Путь к секрету в формате 'путь/к/секрету'.
-                     Для KV v2 автоматически добавляется префикс 'data/' при необходимости.
+        Params:
+            path (str): Путь к секрету в формате 'путь/к/секрету'.
+                  Для KV v2 автоматически добавляется префикс 'data/' при необходимости.
 
-        :return: Словарь с данными секрета
+        Returns:
+            Словарь с данными секрета
 
-        :raises VaultSecretNotFoundError: Если секрет не найден по указанному пути
-        :raises VaultPermissionError: Если недостаточно прав для доступа к секрету
-        :raises VaultError: При других ошибках при чтении секрета
+        Raises:
+            VaultSecretNotFoundError: Если секрет не найден по указанному пути
+            VaultPermissionError: Если недостаточно прав для доступа к секрету
+            VaultError: При других ошибках при чтении секрета
 
         Примечания:
             - Для KV v2 секреты хранятся в формате 'путь/к/секрету',
               а не в полном пути 'secret/data/путь/к/секрету'
             - Метод автоматически обрабатывает версионирование KV v2
+
         """
         try:
             secret = self._client.secrets.kv.v2.read_secret_version(path=path)
@@ -156,6 +151,6 @@ class VaultClient:
                 logger.error(
                     f'Не удалось обнаружить переданный секрет в Vault-хранилище по пути: {path}',
                 )
-                raise VaultSecretNotFoundError(f'Секрет не найден: {path}')
+                raise VaultSecretNotFoundError(f'Секрет не найден: {path}') from e
             logger.exception('Ошибка при чтении Vault-секрета')
-            raise VaultError(f'Ошибка при чтении секрета: {e}')
+            raise VaultError(f'Ошибка при чтении секрета: {e}') from e

@@ -11,8 +11,11 @@ router = APIRouter(tags=['users'])
 logger = logging.getLogger(__name__)
 
 
+settings_dependency = Depends(get_settings)
+
+
 @router.get('/health')
-async def health(settings: Settings = Depends(get_settings)) -> JSONResponse:
+async def health(settings: Settings = settings_dependency):
     content = {
         'status': 'ok',
         'database': 'connected' if settings.POSTGRES_HOST else 'disconnected',
