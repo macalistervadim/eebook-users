@@ -10,8 +10,7 @@ from src.adapters.repository import AbstractRepository
 
 
 class AbstractUnitOfWork(abc.ABC):
-    """
-    Абстрактный базовый класс Unit of Work (Единица работы).
+    """Абстрактный базовый класс Unit of Work (Единица работы).
 
     Предоставляет интерфейс для управления транзакциями и доступа к репозиториям.
 
@@ -22,87 +21,88 @@ class AbstractUnitOfWork(abc.ABC):
     users: AbstractRepository
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
-        """
-        Вход в контекстный менеджер.
+        """Вход в контекстный менеджер.
 
         Returns:
             AbstractUnitOfWork: Текущий экземпляр Unit of Work.
+
         """
         return self
 
     async def __aexit__(self, *args) -> None:
-        """
-        Выход из контекстного менеджера с откатом несохраненных изменений.
+        """Выход из контекстного менеджера с откатом несохраненных изменений.
 
         Args:
             *args: Аргументы исключения, если оно произошло в блоке with.
+
         """
         await self.rollback()
 
     async def commit(self) -> None:
-        """
-        Фиксирует все изменения в рамках текущей единицы работы.
+        """Фиксирует все изменения в рамках текущей единицы работы.
 
         Raises:
             Exception: Если произошла ошибка при фиксации изменений.
+
         """
         await self._commit()
 
     @abc.abstractmethod
     async def _commit(self) -> None:
-        """
-        Абстрактный метод для реализации фиксации изменений.
+        """Абстрактный метод для реализации фиксации изменений.
 
         Должен быть переопределен в подклассах для конкретной реализации.
 
         Raises:
             NotImplementedError: Если метод не переопределен в подклассе.
+
         """
         raise NotImplementedError
 
     @abc.abstractmethod
     async def rollback(self) -> None:
-        """
-        Абстрактный метод для отката изменений.
+        """Абстрактный метод для отката изменений.
 
         Должен быть переопределен в подклассах для конкретной реализации.
 
         Raises:
             NotImplementedError: Если метод не переопределен в подклассе.
+
         """
         raise NotImplementedError
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
-    """
-    Реализация Unit of Work для работы с SQLAlchemy.
+    """Unit of Work для работы с SQLAlchemy.
 
     Обеспечивает управление сессиями базы данных и транзакциями
     с использованием SQLAlchemy.
-
-    Args:
-        session_factory: Фабрика для создания асинхронных сессий SQLAlchemy.
     """
 
     def __init__(self, session_factory: async_sessionmaker[AsyncSession]):
+        """Инициализация SqlAlchemyUnitOfWork.
+
+        Args:
+            session_factory: Фабрика для создания асинхронных сессий SQLAlchemy.
+
+        """
         self.session_factory = session_factory
 
     async def __aenter__(self):
-        """
-        Вход в контекстный менеджер.
+        """Вход в контекстный менеджер.
 
         Инициализирует сессию базы данных и репозитории.
 
         Returns:
             SqlAlchemyUnitOfWork: Текущий экземпляр Unit of Work.
+
         """
         self.session: AsyncSession = self.session_factory()
         self.users = repository.SqlAlchemyRepository(self.session)
         return await super().__aenter__()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """
-        Выход из контекстного менеджера.
+        """Выход из контекстного менеджера.
 
         При возникновении исключения выполняет откат изменений,
         иначе фиксирует изменения. В любом случае закрывает сессию.
@@ -114,6 +114,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
         Returns:
             bool: Результат выполнения родительского метода __aexit__.
+
         """
         if exc_type:
             await self.rollback()
@@ -123,17 +124,16 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         return await super().__aexit__(exc_type, exc_val, exc_tb)
 
     async def _commit(self):
-        """
-        Фиксирует изменения в базе данных.
+        """Фиксирует изменения в базе данных.
 
         Raises:
             SQLAlchemyError: Если произошла ошибка при фиксации транзакции.
+
         """
         await self.session.commit()
 
     async def rollback(self):
-        """
-        Выполняет откат текущей транзакции.
+        """Выполняет откат текущей транзакции.
 
         Отменяет все изменения, сделанные в рамках текущей сессии.
         """
