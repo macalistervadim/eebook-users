@@ -51,7 +51,7 @@ quote-style = "single"
 
 [tool.ruff.lint]
 select = ["E", "W", "C", "F", "N", "COM", "I", "U", "N", "A", "M", "B", "D"]
-ignore = ["F405", "W293", "D100", "D104", "D103", "D102", "D101", "D106", "D107"]
+ignore = ["F405", "W293", "D100", "D104", "D103", "D102", "D101", "D106", "D107", "D105"]
 fixable = ["ALL"]
 unfixable = []
 
