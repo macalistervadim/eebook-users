@@ -105,6 +105,8 @@ class VaultClient:
         except PermissionError as e:
             logger.exception(f'Нет прав на чтение токена Vault-клиентом: {self._token_file}')
             raise VaultPermissionError(f'Нет прав на чтение токена: {self._token_file}') from e
+        except VaultError:
+            raise
         except Exception as e:
             if 'connection' in str(e).lower():
                 logger.exception(f'Не удалось подключиться к Vault: {e}')
@@ -159,9 +161,11 @@ class VaultClient:
                 return data[key]
 
             return data
+        except VaultError:
+            raise
 
         except Exception as e:
-            if '404' in str(e):
+            if '404' in str(e) or 'Not found' in str(e):
                 logger.exception(
                     f'Не удалось обнаружить секрет в Vault по пути: {path}',
                 )

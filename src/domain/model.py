@@ -19,3 +19,15 @@ class User:
 
     def set_password(self, password: str) -> None:
         self.hashed_password = bcrypt.hash(password)
+
+    def __str__(self) -> str:
+        return f'User - {self.first_name} {self.last_name} ({self.email})'
+
+    def ___repr__(self) -> str:
+        return (
+            f'{self.__class__.__name__}('
+            f'first_name={self.first_name!r}, '
+            f'last_name={self.last_name!r}, '
+            f'email={self.email!r}, '
+            f'hashed_password={self.hashed_password!r})'
+        )
