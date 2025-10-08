@@ -3,7 +3,10 @@ import logging
 from src.adapters.orm import metadata
 from src.config.loader import SettingsLoader
 from src.config.settings import Settings
-from src.exceptions import ConfigurationError, DatabaseError
+from src.exceptions import (
+    BootstrapInitializationError,
+    DatabaseCreateTablesError,
+)
 from src.infrastructure.database.engine import get_engine
 from src.infrastructure.logging.logger import configure_logging
 
@@ -22,7 +25,7 @@ async def bootstrap() -> Settings:
 
     except Exception as e:
         logger.exception('Bootstrap failed')
-        raise ConfigurationError(f'Failed to bootstrap application: {str(e)}') from e
+        raise BootstrapInitializationError(f'Failed to bootstrap application: {str(e)}') from e
 
 
 async def create_all_tables():
@@ -32,4 +35,4 @@ async def create_all_tables():
             await conn.run_sync(metadata.create_all)
     except Exception as e:
         logger.critical(f'Failed to create database tables: {str(e)}', exc_info=True)
-        raise DatabaseError(f'Failed to initialize database: {str(e)}') from e
+        raise DatabaseCreateTablesError(f'Failed to initialize database: {str(e)}') from e
