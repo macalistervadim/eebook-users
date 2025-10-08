@@ -1,6 +1,6 @@
-class ConfigurationError(Exception):
-    """Вызывается при неполадках в настройках проекта."""
+class BootstrapInitializationError(Exception):
+    """Вызывается при неполадках в инициализации проекта."""
 
 
-class DatabaseError(Exception):
-    """Базовое исключение для ошибок базы данных."""
+class DatabaseCreateTablesError(Exception):
+    """Вызывается при неуспешном создании таблиц в базе данных."""

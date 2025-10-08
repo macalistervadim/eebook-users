@@ -9,10 +9,9 @@ class ISecretsProvider(Protocol):
 
         Args:
             path: Путь к секрету в хранилище
-            key: Ключ секрета
+            key: Ключ секрета (опционально)
 
         Returns:
             Значение секрета или None, если не найдено
 
         """
-        ...

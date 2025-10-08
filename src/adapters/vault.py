@@ -115,6 +115,8 @@ class VaultClient:
     async def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:  # type: ignore
         """Получает секрет из Vault по указанному пути.
 
+        Опционально можно передать key - конкретно интересующий ключ по пути
+
         Пример:
             # Получение секрета
             secret = vault.read_secret('eebook/users/database')
@@ -125,8 +127,9 @@ class VaultClient:
             db_pass = secret['password']
 
         Params:
-            path (str): Путь к секрету в формате 'путь/к/секрету'.
+            path: Путь к секрету в формате 'путь/к/секрету'.
                   Для KV v2 автоматически добавляется префикс 'data/' при необходимости.
+            key: Название секрета (пр. db_port)
 
         Returns:
             Словарь с данными секрета
@@ -144,12 +147,23 @@ class VaultClient:
         """
         try:
             secret = self._client.secrets.kv.v2.read_secret_version(path=path)
+            data = secret['data']['data']
             logger.debug('Успешно прочитан секрет из Vault')
-            return secret['data']['data']
+
+            if key is not None:
+                if key not in data:
+                    logger.error(f'Ключ "{key}" не найден в секрете по пути: {path}')
+                    raise VaultSecretNotFoundError(
+                        f'Ключ "{key}" не найден в секрете по пути: {path}',
+                    )
+                return data[key]
+
+            return data
+
         except Exception as e:
             if '404' in str(e):
-                logger.error(
-                    f'Не удалось обнаружить переданный секрет в Vault-хранилище по пути: {path}',
+                logger.exception(
+                    f'Не удалось обнаружить секрет в Vault по пути: {path}',
                 )
                 raise VaultSecretNotFoundError(f'Секрет не найден: {path}') from e
             logger.exception('Ошибка при чтении Vault-секрета')
