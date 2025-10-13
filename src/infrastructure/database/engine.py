@@ -28,11 +28,6 @@ def get_engine() -> AsyncEngine:
     """
     settings = get_settings()
 
-    if not settings.postgres_uri:
-        error_msg = 'Не указан URI подключения к PostgreSQL в настройках'
-        logger.critical(error_msg)
-        raise DatabaseConnectionError(error_msg)
-
     try:
         engine = create_async_engine(
             settings.postgres_uri,

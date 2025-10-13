@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:17
@@ -7,6 +5,12 @@ services:
       - "54321:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: users_service
+      POSTGRES_PASSWORD: users_password123
+      POSTGRES_DB: users_main
+      POSTGRES_PORT: 5432
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "users_service", "-d", "users_main"]
       interval: 10s
@@ -22,6 +26,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./tests:/app/tests
+      - ./alembic.ini:/app/alembic.ini:ro
     secrets:
       - vault_token
     environment:
