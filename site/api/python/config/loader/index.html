@@ -1511,12 +1511,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../../infrastucture/database/engine/" class="md-nav__link">
+      <a href="../../infrastructure/database/engine/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     Движок
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/database/migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Миграции
     
   </span>
   
@@ -1542,7 +1565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../infrastucture/lifespan/" class="md-nav__link">
+      <a href="../../infrastructure/lifespan/" class="md-nav__link">
         
   
   
@@ -1618,7 +1641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../serivce_layer/dependencies/" class="md-nav__link">
+      <a href="../../service_layer/dependencies/" class="md-nav__link">
         
   
   
@@ -1641,7 +1664,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../serivce_layer/uow/" class="md-nav__link">
+      <a href="../../service_layer/uow/" class="md-nav__link">
         
   
   
@@ -2210,7 +2233,7 @@
     <div class="doc doc-contents ">
 
 
-        <p>Загружает секреты из Vault в переменные окружения.</p>
+        <p>Загружает секреты из хранилища секретов в переменные окружения.</p>
 
 
 
@@ -2241,19 +2264,23 @@
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SettingsLoader</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загружает секреты из Vault в переменные окружения.&quot;&quot;&quot;</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SettingsLoader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загружает секреты из хранилища секретов в переменные окружения.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secrets_provider</span><span class="p">:</span> <span class="n">ISecretsProvider</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sp</span> <span class="o">=</span> <span class="n">secrets_provider</span> <span class="ow">or</span> <span class="n">VaultClient</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SettingsLoader</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> успешно инициализирован&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Failed to initialize secrets provider: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ошибка при инициализации </span><span class="si">{</span><span class="n">SettingsLoader</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LoaderInitializationError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Ошибка при инициализации </span><span class="si">{</span><span class="n">SettingsLoader</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Загружает секреты из Vault в env.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Загружает секреты из хранилища секретов в env.&quot;&quot;&quot;</span>
         <span class="n">secret_paths</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s1">&#39;eebook/users&#39;</span><span class="p">,</span>
         <span class="p">]</span>
@@ -2261,7 +2288,7 @@
             <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sp</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Secrets loaded from Vault&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Секреты успешно загружены в окружение&#39;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2293,22 +2320,22 @@
 
     <div class="doc doc-contents ">
 
-        <p>Загружает секреты из Vault в env.</p>
+        <p>Загружает секреты из хранилища секретов в env.</p>
 
 
             <details class="quote">
               <summary>Source code in <code>src/config/loader.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загружает секреты из Vault в env.&quot;&quot;&quot;</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загружает секреты из хранилища секретов в env.&quot;&quot;&quot;</span>
     <span class="n">secret_paths</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;eebook/users&#39;</span><span class="p">,</span>
     <span class="p">]</span>
@@ -2316,7 +2343,7 @@
         <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sp</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Secrets loaded from Vault&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Секреты успешно загружены в окружение&#39;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

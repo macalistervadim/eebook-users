@@ -1502,12 +1502,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../../infrastucture/database/engine/" class="md-nav__link">
+      <a href="../../infrastructure/database/engine/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     Движок
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/database/migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Миграции
     
   </span>
   
@@ -1533,7 +1556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../infrastucture/lifespan/" class="md-nav__link">
+      <a href="../../infrastructure/lifespan/" class="md-nav__link">
         
   
   
@@ -1609,7 +1632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../serivce_layer/dependencies/" class="md-nav__link">
+      <a href="../../service_layer/dependencies/" class="md-nav__link">
         
   
   
@@ -1632,7 +1655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../serivce_layer/uow/" class="md-nav__link">
+      <a href="../../service_layer/uow/" class="md-nav__link">
         
   
   
@@ -2202,10 +2225,8 @@
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AbstractRepository</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Абстрактный базовый класс для репозитория пользователей.</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AbstractRepository</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Абстрактный базовый класс для репозитория пользователей.</span>
 
 <span class="sd">    Определяет интерфейс для работы с хранилищем пользователей,</span>
 <span class="sd">    который должен быть реализован в конкретных классах-наследниках.</span>
@@ -2213,21 +2234,20 @@
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Добавляет пользователя в репозиторий.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Добавляет пользователя в репозиторий.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            user: Объект пользователя для добавления.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotImplementedError: Если метод не переопределен в подклассе.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_by_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Находит пользователя по email.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Находит пользователя по email.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            email: Email пользователя для поиска.</span>
@@ -2237,6 +2257,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotImplementedError: Если метод не переопределен в подклассе.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </code></pre></div></td></tr></table></div>
@@ -2289,7 +2310,7 @@
                 <code>user</code>
             </td>
             <td>
-                  <code><span title="src.domain.model.User">User</span></code>
+                  <code><a class="autorefs autorefs-internal" title="User (src.domain.model.User)" href="../../domain/model/#src.domain.model.User">User</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2329,7 +2350,8 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/repository.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
+<span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
@@ -2339,17 +2361,16 @@
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Добавляет пользователя в репозиторий.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Добавляет пользователя в репозиторий.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        user: Объект пользователя для добавления.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        NotImplementedError: Если метод не переопределен в подклассе.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </code></pre></div></td></tr></table></div>
@@ -2419,7 +2440,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="src.domain.model.User">User</span> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="User (src.domain.model.User)" href="../../domain/model/#src.domain.model.User">User</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2456,7 +2477,8 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/repository.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
+<span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
@@ -2469,11 +2491,9 @@
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_by_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Находит пользователя по email.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Находит пользователя по email.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        email: Email пользователя для поиска.</span>
@@ -2483,6 +2503,7 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        NotImplementedError: Если метод не переопределен в подклассе.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </code></pre></div></td></tr></table></div>
@@ -2559,7 +2580,8 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/adapters/repository.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">46</span>
+<span class="normal">47</span>
 <span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
@@ -2606,42 +2628,40 @@
 <span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqlAlchemyRepository</span><span class="p">(</span><span class="n">AbstractRepository</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Реализация репозитория пользователей с использованием SQLAlchemy.</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqlAlchemyRepository</span><span class="p">(</span><span class="n">AbstractRepository</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Реализация репозитория пользователей с использованием SQLAlchemy.</span>
 
 <span class="sd">    Предоставляет методы для работы с хранилищем пользователей,</span>
 <span class="sd">    используя асинхронную сессию SQLAlchemy.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        session: Асинхронная сессия SQLAlchemy для работы с базой данных.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Инициализирует репозиторий с указанной сессией SQLAlchemy.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует репозиторий с указанной сессией SQLAlchemy.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            session: Асинхронная сессия SQLAlchemy.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Добавляет пользователя в сессию SQLAlchemy.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Добавляет пользователя в сессию SQLAlchemy.</span>
 
 <span class="sd">        Примечание:</span>
 <span class="sd">            Изменения не сохраняются в базе данных до вызова session.commit().</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            user: Объект пользователя для добавления.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_by_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Находит пользователя по email в базе данных.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Находит пользователя по email в базе данных.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            email: Email пользователя для поиска.</span>
@@ -2651,6 +2671,7 @@
 
 <span class="sd">        Note:</span>
 <span class="sd">            Выполняет асинхронный запрос к базе данных.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
             <span class="n">select</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">email</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
@@ -2719,19 +2740,19 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/repository.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">58</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
+<span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Инициализирует репозиторий с указанной сессией SQLAlchemy.</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Инициализирует репозиторий с указанной сессией SQLAlchemy.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        session: Асинхронная сессия SQLAlchemy.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
 </code></pre></div></td></tr></table></div>
@@ -2775,7 +2796,7 @@
                 <code>user</code>
             </td>
             <td>
-                  <code><span title="src.domain.model.User">User</span></code>
+                  <code><a class="autorefs autorefs-internal" title="User (src.domain.model.User)" href="../../domain/model/#src.domain.model.User">User</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2792,7 +2813,8 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/repository.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
@@ -2801,16 +2823,15 @@
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Добавляет пользователя в сессию SQLAlchemy.</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Добавляет пользователя в сессию SQLAlchemy.</span>
 
 <span class="sd">    Примечание:</span>
 <span class="sd">        Изменения не сохраняются в базе данных до вызова session.commit().</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        user: Объект пользователя для добавления.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2879,7 +2900,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="src.domain.model.User">User</span> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="User (src.domain.model.User)" href="../../domain/model/#src.domain.model.User">User</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2898,7 +2919,8 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/repository.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
+<span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
@@ -2913,10 +2935,8 @@
 <span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_by_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Находит пользователя по email в базе данных.</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_by_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Находит пользователя по email в базе данных.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        email: Email пользователя для поиска.</span>
@@ -2926,6 +2946,7 @@
 
 <span class="sd">    Note:</span>
 <span class="sd">        Выполняет асинхронный запрос к базе данных.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
         <span class="n">select</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">email</span><span class="p">),</span>  <span class="c1"># type: ignore</span>

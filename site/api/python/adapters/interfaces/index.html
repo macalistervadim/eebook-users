@@ -939,6 +939,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#src.adapters.interfaces.IPasswordHasher" class="md-nav__link">
+    <span class="md-ellipsis">
+      IPasswordHasher
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IPasswordHasher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.adapters.interfaces.IPasswordHasher.hash_password" class="md-nav__link">
+    <span class="md-ellipsis">
+      hash_password
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.adapters.interfaces.IPasswordHasher.verify_password" class="md-nav__link">
+    <span class="md-ellipsis">
+      verify_password
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#src.adapters.interfaces.ISecretsProvider" class="md-nav__link">
     <span class="md-ellipsis">
       ISecretsProvider
@@ -1442,12 +1475,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../../infrastucture/database/engine/" class="md-nav__link">
+      <a href="../../infrastructure/database/engine/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     Движок
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/database/migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Миграции
     
   </span>
   
@@ -1473,7 +1529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../infrastucture/lifespan/" class="md-nav__link">
+      <a href="../../infrastructure/lifespan/" class="md-nav__link">
         
   
   
@@ -1549,7 +1605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../serivce_layer/dependencies/" class="md-nav__link">
+      <a href="../../service_layer/dependencies/" class="md-nav__link">
         
   
   
@@ -1572,7 +1628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../serivce_layer/uow/" class="md-nav__link">
+      <a href="../../service_layer/uow/" class="md-nav__link">
         
   
   
@@ -1933,6 +1989,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#src.adapters.interfaces.IPasswordHasher" class="md-nav__link">
+    <span class="md-ellipsis">
+      IPasswordHasher
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IPasswordHasher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.adapters.interfaces.IPasswordHasher.hash_password" class="md-nav__link">
+    <span class="md-ellipsis">
+      hash_password
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.adapters.interfaces.IPasswordHasher.verify_password" class="md-nav__link">
+    <span class="md-ellipsis">
+      verify_password
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#src.adapters.interfaces.ISecretsProvider" class="md-nav__link">
     <span class="md-ellipsis">
       ISecretsProvider
@@ -2022,6 +2111,322 @@
 
 
 
+<h2 id="src.adapters.interfaces.IPasswordHasher" class="doc doc-heading">
+            <code>IPasswordHasher</code>
+
+
+<a href="#src.adapters.interfaces.IPasswordHasher" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+        <p>Контракт для реализации собственного хэширования и работы с паролями.</p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/adapters/interfaces.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">IPasswordHasher</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Контракт для реализации собственного хэширования и работы с паролями.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Проверить переданый пароль с установленным.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            password: Введенный пароль</span>
+<span class="sd">            hashed_password: Захэшированный пароль</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True, если пароль совпадает, False в ином случае</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">hash_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Захэширвать переданный пароль и вернуть его хэш.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            password: Пароль, который необходимо захэшировать</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Хэш пароля.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.adapters.interfaces.IPasswordHasher.hash_password" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span></code>
+
+<a href="#src.adapters.interfaces.IPasswordHasher.hash_password" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Захэширвать переданный пароль и вернуть его хэш.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>password</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Пароль, который необходимо захэшировать</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Хэш пароля.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/adapters/interfaces.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">hash_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Захэширвать переданный пароль и вернуть его хэш.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        password: Пароль, который необходимо захэшировать</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Хэш пароля.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.adapters.interfaces.IPasswordHasher.verify_password" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">verify_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">)</span></code>
+
+<a href="#src.adapters.interfaces.IPasswordHasher.verify_password" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Проверить переданый пароль с установленным.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>password</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Введенный пароль</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>hashed_password</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Захэшированный пароль</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>True, если пароль совпадает, False в ином случае</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/adapters/interfaces.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">verify_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Проверить переданый пароль с установленным.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        password: Введенный пароль</span>
+<span class="sd">        hashed_password: Захэшированный пароль</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True, если пароль совпадает, False в ином случае</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
 <h2 id="src.adapters.interfaces.ISecretsProvider" class="doc doc-heading">
             <code>ISecretsProvider</code>
 
@@ -2059,23 +2464,19 @@
 <span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ISecretsProvider</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Контракт для любого хранилища секретов.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ISecretsProvider</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Контракт для любого хранилища секретов.&quot;&quot;&quot;</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Получить значение секрета по пути и ключу.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Получить значение секрета по пути и ключу.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: Путь к секрету в хранилище</span>
-<span class="sd">            key: Ключ секрета</span>
+<span class="sd">            key: Ключ секрета (опционально)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Значение секрета или None, если не найдено</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
@@ -2148,7 +2549,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Ключ секрета</p>
+                <p>Ключ секрета (опционально)</p>
               </div>
             </td>
             <td>
@@ -2184,7 +2585,9 @@
 
             <details class="quote">
               <summary>Source code in <code>src/adapters/interfaces.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
@@ -2193,18 +2596,16 @@
 <span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Получить значение секрета по пути и ключу.</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Получить значение секрета по пути и ключу.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: Путь к секрету в хранилище</span>
-<span class="sd">        key: Ключ секрета</span>
+<span class="sd">        key: Ключ секрета (опционально)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Значение секрета или None, если не найдено</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
