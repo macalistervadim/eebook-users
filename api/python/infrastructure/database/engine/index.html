@@ -12,28 +12,28 @@
         <meta name="author" content="macalistervadim">
       
       
-        <link rel="canonical" href="https://macalistervadim.github.io/eebook-users/api/python/serivce_layer/dependencies/">
+        <link rel="canonical" href="https://macalistervadim.github.io/eebook-users/api/python/infrastructure/database/engine/">
       
       
-        <link rel="prev" href="../../infrastucture/lifespan/">
+        <link rel="prev" href="../../../entrypoints/api/endpoints/">
       
       
-        <link rel="next" href="../uow/">
+        <link rel="next" href="../migrations/">
       
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
     
     
       
-        <title>Зависимости - eebook</title>
+        <title>Движок - eebook</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.e53b48f4.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.e53b48f4.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -52,11 +52,11 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../../css/landing.css">
+      <link rel="stylesheet" href="../../../../../css/landing.css">
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -148,7 +148,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#service-layer-dependencies" class="md-skip">
+        <a href="#database-engine" class="md-skip">
           Перейти к содержанию
         </a>
       
@@ -162,7 +162,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
-    <a href="../../../.." title="eebook" class="md-header__button md-logo" aria-label="eebook" data-md-component="logo">
+    <a href="../../../../.." title="eebook" class="md-header__button md-logo" aria-label="eebook" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -182,7 +182,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Зависимости
+              Движок
             
           </span>
         </div>
@@ -293,7 +293,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../.." class="md-tabs__link">
+      <a href="../../../../.." class="md-tabs__link">
         
   
   
@@ -314,7 +314,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../architecture/components/" class="md-tabs__link">
+        <a href="../../../../../architecture/components/" class="md-tabs__link">
           
   
   
@@ -334,7 +334,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../installation/guide/" class="md-tabs__link">
+        <a href="../../../../../installation/guide/" class="md-tabs__link">
           
   
   
@@ -356,7 +356,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../../rest/" class="md-tabs__link">
+        <a href="../../../../rest/" class="md-tabs__link">
           
   
   
@@ -376,7 +376,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../faq/" class="md-tabs__link">
+        <a href="../../../../../faq/" class="md-tabs__link">
           
   
   
@@ -396,7 +396,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../troubleshooting/start/" class="md-tabs__link">
+        <a href="../../../../../troubleshooting/start/" class="md-tabs__link">
           
   
   
@@ -414,7 +414,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../changelog/" class="md-tabs__link">
+      <a href="../../../../../changelog/" class="md-tabs__link">
         
   
   
@@ -433,7 +433,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../LICENCE/" class="md-tabs__link">
+      <a href="../../../../../LICENCE/" class="md-tabs__link">
         
   
   
@@ -468,7 +468,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="eebook" class="md-nav__button md-logo" aria-label="eebook" data-md-component="logo">
+    <a href="../../../../.." title="eebook" class="md-nav__button md-logo" aria-label="eebook" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -498,7 +498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../../../.." class="md-nav__link">
         
   
   
@@ -565,7 +565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../architecture/components/" class="md-nav__link">
+      <a href="../../../../../architecture/components/" class="md-nav__link">
         
   
   
@@ -588,7 +588,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../architecture/sequence/" class="md-nav__link">
+      <a href="../../../../../architecture/sequence/" class="md-nav__link">
         
   
   
@@ -663,7 +663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../installation/guide/" class="md-nav__link">
+      <a href="../../../../../installation/guide/" class="md-nav__link">
         
   
   
@@ -741,7 +741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../rest/" class="md-nav__link">
+      <a href="../../../../rest/" class="md-nav__link">
         
   
   
@@ -812,7 +812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../bootstrap/" class="md-nav__link">
+      <a href="../../../bootstrap/" class="md-nav__link">
         
   
   
@@ -880,7 +880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adapters/interfaces/" class="md-nav__link">
+      <a href="../../../adapters/interfaces/" class="md-nav__link">
         
   
   
@@ -903,7 +903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adapters/orm/" class="md-nav__link">
+      <a href="../../../adapters/orm/" class="md-nav__link">
         
   
   
@@ -926,7 +926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adapters/repository/" class="md-nav__link">
+      <a href="../../../adapters/repository/" class="md-nav__link">
         
   
   
@@ -949,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adapters/vault_client/" class="md-nav__link">
+      <a href="../../../adapters/vault_client/" class="md-nav__link">
         
   
   
@@ -1025,7 +1025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/settings/" class="md-nav__link">
+      <a href="../../../config/settings/" class="md-nav__link">
         
   
   
@@ -1048,7 +1048,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/loader/" class="md-nav__link">
+      <a href="../../../config/loader/" class="md-nav__link">
         
   
   
@@ -1079,7 +1079,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../domain/model/" class="md-nav__link">
+      <a href="../../../domain/model/" class="md-nav__link">
         
   
   
@@ -1147,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../entity/models/" class="md-nav__link">
+      <a href="../../../entity/models/" class="md-nav__link">
         
   
   
@@ -1223,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../entrypoints/fastapi_app/" class="md-nav__link">
+      <a href="../../../entrypoints/fastapi_app/" class="md-nav__link">
         
   
   
@@ -1246,164 +1246,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../entrypoints/api/endpoints/" class="md-nav__link">
+      <a href="../../../entrypoints/api/endpoints/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     API эндпоинты
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_7" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2_7" id="__nav_4_2_7_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Инфраструктура
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_7">
-            <span class="md-nav__icon md-icon"></span>
-            Инфраструктура
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_7_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2_7_1" id="__nav_4_2_7_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    База данных
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_2_7_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_7_1">
-            <span class="md-nav__icon md-icon"></span>
-            База данных
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../infrastucture/database/engine/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Движок
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../infrastucture/lifespan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Жизненный цикл
     
   </span>
   
@@ -1444,15 +1292,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_4_2_8" id="__nav_4_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_2_7" id="__nav_4_2_7_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Сервисный слой
+    Инфраструктура
     
   </span>
   
@@ -1460,10 +1308,55 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_2_8">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2_7">
             <span class="md-nav__icon md-icon"></span>
-            Сервисный слой
+            Инфраструктура
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_7_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_7_1" id="__nav_4_2_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    База данных
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_2_7_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            База данных
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1488,7 +1381,7 @@
   
   
   <span class="md-ellipsis">
-    Зависимости
+    Движок
     
   </span>
   
@@ -1501,7 +1394,7 @@
   
   
   <span class="md-ellipsis">
-    Зависимости
+    Движок
     
   </span>
   
@@ -1526,26 +1419,36 @@
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Основные зависимости
+      Основные компоненты
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Основные зависимости">
+    <nav class="md-nav" aria-label="Основные компоненты">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#get_db-asyncgeneratorasyncsession-none" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      get_db() -&gt; AsyncGenerator[AsyncSession, None]
+      Глобальные переменные
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#get_settings-settings" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      get_settings() -&gt; Settings
+      Функции
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Функции">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#init_enginedb_url-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      init_engine(db_url: str) -&gt; None
     </span>
   </a>
   
@@ -1555,9 +1458,14 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       Пример использования
     </span>
@@ -1566,16 +1474,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#fastapi" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
-      Интеграция с FastAPI
+      Особенности
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       Требования
     </span>
@@ -1584,9 +1492,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#src.service_layer.dependencies" class="md-nav__link">
+  <a href="#src.infrastructure.database.engine" class="md-nav__link">
     <span class="md-ellipsis">
-      dependencies
+      engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.infrastructure.database.engine.get_engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.infrastructure.database.engine.get_session_factory" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_session_factory
     </span>
   </a>
   
@@ -1608,7 +1534,137 @@
   
   
     <li class="md-nav__item">
-      <a href="../uow/" class="md-nav__link">
+      <a href="../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Миграции
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lifespan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Жизненный цикл
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_8" id="__nav_4_2_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Сервисный слой
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Сервисный слой
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../service_layer/dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Зависимости
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../service_layer/uow/" class="md-nav__link">
         
   
   
@@ -1699,7 +1755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/" class="md-nav__link">
+      <a href="../../../../../faq/" class="md-nav__link">
         
   
   
@@ -1722,7 +1778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/coding_guidelines/" class="md-nav__link">
+      <a href="../../../../../faq/coding_guidelines/" class="md-nav__link">
         
   
   
@@ -1745,7 +1801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/git_commits/" class="md-nav__link">
+      <a href="../../../../../faq/git_commits/" class="md-nav__link">
         
   
   
@@ -1768,7 +1824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/testing/" class="md-nav__link">
+      <a href="../../../../../faq/testing/" class="md-nav__link">
         
   
   
@@ -1791,7 +1847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/contributing/" class="md-nav__link">
+      <a href="../../../../../faq/contributing/" class="md-nav__link">
         
   
   
@@ -1866,7 +1922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/start/" class="md-nav__link">
+      <a href="../../../../../troubleshooting/start/" class="md-nav__link">
         
   
   
@@ -1896,7 +1952,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../changelog/" class="md-nav__link">
+      <a href="../../../../../changelog/" class="md-nav__link">
         
   
   
@@ -1918,7 +1974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../LICENCE/" class="md-nav__link">
+      <a href="../../../../../LICENCE/" class="md-nav__link">
         
   
   
@@ -1962,26 +2018,36 @@
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Основные зависимости
+      Основные компоненты
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Основные зависимости">
+    <nav class="md-nav" aria-label="Основные компоненты">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#get_db-asyncgeneratorasyncsession-none" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      get_db() -&gt; AsyncGenerator[AsyncSession, None]
+      Глобальные переменные
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#get_settings-settings" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      get_settings() -&gt; Settings
+      Функции
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Функции">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#init_enginedb_url-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      init_engine(db_url: str) -&gt; None
     </span>
   </a>
   
@@ -1991,9 +2057,14 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       Пример использования
     </span>
@@ -2002,16 +2073,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#fastapi" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
-      Интеграция с FastAPI
+      Особенности
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       Требования
     </span>
@@ -2020,9 +2091,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#src.service_layer.dependencies" class="md-nav__link">
+  <a href="#src.infrastructure.database.engine" class="md-nav__link">
     <span class="md-ellipsis">
-      dependencies
+      engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.infrastructure.database.engine.get_engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.infrastructure.database.engine.get_session_factory" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_session_factory
     </span>
   </a>
   
@@ -2045,7 +2134,7 @@
 
 
   
-    <a href="https://github.com/macalistervadim/eebook-users/edit/main/docs/api/python/serivce_layer/dependencies.md" title="Редактировать страницу" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/macalistervadim/eebook-users/edit/main/docs/api/python/infrastructure/database/engine.md" title="Редактировать страницу" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2054,69 +2143,56 @@
     
       
     
-    <a href="https://github.com/macalistervadim/eebook-users/raw/main/docs/api/python/serivce_layer/dependencies.md" title="Посмотреть исходный код страницы" class="md-content__button md-icon">
+    <a href="https://github.com/macalistervadim/eebook-users/raw/main/docs/api/python/infrastructure/database/engine.md" title="Посмотреть исходный код страницы" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="service-layer-dependencies">Service Layer Dependencies<a class="headerlink" href="#service-layer-dependencies" title="Permanent link">&para;</a></h1>
-<p>Модуль <code>dependencies.py</code> содержит зависимости, используемые в сервисном слое приложения. Эти зависимости обеспечивают доступ к базовым сервисам, таким как база данных и настройки приложения.</p>
-<h2 id="_1">Основные зависимости<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<h3 id="get_db-asyncgeneratorasyncsession-none"><code>get_db() -&gt; AsyncGenerator[AsyncSession, None]</code><a class="headerlink" href="#get_db-asyncgeneratorasyncsession-none" title="Permanent link">&para;</a></h3>
-<p>Асинхронный генератор, предоставляющий сессию базы данных.</p>
-<p><strong>Особенности:</strong>
-- Создает новую сессию при каждом запросе
-- Автоматически фиксирует изменения при успешном выполнении
-- Откатывает транзакцию при возникновении ошибки
-- Логирует ошибки базы данных</p>
-<p><strong>Исключения:</strong>
-- <code>HTTPException(500)</code>: При ошибках работы с базой данных</p>
-<h3 id="get_settings-settings"><code>get_settings() -&gt; Settings</code><a class="headerlink" href="#get_settings-settings" title="Permanent link">&para;</a></h3>
-<p>Функция с кэшированием, возвращающая настройки приложения.</p>
-<p><strong>Особенности:</strong>
-- Использует <code>lru_cache</code> для кэширования экземпляра настроек
-- Возвращает экземпляр класса <code>Settings</code>
-- Гарантирует единственный экземпляр настроек на всё приложение</p>
-<h2 id="_2">Пример использования<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">src.service_layer.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db</span><span class="p">,</span> <span class="n">get_settings</span>
-
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">some_service</span><span class="p">(</span>
-    <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
-    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_settings</span><span class="p">)</span>
-<span class="p">):</span>
-    <span class="c1"># Использование сессии базы данных</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT 1&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Использование настроек</span>
-    <span class="n">debug_mode</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEBUG</span>
-
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
-</code></pre></div>
-<h2 id="fastapi">Интеграция с FastAPI<a class="headerlink" href="#fastapi" title="Permanent link">&para;</a></h2>
-<p>Зависимости могут быть использованы в FastAPI следующим образом:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
-
-<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
-
-<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/example&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">example_route</span><span class="p">(</span>
-    <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
-    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_settings</span><span class="p">)</span>
-<span class="p">):</span>
-    <span class="c1"># Логика обработки запроса</span>
-    <span class="k">pass</span>
-</code></pre></div>
-<h2 id="_3">Требования<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h1 id="database-engine">Database Engine<a class="headerlink" href="#database-engine" title="Permanent link">&para;</a></h1>
+<p>Модуль <code>engine.py</code> отвечает за настройку и управление подключением к базе данных с использованием SQLAlchemy. Он предоставляет асинхронный движок и фабрику сессий для работы с базой данных.</p>
+<h2 id="_1">Основные компоненты<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="_2">Глобальные переменные<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ul>
-<li>FastAPI с поддержкой внедрения зависимостей</li>
-<li>SQLAlchemy с поддержкой асинхронных сессий</li>
-<li>Настроенный экземпляр <code>Settings</code></li>
+<li><code>engine</code>: Асинхронный движок SQLAlchemy для подключения к БД</li>
+<li><code>SessionLocal</code>: Фабрика для создания асинхронных сессий</li>
+</ul>
+<h3 id="_3">Функции<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h4 id="init_enginedb_url-str-none"><code>init_engine(db_url: str) -&gt; None</code><a class="headerlink" href="#init_enginedb_url-str-none" title="Permanent link">&para;</a></h4>
+<p>Инициализирует подключение к базе данных и настраивает пул соединений.</p>
+<p><strong>Параметры:</strong>
+- <code>db_url</code>: Строка подключения к базе данных (например, <code>postgresql+asyncpg://user:password@localhost/dbname</code>)</p>
+<p><strong>Настройки пула соединений:</strong>
+- <code>pool_size=5</code>: Количество соединений, которые будут поддерживаться в пуле
+- <code>max_overflow=10</code>: Максимальное количество соединений сверх <code>pool_size</code>
+- <code>pool_timeout=30</code>: Время ожидания свободного соединения (секунды)
+- <code>pool_pre_ping=True</code>: Проверка соединения перед использованием
+- <code>pool_recycle=300</code>: Время жизни соединения до пересоздания (секунды)
+- <code>connect_timeout=5</code>: Таймаут установки соединения (секунды)</p>
+<h2 id="_4">Пример использования<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.infrastructure.database.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_engine</span><span class="p">,</span> <span class="n">SessionLocal</span>
+
+<span class="c1"># Инициализация движка</span>
+<span class="n">init_engine</span><span class="p">(</span><span class="s2">&quot;postgresql+asyncpg://user:password@localhost/eebook&quot;</span><span class="p">)</span>
+
+<span class="c1"># Использование сессии</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">SessionLocal</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="c1"># Работа с базой данных</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT 1&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">scalar</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="_5">Особенности<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Асинхронность</strong>: Использует асинхронные операции ввода-вывода</li>
+<li><strong>Пул соединений</strong>: Эффективное управление соединениями с БД</li>
+<li><strong>Автоматическое восстановление</strong>: Проверка и восстановление соединений</li>
+<li><strong>Типизация</strong>: Поддержка статической типизации через аннотации</li>
+</ul>
+<h2 id="_6">Требования<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>SQLAlchemy с поддержкой асинхронности</li>
+<li>Асинхронный драйвер базы данных (например, asyncpg для PostgreSQL)</li>
 </ul>
 
 
@@ -2124,7 +2200,7 @@
 
 
 
-<a id="src.service_layer.dependencies"></a>
+<a id="src.infrastructure.database.engine"></a>
     <div class="doc doc-contents first">
 
 
@@ -2146,6 +2222,190 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.infrastructure.database.engine.get_engine" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_engine</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+  </span>
+
+<a href="#src.infrastructure.database.engine.get_engine" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Ленивая инициализация engine. Настройки должны быть загружены до вызова.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>AsyncEngine</code></td>            <td>
+                  <code><span title="sqlalchemy.ext.asyncio.AsyncEngine">AsyncEngine</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Инициализированный асинхронный движок SQLAlchemy</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="src.infrastructure.database.exceptions.DatabaseConnectionError">DatabaseConnectionError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Если не удалось создать подключение к БД</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/infrastructure/database/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@lru_cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncEngine</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ленивая инициализация engine. Настройки должны быть загружены до вызова.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AsyncEngine: Инициализированный асинхронный движок SQLAlchemy</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DatabaseConnectionError: Если не удалось создать подключение к БД</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">postgres_uri</span><span class="p">,</span>
+            <span class="n">pool_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">max_overflow</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">pool_timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+            <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">pool_recycle</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+            <span class="n">connect_args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;command_timeout&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Асинхронный движок БД успешно создан&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">engine</span>
+
+    <span class="k">except</span> <span class="n">sa_exceptions</span><span class="o">.</span><span class="n">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Таймаут подключения к БД&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatabaseTimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Таймаут подключения к БД: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="n">sa_exceptions</span><span class="o">.</span><span class="n">ArgumentError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Некорректные параметры подключения к БД:&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatabaseArgumentError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Некорректные параметры подключения к БД: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="n">sa_exceptions</span><span class="o">.</span><span class="n">SQLAlchemyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Ошибка SQLAlchemy при создании движка&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ошибка SQLAlchemy при создании движка: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Непредвиденная ошибка при создании движка БД: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">error_msg</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.infrastructure.database.engine.get_session_factory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_session_factory</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+  </span>
+
+<a href="#src.infrastructure.database.engine.get_session_factory" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Ленивая инициализация session factory.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/infrastructure/database/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@lru_cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">sessionmaker</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ленивая инициализация session factory.&quot;&quot;&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">,</span> <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
@@ -2176,7 +2436,7 @@
     <span class="md-icon" title="Последнее обновление">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="3 октября 2025 г. 12:17:40 MSK">3 октября 2025 г.</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="13 октября 2025 г. 07:26:55 MSK">13 октября 2025 г.</span>
   </span>
 
     
@@ -2218,13 +2478,13 @@
   
     <div class="custom-prev-next">
       
-        <a class="prev" href="../../infrastucture/lifespan/">
-          ⬅ Жизненный цикл
+        <a class="prev" href="../../../entrypoints/api/endpoints/">
+          ⬅ API эндпоинты
         </a>
       
       
-        <a class="next" href="../uow/">
-          Unit of Work ➡
+        <a class="next" href="../migrations/">
+          Миграции ➡
         </a>
       
     </div>
@@ -2355,11 +2615,11 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.top", "navigation.tabs", "navigation.sections", "navigation.instant", "navigation.expand", "navigation.instant.progress", "content.action.edit", "content.action.view", "content.code.copy", "content.footer"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.top", "navigation.tabs", "navigation.sections", "navigation.instant", "navigation.expand", "navigation.instant.progress", "content.action.edit", "content.action.view", "content.code.copy", "content.footer"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
     
     
   
-      <script src="../../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
       
     
   <script>
