@@ -1,14 +1,16 @@
 [project]
 name = "eebook-users"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.3.0"
+description = "users microservice for the eEbook investment application, handling registration, authentication, and password management."
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.17.0",
     "async-hvac>=0.7.3",
     "asyncpg>=0.30.0",
     "fastapi[standard]>=0.117.1",
     "hvac>=2.3.0",
     "passlib[bcrypt]>=1.7.4",
+    "psycopg2-binary>=2.9.11",
     "pydantic-settings>=2.11.0",
     "pyjwt>=2.10.1",
     "setuptools>=80.9.0",

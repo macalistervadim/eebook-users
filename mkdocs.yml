@@ -139,11 +139,12 @@ nav:
               - API эндпоинты: api/python/entrypoints/api/endpoints.md
           - Инфраструктура:
               - База данных:
-                  - Движок: api/python/infrastucture/database/engine.md
-              - Жизненный цикл: api/python/infrastucture/lifespan.md
+                  - Движок: api/python/infrastructure/database/engine.md
+                  - Миграции: api/python/infrastructure/database/migrations.md
+              - Жизненный цикл: api/python/infrastructure/lifespan.md
           - Сервисный слой:
-              - Зависимости: api/python/serivce_layer/dependencies.md
-              - Unit of Work: api/python/serivce_layer/uow.md
+              - Зависимости: api/python/service_layer/dependencies.md
+              - Unit of Work: api/python/service_layer/uow.md
   - FAQ:
       - Главная: faq/index.md
       - Кодинг и стиль: faq/coding_guidelines.md
