@@ -33,7 +33,7 @@ class User:
         now = datetime.datetime.now(datetime.UTC)
         self.created_at = created_at or now
         self.updated_at = updated_at or now
-        self.last_login_at = last_login_at or now
+        self.last_login_at = last_login_at
 
     def update_login_time(self) -> None:
         """Обновить время последнего входа."""
