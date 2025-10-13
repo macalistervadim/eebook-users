@@ -19,7 +19,6 @@ async def bootstrap() -> Settings:
         await SettingsLoader().load()
         settings = Settings()  # type: ignore
         _ = get_engine()
-        await create_all_tables()
         logger.info('Bootstrap успешно инициализировал компоненты')
         return settings
 

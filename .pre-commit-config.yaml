@@ -34,6 +34,8 @@ repos:
       - id: detect-secrets
         args: ["--baseline", ".secrets.baseline"]
         files: ^src/
+        exclude: 'src/infrastructure/database/migrations/.*'
+
 
   - repo: local
     hooks:
