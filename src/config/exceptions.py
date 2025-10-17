@@ -1,2 +1,2 @@
-class LoaderInitializationError(Exception):
+class SettingsLoaderInitializationError(Exception):
     """Ошибка инициализации загрузчика."""

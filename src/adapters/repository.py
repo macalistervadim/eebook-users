@@ -350,20 +350,3 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             updated_at=r.updated_at,
             last_login_at=r.last_login_at,
         )
-
-
-class ABCUsersRepositoryFactory(abc.ABC):
-    """Абстрактная фабрика для создания репозитория пользователей."""
-
-    @abc.abstractmethod
-    def create(self, session: AsyncSession) -> ABCUsersRepository:
-        """Создаёт экземпляр репозитория пользователей."""
-        raise NotImplementedError
-
-
-class SQLAlchemyUsersRepositoryFactory(ABCUsersRepositoryFactory):
-    def __init__(self, hasher: IPasswordHasher):
-        self._hasher = hasher
-
-    def create(self, session: AsyncSession) -> SQLAlchemyUsersRepository:
-        return SQLAlchemyUsersRepository(session, self._hasher)

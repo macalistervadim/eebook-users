@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
+from src.adapters.factory import ABCUsersRepositoryFactory
 from src.adapters.repository import (
     ABCUsersRepository,
-    ABCUsersRepositoryFactory,
 )
 
 

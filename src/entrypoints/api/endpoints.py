@@ -5,14 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import EmailStr
 from starlette.responses import JSONResponse
 
-from src.adapters.interfaces import IPasswordHasher
-from src.adapters.password_hasher import UserPasswordHasher
-from src.adapters.repository import ABCUsersRepositoryFactory, SQLAlchemyUsersRepositoryFactory
 from src.config.settings import Settings
 from src.entity.models import ChangePasswordSchema, UserCreateSchema, UserResponseSchema
-from src.infrastructure.database.engine import get_session_factory
-from src.service_layer.dependencies import get_settings
-from src.service_layer.uow import AbstractUnitOfWork, SqlAlchemyUnitOfWork
+from src.service_layer.dependencies import get_settings, get_user_service
 from src.service_layer.users_service import UserService
 
 router = APIRouter(tags=['users'])
@@ -30,30 +25,6 @@ async def health(settings: Settings = settings_dependency):
         'database': 'connected' if settings.POSTGRES_HOST else 'disconnected',
     }
     return JSONResponse(content=content, status_code=status.HTTP_200_OK)
-
-
-async def get_uow() -> AbstractUnitOfWork:
-    """Фабрика UoW для DI в FastAPI."""
-    return SqlAlchemyUnitOfWork(
-        session_factory=get_session_factory(),
-        repo_factory=await get_repo_factory(),
-    )
-
-
-async def get_repo_factory() -> ABCUsersRepositoryFactory:
-    """Фабрика Repository которая возвращает фабрику для работы с конкретным репозиторием."""
-    return SQLAlchemyUsersRepositoryFactory(await get_hasher())
-
-
-async def get_hasher() -> IPasswordHasher:
-    """Фабрика Hasher для DI в FastAPI."""
-    return UserPasswordHasher()
-
-
-async def get_user_service() -> UserService:
-    uow = await get_uow()
-    hasher = await get_hasher()
-    return UserService(uow=uow, hasher=hasher)
 
 
 @router.post('/', response_model=UserResponseSchema, status_code=status.HTTP_201_CREATED)

@@ -1,4 +1,3 @@
-import datetime
 import uuid
 
 from sqlalchemy import UUID, Boolean, Column, DateTime, MetaData, String, Table, func
@@ -8,7 +7,6 @@ from src.domain.model import User
 
 metadata = MetaData()
 
-now = datetime.datetime.now(datetime.UTC)
 users = Table(
     'users',
     metadata,

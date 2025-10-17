@@ -3,7 +3,7 @@ import os
 
 from src.adapters.interfaces import ISecretsProvider
 from src.adapters.vault import VaultClient
-from src.config.exceptions import LoaderInitializationError
+from src.config.exceptions import SettingsLoaderInitializationError
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class SettingsLoader:
             logger.info(f'{SettingsLoader.__name__} успешно инициализирован')
         except Exception as e:
             logger.exception(f'Ошибка при инициализации {SettingsLoader.__name__}')
-            raise LoaderInitializationError(
+            raise SettingsLoaderInitializationError(
                 f'Ошибка при инициализации {SettingsLoader.__name__}: {e}',
             ) from e
 
