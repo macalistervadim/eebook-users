@@ -3,7 +3,6 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr
 
 
-# --- Pydantic схемы ---
 class UserCreateSchema(BaseModel):
     first_name: str
     last_name: str

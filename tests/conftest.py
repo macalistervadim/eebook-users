@@ -1,31 +1,40 @@
+import uuid
 from unittest.mock import patch, mock_open
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, clear_mappers
+import pytest_asyncio
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from src.adapters.orm import metadata, start_mappers
+from src.adapters.orm import metadata
+from src.adapters.repository import SQLAlchemyUsersRepository
 from src.adapters.vault import VaultClient
+from src.domain.model import User
 
 
-@pytest.fixture
-def in_memory_db():
-    engine = create_engine('sqlite:///:memory:')
-    metadata.create_all(engine)
-    return engine
+@pytest_asyncio.fixture
+async def in_memory_async_db():
+    engine = create_async_engine('sqlite+aiosqlite:///:memory:', echo=False)
+    async with engine.begin() as conn:
+        await conn.run_sync(metadata.create_all)
+    yield engine
+    async with engine.begin() as conn:
+        await conn.run_sync(metadata.drop_all)
 
 
-@pytest.fixture
-def session_factory(in_memory_db):
-    start_mappers()
-    yield sessionmaker(bind=in_memory_db)
-
-    clear_mappers()
+@pytest_asyncio.fixture
+async def async_session_factory(in_memory_async_db):
+    yield async_sessionmaker(bind=in_memory_async_db, expire_on_commit=False)
 
 
-@pytest.fixture
-def session(session_factory):
-    return session_factory()
+@pytest_asyncio.fixture
+async def async_session(async_session_factory):
+    async with async_session_factory() as session:
+        yield session
+
+
+@pytest_asyncio.fixture
+async def repo(async_session, hasher):
+    return SQLAlchemyUsersRepository(async_session, hasher)
 
 
 @pytest.fixture
@@ -42,3 +51,29 @@ def mock_vault_client():
 
         vc = VaultClient(addr='http://fake', token_file='/fake/token')
         yield vc
+
+
+@pytest.fixture
+def sample_user(hasher):
+    return User(
+        user_id=uuid.uuid4(),
+        first_name='Vadim',
+        last_name='Startsev',
+        email='vadim@example.com',
+        username='vadim',
+        hashed_password=hasher.hash_password('123'),
+        _hasher=hasher,
+    )
+
+
+class FakeHasher:
+    def hash_password(self, password: str) -> str:
+        return 'hashed_' + password
+
+    def verify_password(self, password: str, hashed_password: str) -> bool:
+        return hashed_password == 'hashed_' + password
+
+
+@pytest.fixture
+def hasher():
+    return FakeHasher()
