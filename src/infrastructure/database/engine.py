@@ -2,8 +2,12 @@ import logging
 from functools import lru_cache
 
 import sqlalchemy.exc as sa_exceptions
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from src.infrastructure.database.exceptions import (
     DatabaseArgumentError,
@@ -57,7 +61,10 @@ def get_engine() -> AsyncEngine:
 
 
 @lru_cache
-def get_session_factory() -> sessionmaker:
-    """Ленивая инициализация session factory."""
+def get_session_factory() -> async_sessionmaker[AsyncSession]:
+    """Ленивая инициализация асинхронной session factory."""
     engine = get_engine()
-    return sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)  # type: ignore
+    return async_sessionmaker(
+        bind=engine,
+        expire_on_commit=False,
+    )  # type: ignore

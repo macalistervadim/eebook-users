@@ -29,10 +29,8 @@ class User:
         self.is_active = is_active
         self.is_verified = is_verified
         self._hasher = _hasher
-
-        now = datetime.datetime.now(datetime.UTC)
-        self.created_at = created_at or now
-        self.updated_at = updated_at or now
+        self.created_at = created_at or datetime.datetime.now(datetime.UTC)
+        self.updated_at = updated_at or datetime.datetime.now(datetime.UTC)
         self.last_login_at = last_login_at
 
     def update_login_time(self) -> None:
