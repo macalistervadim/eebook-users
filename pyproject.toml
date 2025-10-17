@@ -5,6 +5,7 @@ description = "users microservice for the eEbook investment application, handlin
 requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.17.0",
+    "argon2-cffi>=25.1.0",
     "async-hvac>=0.7.3",
     "asyncpg>=0.30.0",
     "fastapi[standard]>=0.117.1",
@@ -54,7 +55,7 @@ quote-style = "single"
 
 [tool.ruff.lint]
 select = ["E", "W", "C", "F", "N", "COM", "I", "U", "N", "A", "M", "B", "D"]
-ignore = ["F405", "W293", "D100", "D104", "D103", "D102", "D101", "D106", "D107", "D105"]
+ignore = ["F405", "W293", "D100", "D104", "D103", "D102", "D101", "D106", "D107", "D105", "B008"]
 fixable = ["ALL"]
 unfixable = []
 
