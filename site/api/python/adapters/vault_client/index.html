@@ -18,7 +18,7 @@
         <link rel="prev" href="../repository/">
       
       
-        <link rel="next" href="../../config/settings/">
+        <link rel="next" href="../password_hasher/">
       
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
@@ -148,7 +148,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vaultclient-vault" class="md-skip">
+        <a href="#vault-client" class="md-skip">
           Перейти к содержанию
         </a>
       
@@ -355,8 +355,17 @@
   
     
     
+      
+  
+  
+  
+    
+  
+  
+    
+    
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../../rest/" class="md-tabs__link">
+        <a href="../../bootstrap/" class="md-tabs__link">
           
   
   
@@ -364,6 +373,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -581,29 +593,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../architecture/sequence/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Последовательность
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -738,29 +727,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../rest/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    REST
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -782,10 +748,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
         
           
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="">
             
   
   
@@ -798,8 +764,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
             <span class="md-nav__icon md-icon"></span>
             Python API
           </label>
@@ -850,10 +816,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_4_2_2" id="__nav_4_2_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
             
   
   
@@ -866,12 +832,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_2_2">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_2">
             <span class="md-nav__icon md-icon"></span>
             Адаптеры
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Фабрики
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -999,6 +988,25 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Особенности
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Документация API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Документация API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#vaultclient" class="md-nav__link">
     <span class="md-ellipsis">
       VaultClient
@@ -1006,13 +1014,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#src.adapters.vault.VaultClient" class="md-nav__link">
-    <span class="md-ellipsis">
-      VaultClient
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1085,10 +1089,93 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Примеры использования
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Примеры использования">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Инициализация клиента
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Работа с секретами
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Рекомендации по использованию
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Обработка ошибок
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Переменные окружения
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../password_hasher/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    PasswordHasher
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1124,10 +1211,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_3" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_2_3" id="__nav_4_2_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_3" id="__nav_4_1_3_label" tabindex="0">
             
   
   
@@ -1140,8 +1227,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_3">
             <span class="md-nav__icon md-icon"></span>
             Конфигурация
           </label>
@@ -1246,10 +1333,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_5" >
         
           
-          <label class="md-nav__link" for="__nav_4_2_5" id="__nav_4_2_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_5" id="__nav_4_1_5_label" tabindex="0">
             
   
   
@@ -1262,8 +1349,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_5">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_5">
             <span class="md-nav__icon md-icon"></span>
             Сущности
           </label>
@@ -1322,10 +1409,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_6" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_6" >
         
           
-          <label class="md-nav__link" for="__nav_4_2_6" id="__nav_4_2_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_6" id="__nav_4_1_6_label" tabindex="0">
             
   
   
@@ -1338,8 +1425,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_6">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_6">
             <span class="md-nav__icon md-icon"></span>
             Точки входа
           </label>
@@ -1421,10 +1508,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_7" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_7" >
         
           
-          <label class="md-nav__link" for="__nav_4_2_7" id="__nav_4_2_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_7" id="__nav_4_1_7_label" tabindex="0">
             
   
   
@@ -1437,8 +1524,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_7">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_7">
             <span class="md-nav__icon md-icon"></span>
             Инфраструктура
           </label>
@@ -1466,10 +1553,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_7_1" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_7_1" >
         
           
-          <label class="md-nav__link" for="__nav_4_2_7_1" id="__nav_4_2_7_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_7_1" id="__nav_4_1_7_1_label" tabindex="0">
             
   
   
@@ -1482,8 +1569,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_2_7_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_7_1">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_7_1">
             <span class="md-nav__icon md-icon"></span>
             База данных
           </label>
@@ -1596,10 +1683,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2_8" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_8" >
         
           
-          <label class="md-nav__link" for="__nav_4_2_8" id="__nav_4_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_8" id="__nav_4_1_8_label" tabindex="0">
             
   
   
@@ -1612,8 +1699,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2_8">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_8">
             <span class="md-nav__icon md-icon"></span>
             Сервисный слой
           </label>
@@ -1655,6 +1742,29 @@
   
   <span class="md-ellipsis">
     Unit of Work
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service_layer/users_service/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UserService
     
   </span>
   
@@ -2001,6 +2111,25 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Особенности
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Документация API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Документация API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#vaultclient" class="md-nav__link">
     <span class="md-ellipsis">
       VaultClient
@@ -2008,13 +2137,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#src.adapters.vault.VaultClient" class="md-nav__link">
-    <span class="md-ellipsis">
-      VaultClient
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2087,6 +2212,66 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Примеры использования
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Примеры использования">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Инициализация клиента
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Работа с секретами
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Рекомендации по использованию
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Обработка ошибок
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Переменные окружения
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2120,15 +2305,25 @@
   
 
 
-<h1 id="vaultclient-vault">VaultClient - класс для работы с Vault<a class="headerlink" href="#vaultclient-vault" title="Permanent link">&para;</a></h1>
-<h2 id="vaultclient">VaultClient<a class="headerlink" href="#vaultclient" title="Permanent link">&para;</a></h2>
+<h1 id="vault-client">Vault Client<a class="headerlink" href="#vault-client" title="Permanent link">&para;</a></h1>
+<p>Модуль <code>vault</code> предоставляет клиент для безопасной работы с HashiCorp Vault - системой для хранения и управления секретами. Основной класс <code>VaultClient</code> инкапсулирует всю логику взаимодействия с Vault API, включая аутентификацию и чтение секретов.</p>
+<h2 id="_1">Особенности<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Поддержка аутентификации с помощью токена</li>
+<li>Автоматическая обработка KV Secrets Engine v2</li>
+<li>Полностью асинхронный API</li>
+<li>Расширенная обработка ошибок с конкретными типами исключений</li>
+<li>Логирование всех операций</li>
+</ul>
+<h2 id="api">Документация API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<h3 id="vaultclient">VaultClient<a class="headerlink" href="#vaultclient" title="Permanent link">&para;</a></h3>
 
 
 <div class="doc doc-object doc-class">
 
 
 
-<a id="src.adapters.vault.VaultClient"></a>
+
     <div class="doc doc-contents first">
 
 
@@ -2487,7 +2682,7 @@
 
 
 <h2 id="src.adapters.vault.VaultClient.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">addr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">token_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">addr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">token_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
 <a href="#src.adapters.vault.VaultClient.__init__" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -2612,7 +2807,7 @@
 
 
 <h2 id="src.adapters.vault.VaultClient.get_secret" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_secret</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">get_secret</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -2889,7 +3084,85 @@ db_pass = secret['password']</p>
 
     </div>
 
-</div>
+</div><h2 id="_2">Примеры использования<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">Инициализация клиента<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.adapters.vault</span><span class="w"> </span><span class="kn">import</span> <span class="n">VaultClient</span>
+
+<span class="c1"># Инициализация с явным указанием параметров</span>
+<span class="n">vault</span> <span class="o">=</span> <span class="n">VaultClient</span><span class="p">(</span>
+    <span class="n">addr</span><span class="o">=</span><span class="s1">&#39;http://localhost:8200&#39;</span><span class="p">,</span>  <span class="c1"># Адрес сервера Vault</span>
+    <span class="n">token_file</span><span class="o">=</span><span class="s1">&#39;/path/to/vault/token&#39;</span>  <span class="c1"># Файл с токеном доступа</span>
+<span class="p">)</span>
+
+<span class="c1"># Или с использованием переменных окружения</span>
+<span class="c1"># export VAULT_ADDR=&#39;http://localhost:8200&#39;</span>
+<span class="c1"># export VAULT_TOKEN_FILE=&#39;/path/to/vault/token&#39;</span>
+<span class="n">vault</span> <span class="o">=</span> <span class="n">VaultClient</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="_4">Работа с секретами<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Чтение всего секрета</span>
+<span class="n">secret</span> <span class="o">=</span> <span class="k">await</span> <span class="n">vault</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="s1">&#39;eebook/database&#39;</span><span class="p">)</span>
+<span class="c1"># Результат: {&#39;username&#39;: &#39;admin&#39;, &#39;password&#39;: &#39;s3cr3t&#39;}</span>
+
+<span class="c1"># Чтение конкретного ключа из секрета</span>
+<span class="n">db_password</span> <span class="o">=</span> <span class="k">await</span> <span class="n">vault</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="s1">&#39;eebook/database&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
+<span class="c1"># Результат: &#39;s3cr3t&#39;</span>
+
+<span class="c1"># Обработка ошибок</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">secret</span> <span class="o">=</span> <span class="k">await</span> <span class="n">vault</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="s1">&#39;nonexistent/secret&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">VaultSecretNotFoundError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Секрет не найден&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">VaultPermissionError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Недостаточно прав для доступа к секрету&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">VaultError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ошибка Vault: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="_5">Рекомендации по использованию<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Безопасность</strong></li>
+<li>Никогда не храните токены в коде или системе контроля версий</li>
+<li>Используйте минимально необходимые права доступа для токенов</li>
+<li>
+<p>Регулярно обновляйте токены доступа</p>
+</li>
+<li>
+<p><strong>Обработка ошибок</strong></p>
+</li>
+<li>Всегда обрабатывайте специфические исключения Vault</li>
+<li>Реализуйте механизм повторных попыток при временных сбоях</li>
+<li>
+<p>Логируйте ошибки для последующего аудита</p>
+</li>
+<li>
+<p><strong>Производительность</strong></p>
+</li>
+<li>Кэшируйте часто используемые секреты на стороне приложения</li>
+<li>Избегайте частых обращений к Vault за одними и теми же данными</li>
+<li>
+<p>Используйте пулы соединений для часто используемых клиентов</p>
+</li>
+<li>
+<p><strong>Тестирование</strong></p>
+</li>
+<li>Используйте моки для тестирования без реального сервера Vault</li>
+<li>Тестируйте различные сценарии ошибок</li>
+<li>Проверяйте обработку отсутствующих или невалидных данных</li>
+</ol>
+<h2 id="_6">Обработка ошибок<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>Модуль определяет несколько типов исключений для различных сценариев сбоев:</p>
+<ul>
+<li><code>VaultError</code>: Базовый класс для всех исключений Vault</li>
+<li><code>VaultConnectionError</code>: Ошибка подключения к серверу Vault</li>
+<li><code>VaultTokenError</code>: Ошибка аутентификации или невалидный токен</li>
+<li><code>VaultPermissionError</code>: Недостаточно прав для выполнения операции</li>
+<li><code>VaultSecretNotFoundError</code>: Запрашиваемый секрет не найден</li>
+</ul>
+<h2 id="_7">Переменные окружения<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>VAULT_ADDR</code>: URL сервера Vault (например, 'http://localhost:8200')</li>
+<li><code>VAULT_TOKEN_FILE</code>: Путь к файлу, содержащему токен аутентификации</li>
+</ul>
 
 
 
@@ -2912,7 +3185,7 @@ db_pass = secret['password']</p>
     <span class="md-icon" title="Последнее обновление">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="3 октября 2025 г. 12:17:40 MSK">3 октября 2025 г.</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="20 октября 2025 г. 13:26:17 MSK">20 октября 2025 г.</span>
   </span>
 
     
@@ -2959,8 +3232,8 @@ db_pass = secret['password']</p>
         </a>
       
       
-        <a class="next" href="../../config/settings/">
-          Настройки ➡
+        <a class="next" href="../password_hasher/">
+          PasswordHasher ➡
         </a>
       
     </div>
