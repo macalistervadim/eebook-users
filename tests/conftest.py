@@ -1,5 +1,5 @@
 import uuid
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, AsyncMock
 
 import pytest
 import pytest_asyncio
@@ -78,6 +78,27 @@ class FakeHasher:
 @pytest.fixture
 def hasher():
     return FakeHasher()
+
+
+@pytest.fixture
+def fake_uow():
+    uow = AsyncMock()
+    uow.users = AsyncMock()
+    uow.commit = AsyncMock()
+    # Настраиваем все методы репозитория как асинхронные
+    uow.users.add = AsyncMock()
+    uow.users.remove = AsyncMock()
+    uow.users.activate = AsyncMock()
+    uow.users.deactivate = AsyncMock()
+    uow.users.get_by_email = AsyncMock()
+    uow.users.get_by_id = AsyncMock()
+    uow.users.update = AsyncMock()
+    uow.users.update_login_time = AsyncMock()
+    uow.users.list_all = AsyncMock()
+    uow.users.verify_email = AsyncMock()
+    uow.__aenter__.return_value = uow
+    uow.__aexit__.return_value = None
+    return uow
 
 
 class FakeRepoFactory(ABCUsersRepositoryFactory):
