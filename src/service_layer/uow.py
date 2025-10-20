@@ -120,16 +120,12 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             exc_val: Экземпляр исключения, если оно произошло, иначе None.
             exc_tb: Трассировка стека, если исключение произошло, иначе None.
 
-        Returns:
-            bool: Результат выполнения родительского метода __aexit__.
-
         """
         if exc_type:
             await self.rollback()
         else:
             await self._commit()
         await self.session.close()
-        return await super().__aexit__(exc_type, exc_val, exc_tb)
 
     async def _commit(self):
         """Фиксирует изменения в базе данных.

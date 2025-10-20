@@ -9,8 +9,6 @@ from src.domain.model import User, IPasswordHasher
 @pytest.mark.asyncio
 class TestSQLAlchemyUsersRepository:
     async def test_add_user(self, repo, async_session, sample_user):
-        print("repo type:", type(repo))
-        print("repo:", repo)
         await repo.add(sample_user)
         await async_session.commit()
         fetched = await repo.get_by_id(sample_user.id)
