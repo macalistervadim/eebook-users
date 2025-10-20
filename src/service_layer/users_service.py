@@ -179,7 +179,7 @@ class ABCUserService(abc.ABC):
 class UserService(ABCUserService):
     """Сервисный слой для работы с пользователями (бизнес-логика)."""
 
-    def __init__(self, uow: AbstractUnitOfWork, hasher: IPasswordHasher):
+    def __init__(self, uow: AbstractUnitOfWork, hasher: IPasswordHasher) -> None:
         """Инициализация сервиса.
 
         Args:

@@ -19,7 +19,7 @@ settings_dependency = Depends(get_settings)
 
 
 @router.get('/health')
-async def health(settings: Settings = settings_dependency):
+async def health(settings: Settings = settings_dependency) -> JSONResponse:
     content = {
         'status': 'ok',
         'database': 'connected' if settings.POSTGRES_HOST else 'disconnected',
@@ -31,7 +31,7 @@ async def health(settings: Settings = settings_dependency):
 async def register_user(
     user_data: UserCreateSchema,
     service: UserService = Depends(get_user_service),
-):
+) -> UserResponseSchema:
     """Создаёт нового пользователя."""
     user = await service.register_user(
         first_name=user_data.first_name,
@@ -56,7 +56,7 @@ async def login(
     email: EmailStr,
     password: str,
     service: UserService = Depends(get_user_service),
-):
+) -> dict[str, bool]:
     """Аутентификация пользователя и обновление времени последнего входа."""
     success = await service.login(email=email, password=password)
     if not success:
@@ -69,7 +69,7 @@ async def change_password(
     user_id: UUID,
     data: ChangePasswordSchema,
     service: UserService = Depends(get_user_service),
-):
+) -> None:
     """Меняет пароль пользователя."""
     try:
         await service.change_password(user_id=user_id, new_password=data.new_password)
@@ -79,21 +79,21 @@ async def change_password(
 
 
 @router.put('/{user_id}/activate', status_code=status.HTTP_204_NO_CONTENT)
-async def activate_user(user_id: UUID, service: UserService = Depends(get_user_service)):
+async def activate_user(user_id: UUID, service: UserService = Depends(get_user_service)) -> None:
     """Активирует пользователя."""
     await service.activate_user(user_id)
     return None
 
 
 @router.put('/{user_id}/deactivate', status_code=status.HTTP_204_NO_CONTENT)
-async def deactivate_user(user_id: UUID, service: UserService = Depends(get_user_service)):
+async def deactivate_user(user_id: UUID, service: UserService = Depends(get_user_service)) -> None:
     """Деактивирует пользователя."""
     await service.deactivate_user(user_id)
     return None
 
 
 @router.put('/{user_id}/verify-email', status_code=status.HTTP_204_NO_CONTENT)
-async def verify_email(user_id: UUID, service: UserService = Depends(get_user_service)):
+async def verify_email(user_id: UUID, service: UserService = Depends(get_user_service)) -> None:
     """Подтверждает email пользователя."""
     await service.verify_email(user_id)
     return None
@@ -103,7 +103,7 @@ async def verify_email(user_id: UUID, service: UserService = Depends(get_user_se
 async def list_users(
     only_active: bool = False,
     service: UserService = Depends(get_user_service),
-):
+) -> list[UserResponseSchema]:
     """Возвращает список пользователей."""
     users = await service.list_users(only_active=only_active)
     return [
@@ -121,7 +121,10 @@ async def list_users(
 
 
 @router.get('/{user_id}', response_model=UserResponseSchema)
-async def get_user_by_id(user_id: UUID, service: UserService = Depends(get_user_service)):
+async def get_user_by_id(
+    user_id: UUID,
+    service: UserService = Depends(get_user_service),
+) -> UserResponseSchema:
     """Возвращает пользователя по ID."""
     user = await service.get_user_by_id(user_id)
     if not user:
@@ -138,7 +141,10 @@ async def get_user_by_id(user_id: UUID, service: UserService = Depends(get_user_
 
 
 @router.get('/by-email/', response_model=UserResponseSchema)
-async def get_user_by_email(email: EmailStr, service: UserService = Depends(get_user_service)):
+async def get_user_by_email(
+    email: EmailStr,
+    service: UserService = Depends(get_user_service),
+) -> UserResponseSchema:
     """Возвращает пользователя по email."""
     user = await service.get_user_by_email(email)
     if not user:
@@ -155,7 +161,10 @@ async def get_user_by_email(email: EmailStr, service: UserService = Depends(get_
 
 
 @router.get('/by-username/', response_model=UserResponseSchema)
-async def get_user_by_username(username: str, service: UserService = Depends(get_user_service)):
+async def get_user_by_username(
+    username: str,
+    service: UserService = Depends(get_user_service),
+) -> UserResponseSchema:
     """Возвращает пользователя по username."""
     user = await service.get_user_by_username(username)
     if not user:

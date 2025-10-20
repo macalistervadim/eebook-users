@@ -85,7 +85,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self,
         session_factory: async_sessionmaker[AsyncSession],
         repo_factory: ABCUsersRepositoryFactory,
-    ):
+    ) -> None:
         """Инициализация SqlAlchemyUnitOfWork.
 
         Args:
@@ -96,7 +96,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session_factory = session_factory
         self.repo_factory = repo_factory
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> 'AbstractUnitOfWork':
         """Вход в контекстный менеджер.
 
         Инициализирует сессию базы данных и репозитории.
@@ -109,7 +109,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.users = self.repo_factory.create(self.session)
         return await super().__aenter__()
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """Выход из контекстного менеджера.
 
         При возникновении исключения выполняет откат изменений,
@@ -127,7 +127,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             await self._commit()
         await self.session.close()
 
-    async def _commit(self):
+    async def _commit(self) -> None:
         """Фиксирует изменения в базе данных.
 
         Raises:
@@ -136,7 +136,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         """
         await self.session.commit()
 
-    async def rollback(self):
+    async def rollback(self) -> None:
         """Выполняет откат текущей транзакции.
 
         Отменяет все изменения, сделанные в рамках текущей сессии.

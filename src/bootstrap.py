@@ -27,7 +27,7 @@ async def bootstrap() -> Settings:
         raise BootstrapInitializationError(f'Failed to bootstrap application: {str(e)}') from e
 
 
-async def create_all_tables():
+async def create_all_tables() -> None:
     engine = get_engine()
     try:
         async with engine.begin() as conn:
