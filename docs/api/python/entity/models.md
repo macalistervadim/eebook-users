@@ -1,76 +1,124 @@
-# Модели данных приложения
+# Модели сущностей
 
-Модуль `entity.models` содержит Pydantic-модели для валидации входящих данных. Эти модели используются для проверки и преобразования данных на границе API.
+Модуль `entity.models` содержит Pydantic-схемы для работы с данными пользователей. Эти схемы обеспечивают валидацию, сериализацию и документирование данных на границах системы.
 
-## Основные модели
+## Особенности
 
-### `RegisterModel`
-Модель для валидации данных при регистрации нового пользователя.
+- Строгая типизация всех полей
+- Встроенная валидация данных
+- Сериализация/десериализация в JSON
+- Поддержка документации OpenAPI
+- Интеграция с FastAPI
 
-**Поля:**
-- `first_name: str` - имя пользователя
-- `last_name: str` - фамилия пользователя
-- `email: str` - электронная почта (должна быть валидным email-адресом)
-- `password: str` - пароль пользователя
+## Документация API
 
-### `LoginModel`
-Модель для валидации данных при аутентификации пользователя.
+### UserCreateSchema
 
-**Поля:**
-- `email: str` - электронная почта пользователя
-- `password: str` - пароль пользователя
+Схема для создания нового пользователя.
+
+::: src.entity.models.UserCreateSchema
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_bases: true
+      show_root_heading: false
+      show_root_toc_entry: false
+
+### UserResponseSchema
+
+Схема для ответа с данными пользователя.
+
+::: src.entity.models.UserResponseSchema
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_bases: true
+      show_root_heading: false
+      show_root_toc_entry: false
+
+### ChangePasswordSchema
+
+Схема для смены пароля пользователя.
+
+::: src.entity.models.ChangePasswordSchema
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_bases: true
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## Примеры использования
 
-### Регистрация пользователя
-```python
-from src.entity.models import RegisterModel
+### Создание пользователя
 
-# Валидация и преобразование данных
+```python
+from uuid import uuid4
+from src.entity.models import UserCreateSchema, UserResponseSchema
+
+# Валидация входящих данных
 user_data = {
     "first_name": "Иван",
     "last_name": "Иванов",
     "email": "ivan@example.com",
+    "username": "ivanov",
     "password": "secure_password123"
 }
 
-try:
-    user = RegisterModel(**user_data)
-    # Данные прошли валидацию
-    print(f"Создан пользователь: {user.email}")
-except ValueError as e:
-    print(f"Ошибка валидации: {e}")
+# Создание и валидация данных
+user = UserCreateSchema(**user_data)
+
+# Преобразование в формат ответа
+response_data = UserResponseSchema(
+    id=uuid4(),
+    first_name=user.first_name,
+    last_name=user.last_name,
+    email=user.email,
+    username=user.username,
+    is_active=True,
+    is_verified=False
+)
 ```
 
-### Аутентификация пользователя
+### Смена пароля
+
 ```python
-from src.entity.models import LoginModel
+from src.entity.models import ChangePasswordSchema
 
-# Валидация данных входа
-login_data = {
-    "email": "ivan@example.com",
-    "password": "secure_password123"
-}
-
-try:
-    credentials = LoginModel(**login_data)
-    # Данные для входа корректны
-    print(f"Попытка входа: {credentials.email}")
-except ValueError as e:
-    print(f"Ошибка валидации: {e}")
+# Валидация нового пароля
+password_data = {"new_password": "new_secure_password123"}
+change_password = ChangePasswordSchema(**password_data)
 ```
 
-## Особенности
+## Рекомендации по использованию
 
-- **Валидация данных**: Автоматическая проверка типов и обязательных полей
-- **Безопасность**: Пароли не обрабатываются и не хранятся в этой модели
-- **Совместимость**: Легко интегрируется с FastAPI для валидации запросов
+1. **Валидация данных**
+   - Всегда используйте схемы для валидации входящих данных
+   - Не передавайте сырые словари в бизнес-логику
+   - Используйте встроенные валидаторы Pydantic
 
-## Требования
+2. **Безопасность**
+   - Никогда не возвращайте пароли в ответах API
+   - Используйте разные схемы для ввода и вывода данных
+   - Валидируйте входные данные как можно раньше
 
-- Требуется пакет `pydantic` для работы моделей
+3. **Документирование**
+   - Дополнительные поля документации можно добавить через `Field`
+   - Используйте `example` и `description` для улучшения документации OpenAPI
 
-::: src.entity.models
-    options:
-      heading_level: 2
-      show_source: true
+## Интеграция с FastAPI
+
+Схемы полностью совместимы с FastAPI и могут использоваться для:
+
+- Валидации входных данных запросов
+- Сериализации ответов API
+- Генерации документации OpenAPI
+
+## Ограничения
+
+- Требуется Pydantic v2+
+- Все поля должны быть явно типизированы
+- Вложенные схемы должны быть определены до их использования

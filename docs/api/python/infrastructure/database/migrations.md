@@ -1,109 +1,178 @@
-# Alembic Migrations
-Модуль alembic используется для управления схемой базы данных — создания, изменения и версии таблиц.
-Это официальный инструмент миграций для SQLAlchemy, позволяющий безопасно обновлять структуру БД без потери данных.
+# Миграции базы данных
 
-## Основные понятия
-### Что такое миграции
-Миграции — это набор версий схемы базы данных, которые позволяют:
+Модуль `migrations` предоставляет функционал для управления версионированием схемы базы данных с использованием Alembic.
 
-- Создавать и изменять таблицы; 
-- Добавлять и удалять столбцы; 
-- Управлять внешними ключами и индексами; 
-- Обновлять схему без необходимости пересоздавать базу данных.
-Каждая миграция хранится как отдельный файл в директории `alembic/versions`.
+## Особенности
 
-## Основные компоненты Alembic
-### 1. alembic.ini
-Главный конфигурационный файл Alembic.
+- Поддержка асинхронных операций с базой данных
+- Интеграция с настройками приложения
+- Автоматическая генерация миграций
+- Поддержка отката изменений
+- Работа с Vault для получения секретов
 
-Содержит параметры подключения к базе данных и настройки путей.
+## Документация API
 
-Пример:
+### env.py
+
+
+Основной скрипт конфигурации миграций Alembic.
+
+::: src.infrastructure.database.migrations.env
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
+
+### init_settings_and_get_uri
+
+Загружает настройки и возвращает URI для подключения к БД.
+
+::: src.infrastructure.database.migrations.env.init_settings_and_get_uri
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Примеры использования
+
+### Создание новой миграции
+
+```bash
+alembic revision --autogenerate -m "Описание изменений"
 ```
-[alembic]
-script_location = src/infrastructure/database/alembic
 
-sqlalchemy.url = postgresql+asyncpg://user:password@localhost/eebook
+### Применение миграций
+
+```bash
+# Применить все новые миграции
+alembic upgrade head
+
+# Откатить последнюю миграцию
+alembic downgrade -1
+
+# Применить конкретную миграцию
+alembic upgrade <revision>
 ```
-### 2. env.py
-Сценарий, который управляет применением миграций.
 
-Здесь определяется, как Alembic подключается к базе данных (в том числе асинхронно).
+### Проверка текущей версии
 
-Пример (для асинхронного варианта):
+```bash
+alembic current
+```
+
+## Рекомендации по использованию
+
+1. **Разработка**
+   - Всегда добавляйте осмысленные сообщения к миграциям
+   - Проверяйте сгенерированные миграции перед применением
+   - Используйте `--autogenerate` с осторожностью
+   - Храните миграции в системе контроля версий
+
+2. **Безопасность**
+   - Не включайте чувствительные данные в миграции
+   - Используйте переменные окружения для конфиденциальной информации
+   - Проверяйте SQL-запросы перед выполнением в production
+
+3. **Производительность**
+   - Для больших таблиц используйте `batch_alter_table`
+   - Добавляйте индексы для часто используемых запросов
+   - Избегайте блокирующих операций в транзакциях
+
+## Интеграция
+
+Модуль интегрируется с:
+
+- SQLAlchemy ORM
+- Alembic
+- Vault для управления секретами
+- Настройками приложения
+- Системами логирования
+
+## Ограничения
+
+- Требуется Alembic 1.8+
+- Зависит от синхронного драйвера БД для выполнения миграций
+- Автоматическая генерация может потребовать ручной доработки
+
+## Дополнительные возможности
+
+### Кастомные шаблоны миграций
+
+Шаблоны миграций можно настраивать через `script.py.mako`:
 
 ```python
-from logging.config import fileConfig
-from sqlalchemy import pool
-from sqlalchemy.ext.asyncio import async_engine_from_config
-from alembic import context
-from src.infrastructure.database.models import Base
+"""${message}
 
-config = context.config
-fileConfig(config.config_file_name)
-target_metadata = Base.metadata
+Revision ID: ${up_revision}
+Revises: ${down_revision | comma,n}
+Create Date: ${create_date}
+"""
+from alembic import op
+import sqlalchemy as sa
+${imports if imports else ""}
 
-async def run_migrations_online():
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+# revision identifiers, used by Alembic
+revision = ${repr(up_revision)}
+down_revision = ${repr(down_revision)}
+
+
+def upgrade():
+    ${upgrades if upgrades else "pass"}
+
+
+def downgrade():
+    ${downgrades if downgrades else "pass"}
+```
+
+### Обработка ошибок
+
+```python
+try:
+    # Выполнение миграции
+    context.run_migrations()
+except Exception as e:
+    logger.error(f"Ошибка при выполнении миграции: {e}")
+    raise
+```
+
+### Расширенные сценарии
+
+#### Миграция с обработкой данных
+
+```python
+def upgrade():
+    # Создание новой таблицы
+    op.create_table(
+        'new_table',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('data', sa.String()),
+        sa.PrimaryKeyConstraint('id')
     )
 
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
+    # Копирование данных из старой таблицы
+    connection = op.get_bind()
+    connection.execute("""
+        INSERT INTO new_table (id, data)
+        SELECT id, old_data FROM old_table
+    """)
 
-async def do_run_migrations(connection):
-    context.configure(connection=connection, target_metadata=target_metadata)
-    with context.begin_transaction():
-        context.run_migrations()
+    # Удаление старой таблицы
+    op.drop_table('old_table')
 
-import asyncio
-asyncio.run(run_migrations_online())
+    # Переименование новой таблицы
+    op.rename_table('new_table', 'old_table')
 ```
 
----
+#### Условное выполнение миграции
 
-# Основные команды
-## Инициализация
-Создать директорию миграций:
+```python
+def upgrade():
+    inspector = inspect(engine)
+    if 'old_table_name' in inspector.get_table_names():
+        # Выполнить миграцию только если таблица существует
+        op.drop_table('old_table_name')
 ```
-alembic init src/infrastructure/database/alembic
-```
-
-## Создание миграции
-Сгенерировать новую миграцию на основе изменений моделей:
-``` 
-alembic revision --autogenerate -m "add users table"
-```
-
-## Автоматическое сравнение:
-Alembic анализирует текущие модели (Base.metadata) и схему БД, формируя SQL-изменения.
-
-## Применение миграций
-Применить все новые миграции:
-```
-alembic upgrade head
-```
-
-Вернуться к предыдущей версии:
-```
-alembic downgrade -1
-```
-
----
-
-# Асинхронный вариант Alembic
-Хотя Alembic изначально синхронный, его можно использовать с асинхронным SQLAlchemy при помощи async_engine_from_config.
-
-Принцип:
-
-- Alembic создаёт асинхронный движок;
-- Внутри run_migrations_online используется await connection.run_sync();
-
-Таким образом, миграции выполняются синхронно внутри асинхронного контекста.
-
-!!! warning "Применение команд"
-    Приведенные команды в данной статье могут отличаться от используемых напрямую в проекте в зависимости от используемой
-    архитектуры и инструментария. Данные команды приведены для использования на "чистой" системе без использования инструментов
-    по типу Vault, k8 и пр.

@@ -1,76 +1,195 @@
-# Service Layer Dependencies
+# Зависимости сервисного слоя
 
-Модуль `dependencies.py` содержит зависимости, используемые в сервисном слое приложения. Эти зависимости обеспечивают доступ к базовым сервисам, таким как база данных и настройки приложения.
+Модуль `dependencies` предоставляет фабрики и провайдеры зависимостей для сервисного слоя приложения, используя паттерн внедрения зависимостей.
 
-## Основные зависимости
+## Особенности
 
-### `get_db() -> AsyncGenerator[AsyncSession, None]`
-Асинхронный генератор, предоставляющий сессию базы данных.
+- Кэширование часто используемых зависимостей
+- Асинхронная загрузка зависимостей
+- Поддержка единицы работы (Unit of Work)
+- Интеграция с репозиториями и сервисами
+- Управление жизненным циклом зависимостей
 
-**Особенности:**
-- Создает новую сессию при каждом запросе
-- Автоматически фиксирует изменения при успешном выполнении
-- Откатывает транзакцию при возникновении ошибки
-- Логирует ошибки базы данных
+## Документация API
 
-**Исключения:**
-- `HTTPException(500)`: При ошибках работы с базой данных
+### get_settings
 
-### `get_settings() -> Settings`
-Функция с кэшированием, возвращающая настройки приложения.
+Фабрика для получения настроек приложения с кэшированием.
 
-**Особенности:**
-- Использует `lru_cache` для кэширования экземпляра настроек
-- Возвращает экземпляр класса `Settings`
-- Гарантирует единственный экземпляр настроек на всё приложение
+::: src.service_layer.dependencies.get_settings
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
 
-## Пример использования
+### get_uow
 
-```python
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+Провайдер для единицы работы (Unit of Work).
 
-from src.service_layer.dependencies import get_db, get_settings
+::: src.service_layer.dependencies.get_uow
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
 
-async def some_service(
-    db: AsyncSession = Depends(get_db),
-    settings: Settings = Depends(get_settings)
-):
-    # Использование сессии базы данных
-    result = await db.execute("SELECT 1")
+### get_repo_factory
 
-    # Использование настроек
-    debug_mode = settings.DEBUG
+Фабрика для создания репозиториев.
 
-    return {"status": "ok"}
-```
+::: src.service_layer.dependencies.get_repo_factory
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
 
-## Интеграция с FastAPI
+### get_hasher
 
-Зависимости могут быть использованы в FastAPI следующим образом:
+Провайдер для сервиса хеширования паролей.
+
+::: src.service_layer.dependencies.get_hasher
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
+
+### get_user_service
+
+Фабрика для сервиса работы с пользователями.
+
+::: src.service_layer.dependencies.get_user_service
+    options:
+      show_source: true
+      show_signature_annotations: true
+      show_docstring: true
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Примеры использования
+
+### Базовое использование в FastAPI
 
 ```python
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from src.service_layer.dependencies import get_user_service
+from src.service_layer.users_service import UserService
 
 router = APIRouter()
 
-@router.get("/example")
-async def example_route(
-    db: AsyncSession = Depends(get_db),
-    settings: Settings = Depends(get_settings)
+@router.get("/users/{user_id}")
+async def get_user(
+    user_id: int,
+    user_service: UserService = Depends(get_user_service)
 ):
-    # Логика обработки запроса
-    pass
+    user = await user_service.get_user(user_id)
+    return {"user": user}
 ```
 
-## Требования
+### Кастомизация зависимостей
 
-- FastAPI с поддержкой внедрения зависимостей
-- SQLAlchemy с поддержкой асинхронных сессий
-- Настроенный экземпляр `Settings`
+```python
+from functools import lru_cache
+from src.service_layer.dependencies import get_settings, get_hasher
+from src.adapters.factory import CustomUsersRepositoryFactory
 
-::: src.service_layer.dependencies
-    options:
-      heading_level: 2
-      show_source: true
+# Переопределение фабрики репозиториев
+async def get_custom_repo_factory():
+    hasher = await get_hasher()
+    return CustomUsersRepositoryFactory(hasher)
+
+# Использование кастомной фабрики
+@lru_cache
+def get_custom_settings():
+    settings = get_settings()
+    # Модификация настроек
+    settings.DEBUG = True
+    return settings
+```
+
+## Рекомендации по использованию
+
+1. **Управление зависимостями**
+   - Используйте `lru_cache` для дорогих в создании зависимостей
+   - Разделяйте зависимости по уровням абстракции
+   - Избегайте циклических импортов
+
+2. **Тестирование**
+   - Заменяйте зависимости на моки в тестах
+   - Используйте фикстуры для настройки тестового окружения
+   - Изолируйте тесты друг от друга
+
+3. **Производительность**
+   - Кэшируйте тяжелые зависимости
+   - Используйте ленивую загрузку, где это возможно
+   - Избегайте блокирующих операций при инициализации
+
+## Интеграция
+
+Модуль интегрируется с:
+
+- FastAPI приложениями
+- SQLAlchemy ORM
+- Системой аутентификации
+- Сервисным слоем приложения
+- Репозиториями доступа к данным
+
+## Ограничения
+
+- Требуется Python 3.8+
+- Зависит от FastAPI и SQLAlchemy
+- Предполагает использование асинхронного кода
+
+## Дополнительные возможности
+
+### Создание кастомных провайдеров
+
+```python
+from typing import Any
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+async def get_db_session() -> AsyncSession:
+    """Провайдер сессии БД с автоматическим управлением жизненным циклом."""
+    session_factory = get_session_factory()
+    async with session_factory() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+
+# Использование в зависимостях
+async def get_user_service(
+    session: AsyncSession = Depends(get_db_session)
+) -> UserService:
+    return UserService(session=session)
+```
+
+### Кэширование зависимостей
+
+```python
+from functools import lru_cache
+from src.service_layer.dependencies import get_settings
+
+@lru_cache
+def get_cached_service():
+    """Пример кэширования сервиса с настройками."""
+    settings = get_settings()
+    return SomeService(settings)
+
+# Использование в FastAPI маршруте
+@router.get("/some-route")
+async def some_route(
+    service: SomeService = Depends(get_cached_service)
+):
+    result = await service.do_something()
+    return {"result": result}
+```

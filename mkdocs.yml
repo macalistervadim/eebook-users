@@ -116,18 +116,18 @@ nav:
   - Главная: index.md
   - Архитектура:
       - Компоненты: architecture/components.md
-      - Последовательность: architecture/sequence.md
   - Руководство:
       - Установка: installation/guide.md
   - API:
-      - REST: api/rest.md
       - Python API:
           - Bootstrap: api/python/bootstrap.md
           - Адаптеры:
+              - Фабрики: api/python/adapters/factory.md
               - Интерфейсы: api/python/adapters/interfaces.md
               - ORM: api/python/adapters/orm.md
               - Repository: api/python/adapters/repository.md
               - Vault: api/python/adapters/vault_client.md
+              - PasswordHasher: api/python/adapters/password_hasher.md
           - Конфигурация:
               - Настройки: api/python/config/settings.md
               - Загрузчик: api/python/config/loader.md
@@ -145,6 +145,7 @@ nav:
           - Сервисный слой:
               - Зависимости: api/python/service_layer/dependencies.md
               - Unit of Work: api/python/service_layer/uow.md
+              - UserService: api/python/service_layer/users_service.md
   - FAQ:
       - Главная: faq/index.md
       - Кодинг и стиль: faq/coding_guidelines.md

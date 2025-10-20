@@ -208,6 +208,13 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
     """Реализация репозитория пользователей на SQLAlchemy (PostgreSQL, async) с поддержкой UoW."""
 
     def __init__(self, session: AsyncSession, hasher: IPasswordHasher):
+        """Инициализирует репозиторий пользователей.
+
+        Args:
+            session: Асинхронная сессия SQLAlchemy.
+            hasher: Сервис для хеширования паролей.
+
+        """
         self.session = session
         self._hasher = hasher
 
@@ -334,7 +341,18 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
         await self.session.execute(stmt)
 
     def _row_to_user(self, row) -> User:
-        """Конвертирует SQLAlchemy row в доменную модель User."""
+        """Конвертирует строку результата SQLAlchemy в доменную модель User.
+
+        Args:
+            row: Строка результата запроса SQLAlchemy.
+
+        Returns:
+            Экземпляр доменной модели User.
+
+        Note:
+            Внутренний метод, не предназначен для использования извне.
+
+        """
         r = row[0] if isinstance(row, tuple) else row
         return User(
             user_id=r.id,
