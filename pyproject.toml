@@ -64,3 +64,6 @@ unfixable = []
 
 [tool.bandit]
 exclude = ["tests/"]
+
+[tool.pytest]
+asyncio_mode = "strict"

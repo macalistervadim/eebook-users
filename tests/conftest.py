@@ -5,6 +5,7 @@ import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
+from src.adapters.factory import ABCUsersRepositoryFactory
 from src.adapters.orm import metadata
 from src.adapters.repository import SQLAlchemyUsersRepository
 from src.adapters.vault import VaultClient
@@ -77,3 +78,8 @@ class FakeHasher:
 @pytest.fixture
 def hasher():
     return FakeHasher()
+
+
+class FakeRepoFactory(ABCUsersRepositoryFactory):
+    def create(self, session):
+        return 'fake_repo'
