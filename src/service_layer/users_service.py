@@ -1,7 +1,7 @@
 import abc
 import uuid
 
-from src.adapters.interfaces import IPasswordHasher
+from src.adapters.interfaces import AbstractClock, IPasswordHasher
 from src.domain.model import User
 from src.service_layer.uow import AbstractUnitOfWork
 
@@ -179,16 +179,15 @@ class ABCUserService(abc.ABC):
 class UserService(ABCUserService):
     """Сервисный слой для работы с пользователями (бизнес-логика)."""
 
-    def __init__(self, uow: AbstractUnitOfWork, hasher: IPasswordHasher) -> None:
-        """Инициализация сервиса.
-
-        Args:
-            uow: Unit of Work для управления транзакциями и репозиториями.
-            hasher: Сервис для хеширования и проверки паролей.
-
-        """
+    def __init__(
+        self,
+        uow: AbstractUnitOfWork,
+        hasher: IPasswordHasher,
+        clock: AbstractClock,
+    ) -> None:
         self.uow = uow
         self.hasher = hasher
+        self.clock = clock
 
     async def register_user(
         self,
@@ -199,6 +198,8 @@ class UserService(ABCUserService):
         password: str,
     ) -> User:
         hashed = self.hasher.hash_password(password)
+        now = self.clock.now()
+
         user = User(
             user_id=None,
             first_name=first_name,
@@ -206,7 +207,8 @@ class UserService(ABCUserService):
             email=email,
             username=username,
             hashed_password=hashed,
-            _hasher=self.hasher,
+            created_at=now,
+            updated_at=now,
         )
 
         async with self.uow as uow:
@@ -215,15 +217,6 @@ class UserService(ABCUserService):
         return user
 
     async def remove_user(self, user_id: uuid.UUID) -> None:
-        """Удаляет пользователя по ID.
-
-        Args:
-            user_id: ID пользователя.
-
-        Raises:
-            Exception: Если произошла ошибка при удалении пользователя.
-
-        """
         async with self.uow as uow:
             await uow.users.remove(user_id)
             await uow.commit()
@@ -235,7 +228,8 @@ class UserService(ABCUserService):
                 return False
             if not self.hasher.verify_password(password, user.hashed_password):
                 return False
-            await uow.users.update_login_time(user.id)
+            user.update_login_time(self.clock.now())
+            await uow.users.update(user)
             await uow.commit()
             return True
 
@@ -245,23 +239,35 @@ class UserService(ABCUserService):
             user = await uow.users.get_by_id(user_id)
             if not user:
                 raise ValueError('User not found')
-            user.hashed_password = hashed
+            user.change_password(hashed)
             await uow.users.update(user)
             await uow.commit()
 
     async def activate_user(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:
-            await uow.users.activate(user_id)
+            user = await uow.users.get_by_id(user_id)
+            if not user:
+                raise ValueError('User not found')
+            user.activate(self.clock.now())
+            await uow.users.update(user)
             await uow.commit()
 
     async def deactivate_user(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:
-            await uow.users.deactivate(user_id)
+            user = await uow.users.get_by_id(user_id)
+            if not user:
+                raise ValueError('User not found')
+            user.deactivate(self.clock.now())
+            await uow.users.update(user)
             await uow.commit()
 
     async def verify_email(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:
-            await uow.users.verify_email(user_id)
+            user = await uow.users.get_by_id(user_id)
+            if not user:
+                raise ValueError('User not found')
+            user.verify_email(self.clock.now())
+            await uow.users.update(user)
             await uow.commit()
 
     async def get_user_by_email(self, email: str) -> User | None:

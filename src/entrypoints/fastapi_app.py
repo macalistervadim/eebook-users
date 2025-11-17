@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from src.entrypoints.api import endpoints
 from src.infrastructure.lifespan import lifespan
@@ -16,6 +17,14 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(endpoints.router)
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=['http://localhost:5173'],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
 
     return app
 

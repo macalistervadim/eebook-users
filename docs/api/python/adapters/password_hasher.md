@@ -37,10 +37,10 @@
 ### Создание и использование хешера
 
 ```python
-from src.adapters.password_hasher import UserPasswordHasher
+from src.adapters.password_hasher import Argon2PasswordHasher
 
 # Создание экземпляра хешера
-hasher = UserPasswordHasher()
+hasher = Argon2PasswordHasher()
 
 # Хеширование пароля
 hashed_password = hasher.hash_password("my_secure_password")
@@ -53,18 +53,19 @@ is_valid = hasher.verify_password("my_secure_password", hashed_password)  # Ве
 
 ```python
 from dataclasses import dataclass
-from src.adapters.password_hasher import UserPasswordHasher
+from src.adapters.password_hasher import Argon2PasswordHasher
 
-hasher = UserPasswordHasher()
+hasher = Argon2PasswordHasher()
+
 
 @dataclass
 class User:
     username: str
     _hashed_password: str
-    
+
     def set_password(self, password: str) -> None:
         self._hashed_password = hasher.hash_password(password)
-    
+
     def check_password(self, password: str) -> bool:
         return hasher.verify_password(password, self._hashed_password)
 ```

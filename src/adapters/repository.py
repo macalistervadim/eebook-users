@@ -1,11 +1,9 @@
 import abc
-import datetime
 import uuid
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.adapters.interfaces import IPasswordHasher
 from src.adapters.orm import users
 from src.domain.model import User
 
@@ -16,89 +14,6 @@ class ABCUsersRepository(abc.ABC):
     Определяет интерфейс для работы с хранилищем пользователей,
     который должен быть реализован в конкретных классах-наследниках.
     """
-
-    @abc.abstractmethod
-    async def update_login_time(self, user_id: uuid.UUID) -> None:
-        """Обновить время последнего входа пользователя.
-
-        Args:
-            user_id: Уникальный идентификатор пользователя.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def activate(self, user_id: uuid.UUID) -> None:
-        """Активировать пользователя.
-
-        Args:
-            user_id: Уникальный идентификатор пользователя.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def deactivate(self, user_id: uuid.UUID) -> None:
-        """Деактивировать пользователя.
-
-        Args:
-            user_id: Уникальный идентификатор пользователя.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def verify_email(self, user_id: uuid.UUID) -> None:
-        """Подтвердить email пользователя.
-
-        Args:
-            user_id: Уникальный идентификатор пользователя.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def verify_password(self, user_id: uuid.UUID, password: str) -> bool:
-        """Проверяет корректность пароля пользователя.
-
-        Args:
-            user_id: Уникальный идентификатор пользователя.
-            password: Пароль для проверки.
-
-        Returns:
-            bool: True, если пароль верный, иначе False.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def set_password(self, user_id: uuid.UUID, password: str) -> None:
-        """Устанавливает новый пароль для пользователя.
-
-        Args:
-            user_id: Уникальный идентификатор пользователя.
-            password: Новый пароль.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
 
     @abc.abstractmethod
     async def add(self, user: User) -> None:
@@ -207,7 +122,7 @@ class ABCUsersRepository(abc.ABC):
 class SQLAlchemyUsersRepository(ABCUsersRepository):
     """Реализация репозитория пользователей на SQLAlchemy (PostgreSQL, async) с поддержкой UoW."""
 
-    def __init__(self, session: AsyncSession, hasher: IPasswordHasher):
+    def __init__(self, session: AsyncSession):
         """Инициализирует репозиторий пользователей.
 
         Args:
@@ -216,7 +131,6 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
 
         """
         self.session = session
-        self._hasher = hasher
 
     async def add(self, user: User) -> None:
         stmt = users.insert().values(
@@ -268,7 +182,7 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
                 hashed_password=user.hashed_password,
                 is_active=user.is_active,
                 is_verified=user.is_verified,
-                updated_at=datetime.datetime.now(datetime.UTC),
+                updated_at=user.updated_at,
                 last_login_at=user.last_login_at,
             )
         )
@@ -276,68 +190,6 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
 
     async def remove(self, user_id: uuid.UUID) -> None:
         stmt = delete(users).where(users.c.id == user_id)
-        await self.session.execute(stmt)
-
-    async def update_login_time(self, user_id: uuid.UUID) -> None:
-        stmt = (
-            update(users)
-            .where(users.c.id == user_id)
-            .values(
-                last_login_at=datetime.datetime.now(datetime.UTC),
-                updated_at=datetime.datetime.now(datetime.UTC),
-            )
-        )
-        await self.session.execute(stmt)
-
-    async def activate(self, user_id: uuid.UUID) -> None:
-        stmt = (
-            update(users)
-            .where(users.c.id == user_id)
-            .values(
-                is_active=True,
-                updated_at=datetime.datetime.now(datetime.UTC),
-            )
-        )
-        await self.session.execute(stmt)
-
-    async def deactivate(self, user_id: uuid.UUID) -> None:
-        stmt = (
-            update(users)
-            .where(users.c.id == user_id)
-            .values(
-                is_active=False,
-                updated_at=datetime.datetime.now(datetime.UTC),
-            )
-        )
-        await self.session.execute(stmt)
-
-    async def verify_email(self, user_id: uuid.UUID) -> None:
-        stmt = (
-            update(users)
-            .where(users.c.id == user_id)
-            .values(
-                is_verified=True,
-                updated_at=datetime.datetime.now(datetime.UTC),
-            )
-        )
-        await self.session.execute(stmt)
-
-    async def verify_password(self, user_id: uuid.UUID, password: str) -> bool:
-        user = await self.get_by_id(user_id)
-        if not user:
-            return False
-        return self._hasher.verify_password(password, user.hashed_password)
-
-    async def set_password(self, user_id: uuid.UUID, password: str) -> None:
-        hashed = self._hasher.hash_password(password)
-        stmt = (
-            update(users)
-            .where(users.c.id == user_id)
-            .values(
-                hashed_password=hashed,
-                updated_at=datetime.datetime.now(datetime.UTC),
-            )
-        )
         await self.session.execute(stmt)
 
     def _row_to_user(self, row) -> User:
@@ -361,7 +213,6 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             email=r.email,
             username=r.username,
             hashed_password=r.hashed_password,
-            _hasher=self._hasher,
             is_active=r.is_active,
             is_verified=r.is_verified,
             created_at=r.created_at,

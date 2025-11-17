@@ -3,7 +3,7 @@ from functools import lru_cache
 
 from src.adapters.factory import ABCUsersRepositoryFactory, SQLAlchemyUsersRepositoryFactory
 from src.adapters.interfaces import IPasswordHasher
-from src.adapters.password_hasher import UserPasswordHasher
+from src.adapters.password_hasher import Argon2PasswordHasher
 from src.config.settings import Settings
 from src.infrastructure.database.engine import get_session_factory
 from src.service_layer.uow import AbstractUnitOfWork, SqlAlchemyUnitOfWork
@@ -29,7 +29,7 @@ async def get_repo_factory() -> ABCUsersRepositoryFactory:
 
 
 async def get_hasher() -> IPasswordHasher:
-    return UserPasswordHasher()
+    return Argon2PasswordHasher()
 
 
 async def get_user_service() -> UserService:

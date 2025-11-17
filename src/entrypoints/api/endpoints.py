@@ -2,7 +2,7 @@ import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
 from starlette.responses import JSONResponse
 
 from src.config.settings import Settings
@@ -10,7 +10,7 @@ from src.entity.models import ChangePasswordSchema, UserCreateSchema, UserRespon
 from src.service_layer.dependencies import get_settings, get_user_service
 from src.service_layer.users_service import UserService
 
-router = APIRouter(tags=['users'])
+router = APIRouter(prefix='/api/v1/users', tags=['users'])
 
 logger = logging.getLogger(__name__)
 
@@ -51,14 +51,18 @@ async def register_user(
     )
 
 
+class LoginSchema(BaseModel):
+    email: EmailStr
+    password: str
+
+
 @router.post('/login', status_code=status.HTTP_200_OK)
 async def login(
-    email: EmailStr,
-    password: str,
+    login_data: LoginSchema,
     service: UserService = Depends(get_user_service),
 ) -> dict[str, bool]:
     """Аутентификация пользователя и обновление времени последнего входа."""
-    success = await service.login(email=email, password=password)
+    success = await service.login(email=login_data.email, password=login_data.password)
     if not success:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid credentials')
     return {'success': True}

@@ -44,3 +44,8 @@ secrets:
 
 volumes:
   pgdata:
+
+networks:
+  default:
+    external:
+      name: eebook

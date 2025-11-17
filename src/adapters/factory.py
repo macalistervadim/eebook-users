@@ -20,4 +20,4 @@ class SQLAlchemyUsersRepositoryFactory(ABCUsersRepositoryFactory):
         self._hasher = hasher
 
     def create(self, session: AsyncSession) -> SQLAlchemyUsersRepository:
-        return SQLAlchemyUsersRepository(session, self._hasher)
+        return SQLAlchemyUsersRepository(session)

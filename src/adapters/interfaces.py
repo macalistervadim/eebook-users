@@ -1,3 +1,5 @@
+import abc
+import datetime
 from typing import Any, Protocol
 
 
@@ -45,3 +47,10 @@ class IPasswordHasher(Protocol):
 
         """
         ...
+
+
+class AbstractClock(abc.ABC):
+    @abc.abstractmethod
+    def now(self) -> datetime.datetime:
+        """Возвращает текущее время в UTC."""
+        raise NotImplementedError

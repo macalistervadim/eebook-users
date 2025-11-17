@@ -9,12 +9,12 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+import src.service_layer.dependencies as dependencies
 from src.infrastructure.database.exceptions import (
     DatabaseArgumentError,
     DatabaseConnectionError,
     DatabaseTimeoutError,
 )
-from src.service_layer.dependencies import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ def get_engine() -> AsyncEngine:
         DatabaseConnectionError: Если не удалось создать подключение к БД
 
     """
-    settings = get_settings()
+    settings = dependencies.get_settings()
 
     try:
         engine = create_async_engine(
