@@ -1,8 +1,8 @@
 import datetime
 
-from src.adapters.interfaces import AbstractClock
+from src.adapters.interfaces import AbstractTimeProvider
 
 
-class SystemClock(AbstractClock):
+class UtcTimeProvider(AbstractTimeProvider):
     def now(self) -> datetime.datetime:
         return datetime.datetime.now(datetime.UTC)

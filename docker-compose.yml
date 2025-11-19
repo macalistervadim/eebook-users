@@ -37,6 +37,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+      
+  redis:
+    image: redis:8.0-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - redis:/data
+      
 
 secrets:
   vault_token:
@@ -44,6 +54,8 @@ secrets:
 
 volumes:
   pgdata:
+  redis:
+    driver: local
 
 networks:
   default:

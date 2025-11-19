@@ -1,8 +1,12 @@
 import abc
 import uuid
 
-from src.adapters.interfaces import AbstractClock, IPasswordHasher
+from fastapi import HTTPException, status
+
+from src.adapters.interfaces import AbstractTimeProvider, IPasswordHasher
 from src.domain.model import User
+from src.schemas.api.auth import TokenPair
+from src.service_layer.auth_service import ABCAuthService
 from src.service_layer.uow import AbstractUnitOfWork
 
 
@@ -183,11 +187,13 @@ class UserService(ABCUserService):
         self,
         uow: AbstractUnitOfWork,
         hasher: IPasswordHasher,
-        clock: AbstractClock,
+        time_provider: AbstractTimeProvider,
+        auth_service: ABCAuthService,
     ) -> None:
         self.uow = uow
         self.hasher = hasher
-        self.clock = clock
+        self.time_provider = time_provider
+        self.auth_service = auth_service
 
     async def register_user(
         self,
@@ -198,7 +204,7 @@ class UserService(ABCUserService):
         password: str,
     ) -> User:
         hashed = self.hasher.hash_password(password)
-        now = self.clock.now()
+        now = self.time_provider.now()
 
         user = User(
             user_id=None,
@@ -209,6 +215,7 @@ class UserService(ABCUserService):
             hashed_password=hashed,
             created_at=now,
             updated_at=now,
+            last_login_at=now,
         )
 
         async with self.uow as uow:
@@ -221,17 +228,27 @@ class UserService(ABCUserService):
             await uow.users.remove(user_id)
             await uow.commit()
 
-    async def login(self, email: str, password: str) -> bool:
+    async def login(self, email: str, password: str) -> TokenPair | None:
         async with self.uow as uow:
             user = await uow.users.get_by_email(email)
+
             if not user:
-                return False
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail='Неверный логин или пароль',
+                )
+
             if not self.hasher.verify_password(password, user.hashed_password):
-                return False
-            user.update_login_time(self.clock.now())
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail='Неверный логин или пароль',
+                )
+
+            user.update_login_time(self.time_provider.now())
             await uow.users.update(user)
             await uow.commit()
-            return True
+
+            return self.auth_service.create_token_pair(user.id)
 
     async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
         hashed = self.hasher.hash_password(new_password)
@@ -248,7 +265,7 @@ class UserService(ABCUserService):
             user = await uow.users.get_by_id(user_id)
             if not user:
                 raise ValueError('User not found')
-            user.activate(self.clock.now())
+            user.activate(self.time_provider.now())
             await uow.users.update(user)
             await uow.commit()
 
@@ -257,7 +274,7 @@ class UserService(ABCUserService):
             user = await uow.users.get_by_id(user_id)
             if not user:
                 raise ValueError('User not found')
-            user.deactivate(self.clock.now())
+            user.deactivate(self.time_provider.now())
             await uow.users.update(user)
             await uow.commit()
 
@@ -266,7 +283,7 @@ class UserService(ABCUserService):
             user = await uow.users.get_by_id(user_id)
             if not user:
                 raise ValueError('User not found')
-            user.verify_email(self.clock.now())
+            user.verify_email(self.time_provider.now())
             await uow.users.update(user)
             await uow.commit()
 
