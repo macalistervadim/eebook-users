@@ -228,7 +228,7 @@ class UserService(ABCUserService):
             await uow.users.remove(user_id)
             await uow.commit()
 
-    async def login(self, email: str, password: str) -> TokenPair | None:
+    async def login(self, email: str, password: str, fingerprint: str) -> TokenPair | None:
         async with self.uow as uow:
             user = await uow.users.get_by_email(email)
 
@@ -248,7 +248,14 @@ class UserService(ABCUserService):
             await uow.users.update(user)
             await uow.commit()
 
-            return self.auth_service.create_token_pair(user.id)
+            token_pair = await self.auth_service.create_token_pair(
+                uow=uow,
+                user_id=user.id,
+                fingerprint=fingerprint,
+            )
+
+            await uow.commit()
+            return token_pair
 
     async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
         hashed = self.hasher.hash_password(new_password)

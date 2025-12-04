@@ -16,3 +16,17 @@ class TokenPayload:
     issued_at: datetime
     expires_at: datetime
     token_type: TokenType
+
+
+@dataclass
+class RefreshToken:
+    id: uuid.UUID
+    user_id: uuid.UUID
+    jti: uuid.UUID
+    fingerprint: str
+    created_at: datetime
+    expires_at: datetime
+    is_revoked: bool = False
+
+    def revoke(self, now: datetime) -> None:
+        self.is_revoked = True

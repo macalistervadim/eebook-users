@@ -1,7 +1,9 @@
+import hashlib
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Security, status
+from asyncpg.pgproto.pgproto import timedelta
+from fastapi import APIRouter, Depends, HTTPException, Request, Security, status
 from fastapi_jwt import JwtAccessBearer, JwtAuthorizationCredentials
 from pydantic import EmailStr
 from starlette.responses import JSONResponse, Response
@@ -64,21 +66,29 @@ async def register_user(
 access_security = JwtAccessBearer(secret_key='dsafsdfs')
 
 
-@router.post('/login', status_code=status.HTTP_200_OK)
+@router.post('/login')
 async def login(
     login_data: LoginSchema,
+    request: Request,
     response: Response,
     service: UserService = Depends(get_user_service),
 ):
-    token_pair = await service.login(
-        email=login_data.email,
-        password=login_data.password,
+    ip = request.client.host
+    ua = request.headers.get('user-agent', '')
+    fingerprint = f'{ip}:{hashlib.sha256(ua.encode()).hexdigest()[:16]}'
+
+    token_pair = await service.login(login_data.email, login_data.password, fingerprint)
+
+    # Кладём ID refresh-токена в httpOnly куку
+    response.set_cookie(
+        key='refresh_token_id',
+        value=token_pair.refresh_token,
+        httponly=True,
+        secure=True,
+        samesite='strict',
+        max_age=int(timedelta(minutes=10)),
     )
 
-    # Только refresh токен в HttpOnly куку
-    access_security.set_refresh_cookie(response, token_pair.refresh_token)
-
-    # Access токен возвращаем фронту в теле ответа
     return {
         'access_token': token_pair.access_token,
         'access_expires_at': token_pair.access_expires_at,

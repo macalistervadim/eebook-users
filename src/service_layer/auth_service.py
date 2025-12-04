@@ -5,9 +5,10 @@ from datetime import UTC, datetime
 from asyncpg.pgproto.pgproto import timedelta
 
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
-from src.adapters.interfaces import ABCAuthService, AbstractTokenStore
+from src.adapters.interfaces import ABCAuthService, AbstractTimeProvider, AbstractTokenStore
 from src.schemas.api.auth import TokenPair
-from src.schemas.internal.auth import TokenPayload, TokenType
+from src.schemas.internal.auth import RefreshToken, TokenPayload, TokenType
+from src.service_layer.uow import AbstractUnitOfWork
 
 logger = logging.getLogger(__name__)
 
@@ -32,36 +33,41 @@ class JWTAuthService(ABCAuthService):
         self,
         jwt_backend: JwtTokenAdapter,
         token_store: AbstractTokenStore,
+        time_provider: AbstractTimeProvider,
     ):
         self._jwt = jwt_backend
         self._store = token_store
+        self._time_provider = time_provider
 
-    def create_token_pair(self, user_id: uuid.UUID) -> TokenPair:
-        """Создать новую пару access + refresh токенов.
-
-        Args:
-            user_id: Идентификатор пользователя.
-
-        Returns:
-            TokenPair: Пара токенов и времена истечения.
-
-        Raises:
-            RuntimeError: Если генерация токенов прошла некорректно.
-
-        """
+    async def create_token_pair(
+        self,
+        uow: AbstractUnitOfWork,
+        user_id: uuid.UUID,
+        fingerprint: str,
+    ) -> TokenPair:
         access, refresh = self._jwt.create_tokens(user_id)
 
-        access_payload = self._jwt.decode_token(access, 'access')
+        # Извлекаем JTI из refresh-токена
         refresh_payload = self._jwt.decode_token(refresh, 'refresh')
+        jti = refresh_payload['jti']
 
-        if not access_payload or not refresh_payload:
-            raise RuntimeError('Только что созданные токены невалидны.')
+        # Создаём refresh-токен в БД
+        now = self._time_provider.now()
+        refresh_token = RefreshToken(
+            id=uuid.uuid4(),
+            user_id=user_id,
+            jti=jti,
+            fingerprint=fingerprint,
+            created_at=now,
+            expires_at=now + self._jwt.refresh_expires_delta,
+        )
+        await uow.refresh_tokens.add(refresh_token)
 
         return TokenPair(
             access_token=access,
-            refresh_token=refresh,
-            access_expires_at=self._jwt.get_expires_at(access_payload),
-            refresh_expires_at=self._jwt.get_expires_at(refresh_payload),
+            refresh_token=str(refresh_token.id),
+            access_expires_at=self._jwt.get_expires_at(self._jwt.decode_token(access, 'access')),
+            refresh_expires_at=refresh_token.expires_at,
         )
 
     async def validate_access_token(self, token: str) -> TokenPayload | None:
@@ -123,7 +129,7 @@ class JWTAuthService(ABCAuthService):
         await self._store.revoke(jti, self._jwt.refresh_expires_delta)
 
         user_id = uuid.UUID(payload['sub'])
-        return self.create_token_pair(user_id)
+        return await self.create_token_pair(user_id)
 
     async def revoke_token_pair(self, access_token: str, refresh_token: str) -> bool:
         """Отозвать оба токена пары — access и refresh.

@@ -1,4 +1,5 @@
 import abc
+import datetime
 import uuid
 
 from sqlalchemy import delete, select, update
@@ -6,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.adapters.orm import users
 from src.domain.model import User
+from src.schemas.internal.auth import RefreshToken
 
 
 class ABCUsersRepository(abc.ABC):
@@ -219,3 +221,38 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             updated_at=r.updated_at,
             last_login_at=r.last_login_at,
         )
+
+
+class AbstractRefreshTokenRepository(abc.ABC):
+    @abc.abstractmethod
+    async def add(self, token: RefreshToken) -> None: ...
+
+    @abc.abstractmethod
+    async def get_by_id(self, token_id: uuid.UUID) -> RefreshToken | None: ...
+
+    # @abc.abstractmethod
+    # async def get_by_jti(self, jti: str) -> RefreshToken | None: ...
+
+    @abc.abstractmethod
+    async def revoke(self, token_id: uuid.UUID, now: datetime.datetime) -> None: ...
+
+    # @abc.abstractmethod
+    # async def revoke_all_for_user(self, user_id: uuid.UUID, now: datetime.datetime) -> None: ...
+
+
+class SqlAlchemyRefreshTokenRepository(AbstractRefreshTokenRepository):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add(self, token: RefreshToken) -> None:
+        self.session.add(token)
+        await self.session.flush()
+
+    async def get_by_id(self, token_id: uuid.UUID) -> RefreshToken | None:
+        stmt = select(RefreshToken).where(RefreshToken.id == token_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def revoke(self, token_id: uuid.UUID, now: datetime.datetime) -> None:
+        stmt = update(RefreshToken).where(RefreshToken.id == token_id).values(is_revoked=True)
+        await self.session.execute(stmt)

@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_PORT: int
     POSTGRES_HOST: str
-    CORS_ORIGINS: list[str]
+    CORS_ORIGINS: str
 
     class Config:
         env_file_encoding = 'utf-8'

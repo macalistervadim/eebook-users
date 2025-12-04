@@ -5,7 +5,12 @@ from functools import lru_cache
 from redis.asyncio import Redis
 
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
-from src.adapters.factory import ABCUsersRepositoryFactory, SQLAlchemyUsersRepositoryFactory
+from src.adapters.factory import (
+    ABCRefreshTokenRepositoryFactory,
+    ABCUsersRepositoryFactory,
+    RefreshTokenRepositoryFactory,
+    SQLAlchemyUsersRepositoryFactory,
+)
 from src.adapters.interfaces import AbstractTimeProvider, AbstractTokenStore, IPasswordHasher
 from src.adapters.password_hasher import Argon2PasswordHasher
 from src.adapters.time_provider import UtcTimeProvider
@@ -28,6 +33,7 @@ async def get_uow() -> AbstractUnitOfWork:
     return SqlAlchemyUnitOfWork(
         session_factory=get_session_factory(),
         repo_factory=await get_repo_factory(),
+        refresh_token_repo_factory=await get_refresh_token_repo_factory(),
     )
 
 
@@ -48,6 +54,7 @@ async def get_jwt_backend():
         secret_key='123',
         access_expires_delta=timedelta(minutes=15),
         refresh_expires_delta=timedelta(days=7),
+        time_provider=await get_time_provider(),
     )
 
 
@@ -61,10 +68,15 @@ async def get_token_store() -> AbstractTokenStore:
     )
 
 
+async def get_refresh_token_repo_factory() -> ABCRefreshTokenRepositoryFactory:
+    return RefreshTokenRepositoryFactory()
+
+
 async def get_auth_service() -> ABCAuthService:
     return JWTAuthService(
         jwt_backend=await get_jwt_backend(),
         token_store=await get_token_store(),
+        time_provider=await get_time_provider(),
     )
 
 
