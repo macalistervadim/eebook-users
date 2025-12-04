@@ -3,10 +3,10 @@ import uuid
 
 from fastapi import HTTPException, status
 
-from src.adapters.interfaces import AbstractTimeProvider, IPasswordHasher
+from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider
+from src.adapters.interfaces import IPasswordHasher
 from src.domain.model import User
 from src.schemas.api.auth import TokenPair
-from src.service_layer.auth_service import ABCAuthService
 from src.service_layer.uow import AbstractUnitOfWork
 
 
@@ -187,7 +187,7 @@ class UserService(ABCUserService):
         self,
         uow: AbstractUnitOfWork,
         hasher: IPasswordHasher,
-        time_provider: AbstractTimeProvider,
+        time_provider: ABCTimeProvider,
         auth_service: ABCAuthService,
     ) -> None:
         self.uow = uow

@@ -5,7 +5,7 @@ from typing import Any
 import jwt as pyjwt
 from fastapi_jwt import JwtAccessBearer
 
-from src.adapters.interfaces import AbstractTimeProvider
+from src.adapters.abc_classes import ABCTimeProvider
 
 
 class JwtTokenAdapter:
@@ -33,7 +33,7 @@ class JwtTokenAdapter:
     def __init__(
         self,
         secret_key: str,
-        time_provider: AbstractTimeProvider,
+        time_provider: ABCTimeProvider,
         algorithm: str = 'HS256',
         access_expires_delta: timedelta = timedelta(minutes=15),
         refresh_expires_delta: timedelta = timedelta(days=15),

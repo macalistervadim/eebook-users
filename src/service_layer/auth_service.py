@@ -4,8 +4,8 @@ from datetime import UTC, datetime
 
 from asyncpg.pgproto.pgproto import timedelta
 
+from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider, ABCTokenStore
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
-from src.adapters.interfaces import ABCAuthService, AbstractTimeProvider, AbstractTokenStore
 from src.schemas.api.auth import TokenPair
 from src.schemas.internal.auth import RefreshToken, TokenPayload, TokenType
 from src.service_layer.uow import AbstractUnitOfWork
@@ -32,8 +32,8 @@ class JWTAuthService(ABCAuthService):
     def __init__(
         self,
         jwt_backend: JwtTokenAdapter,
-        token_store: AbstractTokenStore,
-        time_provider: AbstractTimeProvider,
+        token_store: ABCTokenStore,
+        time_provider: ABCTimeProvider,
     ):
         self._jwt = jwt_backend
         self._store = token_store

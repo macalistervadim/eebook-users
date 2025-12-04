@@ -8,11 +8,11 @@ from fastapi_jwt import JwtAccessBearer, JwtAuthorizationCredentials
 from pydantic import EmailStr
 from starlette.responses import JSONResponse, Response
 
-from src.config.settings import Settings
+from src.config.settings import Settings, get_settings
 from src.schemas.api.auth import LoginSchema, UserWithTokens
 from src.schemas.api.users import ChangePasswordSchema, UserCreateSchema, UserResponseSchema
 from src.service_layer.auth_service import JWTAuthService
-from src.service_layer.dependencies import get_auth_service, get_settings, get_user_service
+from src.service_layer.dependencies import get_auth_service, get_user_service
 from src.service_layer.users_service import UserService
 
 router = APIRouter(prefix='/api/v1/users', tags=['users'])

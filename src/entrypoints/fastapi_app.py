@@ -5,7 +5,7 @@ from src.infrastructure.lifespan import lifespan
 from src.infrastructure.middleware.cors import setup_cors
 
 
-def create_app() -> FastAPI:
+def create_app(*args, **kwargs) -> FastAPI:
     app = FastAPI(
         title='eebook',
         description='API учета инвестиций eebook',
@@ -17,10 +17,6 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(endpoints.router)
-
     setup_cors(app)
 
     return app
-
-
-app = create_app()

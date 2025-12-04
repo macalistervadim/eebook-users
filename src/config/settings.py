@@ -1,4 +1,10 @@
+import logging
+
 from pydantic_settings import BaseSettings
+
+logger = logging.getLogger(__name__)
+
+_settings: 'Settings | None' = None
 
 
 class Settings(BaseSettings):
@@ -24,5 +30,14 @@ class Settings(BaseSettings):
         )
 
 
+def setup_settings(settings: Settings) -> None:
+    global _settings
+    if _settings is not None:
+        logger.warning('Settings already initialized — overwriting')
+    _settings = settings
+
+
 def get_settings() -> Settings:
-    return Settings()  # type: ignore
+    if _settings is None:
+        raise RuntimeError('Settings not initialized yet')
+    return _settings

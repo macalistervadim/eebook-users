@@ -2,10 +2,10 @@ from datetime import timedelta
 
 from redis.asyncio import Redis
 
-from src.adapters.interfaces import AbstractTokenStore
+from src.adapters.abc_classes import ABCTokenStore
 
 
-class RedisJwtRevocationStore(AbstractTokenStore):
+class RedisJwtRevocationStore(ABCTokenStore):
     def __init__(self, redis: Redis):
         self._redis = redis
 

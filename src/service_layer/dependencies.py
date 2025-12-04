@@ -1,9 +1,9 @@
 import logging
 from datetime import timedelta
-from functools import lru_cache
 
 from redis.asyncio import Redis
 
+from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider, ABCTokenStore
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
 from src.adapters.factory import (
     ABCRefreshTokenRepositoryFactory,
@@ -11,27 +11,23 @@ from src.adapters.factory import (
     RefreshTokenRepositoryFactory,
     SQLAlchemyUsersRepositoryFactory,
 )
-from src.adapters.interfaces import AbstractTimeProvider, AbstractTokenStore, IPasswordHasher
+from src.adapters.interfaces import IPasswordHasher
 from src.adapters.password_hasher import Argon2PasswordHasher
 from src.adapters.time_provider import UtcTimeProvider
-from src.config.settings import Settings
 from src.infrastructure.auth.token_store import RedisJwtRevocationStore
 from src.infrastructure.database.engine import get_session_factory
-from src.service_layer.auth_service import ABCAuthService, JWTAuthService
+from src.service_layer.auth_service import JWTAuthService
 from src.service_layer.uow import AbstractUnitOfWork, SqlAlchemyUnitOfWork
 from src.service_layer.users_service import UserService
 
 logger = logging.getLogger(__name__)
 
 
-@lru_cache
-def get_settings() -> Settings:
-    return Settings()  # type: ignore
-
-
 async def get_uow() -> AbstractUnitOfWork:
+    session_factory = get_session_factory()
+
     return SqlAlchemyUnitOfWork(
-        session_factory=get_session_factory(),
+        session_factory=session_factory,
         repo_factory=await get_repo_factory(),
         refresh_token_repo_factory=await get_refresh_token_repo_factory(),
     )
@@ -45,7 +41,7 @@ async def get_hasher() -> IPasswordHasher:
     return Argon2PasswordHasher()
 
 
-async def get_time_provider() -> AbstractTimeProvider:
+async def get_time_provider() -> ABCTimeProvider:
     return UtcTimeProvider()
 
 
@@ -58,7 +54,7 @@ async def get_jwt_backend():
     )
 
 
-async def get_token_store() -> AbstractTokenStore:
+async def get_token_store() -> ABCTokenStore:
     return RedisJwtRevocationStore(
         redis=Redis.from_url(
             'redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@redis:6379/0',

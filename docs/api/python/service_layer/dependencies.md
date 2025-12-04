@@ -96,13 +96,16 @@ async def get_user(
 
 ```python
 from functools import lru_cache
-from src.service_layer.dependencies import get_settings, get_hasher
+from src.service_layer.dependencies import get_hasher
+from src.config.settings import get_settings
 from src.adapters.factory import CustomUsersRepositoryFactory
+
 
 # Переопределение фабрики репозиториев
 async def get_custom_repo_factory():
     hasher = await get_hasher()
     return CustomUsersRepositoryFactory(hasher)
+
 
 # Использование кастомной фабрики
 @lru_cache
@@ -177,7 +180,8 @@ async def get_user_service(
 
 ```python
 from functools import lru_cache
-from src.service_layer.dependencies import get_settings
+from src.config.settings import get_settings
+
 
 @lru_cache
 def get_cached_service():
@@ -185,10 +189,11 @@ def get_cached_service():
     settings = get_settings()
     return SomeService(settings)
 
+
 # Использование в FastAPI маршруте
 @router.get("/some-route")
 async def some_route(
-    service: SomeService = Depends(get_cached_service)
+        service: SomeService = Depends(get_cached_service)
 ):
     result = await service.do_something()
     return {"result": result}

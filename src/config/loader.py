@@ -21,13 +21,13 @@ class SettingsLoader:
                 f'Ошибка при инициализации {SettingsLoader.__name__}: {e}',
             ) from e
 
-    async def load(self) -> None:
+    def load(self) -> None:
         """Загружает секреты из хранилища секретов в env."""
         secret_paths = [
             'eebook/users',
         ]
         for path in secret_paths:
-            data = await self._sp.get_secret(path)
+            data = self._sp.get_secret(path)
             for key, value in data.items():
                 os.environ[key] = str(value)
         logger.info('Секреты успешно загружены в окружение')
