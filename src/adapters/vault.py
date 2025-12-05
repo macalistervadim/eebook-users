@@ -114,7 +114,7 @@ class VaultClient:
             logger.exception(f'Ошибка при инициализации клиента Vault: {e}')
             raise VaultError(f'Ошибка при инициализации клиента Vault: {e}') from e
 
-    async def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:  # type: ignore
+    def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:  # type: ignore
         """Получает секрет из Vault по указанному пути.
 
         Опционально можно передать key - конкретно интересующий ключ по пути
@@ -161,9 +161,9 @@ class VaultClient:
                 return data[key]
 
             return data
-        except VaultError:
-            raise
-
+        except VaultError as e:
+            logger.exception('Ошибка при чтении vault-секрета')
+            raise VaultError(f'Возникла ошибка при чтении секрета: {e}') from e
         except Exception as e:
             if '404' in str(e) or 'Not found' in str(e):
                 logger.exception(

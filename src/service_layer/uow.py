@@ -5,7 +5,10 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.adapters.factory import ABCUsersRepositoryFactory
+from src.adapters.factory import (
+    ABCRefreshTokenRepositoryFactory,
+    ABCUsersRepositoryFactory,
+)
 from src.adapters.repository import (
     ABCUsersRepository,
 )
@@ -21,6 +24,7 @@ class AbstractUnitOfWork(abc.ABC):
     """
 
     users: ABCUsersRepository
+    refresh_tokens: ABCRefreshTokenRepositoryFactory
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
         """Вход в контекстный менеджер.
@@ -85,6 +89,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self,
         session_factory: async_sessionmaker[AsyncSession],
         repo_factory: ABCUsersRepositoryFactory,
+        refresh_token_repo_factory: ABCRefreshTokenRepositoryFactory,
     ) -> None:
         """Инициализация SqlAlchemyUnitOfWork.
 
@@ -95,6 +100,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         """
         self.session_factory = session_factory
         self.repo_factory = repo_factory
+        self._refresh_token_repo_factory = refresh_token_repo_factory
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
         """Вход в контекстный менеджер.
@@ -107,6 +113,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         """
         self.session: AsyncSession = self.session_factory()
         self.users = self.repo_factory.create(self.session)
+        self.refresh_tokens = self._refresh_token_repo_factory.create(self.session)
         return await super().__aenter__()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:

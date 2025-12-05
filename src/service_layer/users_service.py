@@ -1,8 +1,12 @@
 import abc
 import uuid
 
+from fastapi import HTTPException, status
+
+from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider
 from src.adapters.interfaces import IPasswordHasher
 from src.domain.model import User
+from src.schemas.api.auth import TokenPair
 from src.service_layer.uow import AbstractUnitOfWork
 
 
@@ -179,16 +183,17 @@ class ABCUserService(abc.ABC):
 class UserService(ABCUserService):
     """Сервисный слой для работы с пользователями (бизнес-логика)."""
 
-    def __init__(self, uow: AbstractUnitOfWork, hasher: IPasswordHasher) -> None:
-        """Инициализация сервиса.
-
-        Args:
-            uow: Unit of Work для управления транзакциями и репозиториями.
-            hasher: Сервис для хеширования и проверки паролей.
-
-        """
+    def __init__(
+        self,
+        uow: AbstractUnitOfWork,
+        hasher: IPasswordHasher,
+        time_provider: ABCTimeProvider,
+        auth_service: ABCAuthService,
+    ) -> None:
         self.uow = uow
         self.hasher = hasher
+        self.time_provider = time_provider
+        self.auth_service = auth_service
 
     async def register_user(
         self,
@@ -199,6 +204,8 @@ class UserService(ABCUserService):
         password: str,
     ) -> User:
         hashed = self.hasher.hash_password(password)
+        now = self.time_provider.now()
+
         user = User(
             user_id=None,
             first_name=first_name,
@@ -206,7 +213,9 @@ class UserService(ABCUserService):
             email=email,
             username=username,
             hashed_password=hashed,
-            _hasher=self.hasher,
+            created_at=now,
+            updated_at=now,
+            last_login_at=now,
         )
 
         async with self.uow as uow:
@@ -215,29 +224,38 @@ class UserService(ABCUserService):
         return user
 
     async def remove_user(self, user_id: uuid.UUID) -> None:
-        """Удаляет пользователя по ID.
-
-        Args:
-            user_id: ID пользователя.
-
-        Raises:
-            Exception: Если произошла ошибка при удалении пользователя.
-
-        """
         async with self.uow as uow:
             await uow.users.remove(user_id)
             await uow.commit()
 
-    async def login(self, email: str, password: str) -> bool:
+    async def login(self, email: str, password: str, fingerprint: str) -> TokenPair | None:
         async with self.uow as uow:
             user = await uow.users.get_by_email(email)
+
             if not user:
-                return False
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail='Неверный логин или пароль',
+                )
+
             if not self.hasher.verify_password(password, user.hashed_password):
-                return False
-            await uow.users.update_login_time(user.id)
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail='Неверный логин или пароль',
+                )
+
+            user.update_login_time(self.time_provider.now())
+            await uow.users.update(user)
             await uow.commit()
-            return True
+
+            token_pair = await self.auth_service.create_token_pair(
+                uow=uow,
+                user_id=user.id,
+                fingerprint=fingerprint,
+            )
+
+            await uow.commit()
+            return token_pair
 
     async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
         hashed = self.hasher.hash_password(new_password)
@@ -245,23 +263,35 @@ class UserService(ABCUserService):
             user = await uow.users.get_by_id(user_id)
             if not user:
                 raise ValueError('User not found')
-            user.hashed_password = hashed
+            user.change_password(hashed)
             await uow.users.update(user)
             await uow.commit()
 
     async def activate_user(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:
-            await uow.users.activate(user_id)
+            user = await uow.users.get_by_id(user_id)
+            if not user:
+                raise ValueError('User not found')
+            user.activate(self.time_provider.now())
+            await uow.users.update(user)
             await uow.commit()
 
     async def deactivate_user(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:
-            await uow.users.deactivate(user_id)
+            user = await uow.users.get_by_id(user_id)
+            if not user:
+                raise ValueError('User not found')
+            user.deactivate(self.time_provider.now())
+            await uow.users.update(user)
             await uow.commit()
 
     async def verify_email(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:
-            await uow.users.verify_email(user_id)
+            user = await uow.users.get_by_id(user_id)
+            if not user:
+                raise ValueError('User not found')
+            user.verify_email(self.time_provider.now())
+            await uow.users.update(user)
             await uow.commit()
 
     async def get_user_by_email(self, email: str) -> User | None:

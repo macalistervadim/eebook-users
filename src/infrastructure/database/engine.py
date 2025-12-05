@@ -1,5 +1,4 @@
 import logging
-from functools import lru_cache
 
 import sqlalchemy.exc as sa_exceptions
 from sqlalchemy.ext.asyncio import (
@@ -9,31 +8,27 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from src.config.settings import get_settings
 from src.infrastructure.database.exceptions import (
     DatabaseArgumentError,
     DatabaseConnectionError,
     DatabaseTimeoutError,
 )
-from src.service_layer.dependencies import get_settings
 
 logger = logging.getLogger(__name__)
 
+_engine: AsyncEngine | None = None
+_session_factory: async_sessionmaker | None = None
 
-@lru_cache
-def get_engine() -> AsyncEngine:
-    """Ленивая инициализация engine. Настройки должны быть загружены до вызова.
 
-    Returns:
-        AsyncEngine: Инициализированный асинхронный движок SQLAlchemy
+def init_engine_and_session() -> None:
+    global _engine, _session_factory
+    if _engine is not None:
+        raise RuntimeError('Engine already initialized')
 
-    Raises:
-        DatabaseConnectionError: Если не удалось создать подключение к БД
-
-    """
     settings = get_settings()
-
     try:
-        engine = create_async_engine(
+        _engine = create_async_engine(
             settings.postgres_uri,
             pool_size=5,
             max_overflow=10,
@@ -42,9 +37,11 @@ def get_engine() -> AsyncEngine:
             pool_recycle=300,
             connect_args={'command_timeout': 10},
         )
-        logger.info('Асинхронный движок БД успешно создан')
-        return engine
-
+        _session_factory = async_sessionmaker(
+            bind=_engine,
+            expire_on_commit=False,
+        )
+        logger.info('Асинхронный движок и session factory успешно созданы')
     except sa_exceptions.TimeoutError as e:
         logger.exception('Таймаут подключения к БД')
         raise DatabaseTimeoutError(f'Таймаут подключения к БД: {str(e)}') from e
@@ -60,11 +57,13 @@ def get_engine() -> AsyncEngine:
         raise DatabaseConnectionError(error_msg) from e
 
 
-@lru_cache
+def get_engine() -> AsyncEngine:
+    if _engine is None:
+        raise RuntimeError('Engine not initialized. Call init_engine_and_session() first.')
+    return _engine
+
+
 def get_session_factory() -> async_sessionmaker[AsyncSession]:
-    """Ленивая инициализация асинхронной session factory."""
-    engine = get_engine()
-    return async_sessionmaker(
-        bind=engine,
-        expire_on_commit=False,
-    )  # type: ignore
+    if _session_factory is None:
+        raise RuntimeError('Session factory not initialized.')
+    return _session_factory

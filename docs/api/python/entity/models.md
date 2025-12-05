@@ -57,7 +57,7 @@
 
 ```python
 from uuid import uuid4
-from src.entity.models import UserCreateSchema, UserResponseSchema
+from src.schemas.api.users import UserCreateSchema, UserResponseSchema
 
 # Валидация входящих данных
 user_data = {
@@ -86,7 +86,8 @@ response_data = UserResponseSchema(
 ### Смена пароля
 
 ```python
-from src.entity.models import ChangePasswordSchema
+
+from src.schemas.api.users import ChangePasswordSchema
 
 # Валидация нового пароля
 password_data = {"new_password": "new_secure_password123"}

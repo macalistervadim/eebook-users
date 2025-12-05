@@ -3,7 +3,12 @@ import abc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.adapters.interfaces import IPasswordHasher
-from src.adapters.repository import ABCUsersRepository, SQLAlchemyUsersRepository
+from src.adapters.repository import (
+    ABCUsersRepository,
+    AbstractRefreshTokenRepository,
+    SqlAlchemyRefreshTokenRepository,
+    SQLAlchemyUsersRepository,
+)
 
 
 class ABCUsersRepositoryFactory(abc.ABC):
@@ -20,4 +25,18 @@ class SQLAlchemyUsersRepositoryFactory(ABCUsersRepositoryFactory):
         self._hasher = hasher
 
     def create(self, session: AsyncSession) -> SQLAlchemyUsersRepository:
-        return SQLAlchemyUsersRepository(session, self._hasher)
+        return SQLAlchemyUsersRepository(session)
+
+
+class ABCRefreshTokenRepositoryFactory(abc.ABC):
+    """Абстрактная фабрика для создания репозитория refresh токенов (JWT-auth)."""
+
+    @abc.abstractmethod
+    def create(self, session: AsyncSession) -> AbstractRefreshTokenRepository:
+        """Создаёт экземпляр репозитория refresh токенов."""
+        raise NotImplementedError
+
+
+class RefreshTokenRepositoryFactory(ABCRefreshTokenRepositoryFactory):
+    def create(self, session: AsyncSession) -> SqlAlchemyRefreshTokenRepository:
+        return SqlAlchemyRefreshTokenRepository(session)

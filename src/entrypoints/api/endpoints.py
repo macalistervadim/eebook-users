@@ -1,16 +1,21 @@
+import hashlib
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from asyncpg.pgproto.pgproto import timedelta
+from fastapi import APIRouter, Depends, HTTPException, Request, Security, status
+from fastapi_jwt import JwtAccessBearer, JwtAuthorizationCredentials
 from pydantic import EmailStr
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
-from src.config.settings import Settings
-from src.entity.models import ChangePasswordSchema, UserCreateSchema, UserResponseSchema
-from src.service_layer.dependencies import get_settings, get_user_service
+from src.config.settings import Settings, get_settings
+from src.schemas.api.auth import LoginSchema, UserWithTokens
+from src.schemas.api.users import ChangePasswordSchema, UserCreateSchema, UserResponseSchema
+from src.service_layer.auth_service import JWTAuthService
+from src.service_layer.dependencies import get_auth_service, get_user_service
 from src.service_layer.users_service import UserService
 
-router = APIRouter(tags=['users'])
+router = APIRouter(prefix='/api/v1/users', tags=['users'])
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +32,13 @@ async def health(settings: Settings = settings_dependency) -> JSONResponse:
     return JSONResponse(content=content, status_code=status.HTTP_200_OK)
 
 
-@router.post('/', response_model=UserResponseSchema, status_code=status.HTTP_201_CREATED)
+@router.post('/register', response_model=UserWithTokens, status_code=status.HTTP_201_CREATED)
 async def register_user(
     user_data: UserCreateSchema,
     service: UserService = Depends(get_user_service),
-) -> UserResponseSchema:
-    """Создаёт нового пользователя."""
+    auth_service: JWTAuthService = Depends(get_auth_service),
+) -> UserWithTokens:
+    """Создаёт нового пользователя и сразу выдаёт токены."""
     user = await service.register_user(
         first_name=user_data.first_name,
         last_name=user_data.last_name,
@@ -40,42 +46,77 @@ async def register_user(
         username=user_data.username,
         password=user_data.password,
     )
-    return UserResponseSchema(
-        id=user.id,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        username=user.username,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
+
+    token_pair = auth_service.create_token_pair(user.id)
+
+    return UserWithTokens(
+        user=UserResponseSchema(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            username=user.username,
+            is_active=user.is_active,
+            is_verified=user.is_verified,
+        ),
+        tokens=token_pair,
     )
 
 
-@router.post('/login', status_code=status.HTTP_200_OK)
+access_security = JwtAccessBearer(secret_key='dsafsdfs')
+
+
+@router.post('/login')
 async def login(
-    email: EmailStr,
-    password: str,
+    login_data: LoginSchema,
+    request: Request,
+    response: Response,
     service: UserService = Depends(get_user_service),
-) -> dict[str, bool]:
-    """Аутентификация пользователя и обновление времени последнего входа."""
-    success = await service.login(email=email, password=password)
-    if not success:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid credentials')
-    return {'success': True}
+):
+    ip = request.client.host
+    ua = request.headers.get('user-agent', '')
+    fingerprint = f'{ip}:{hashlib.sha256(ua.encode()).hexdigest()[:16]}'
+
+    token_pair = await service.login(login_data.email, login_data.password, fingerprint)
+
+    # Кладём ID refresh-токена в httpOnly куку
+    response.set_cookie(
+        key='refresh_token_id',
+        value=token_pair.refresh_token,
+        httponly=True,
+        secure=True,
+        samesite='strict',
+        max_age=int(timedelta(minutes=10)),
+    )
+
+    return {
+        'access_token': token_pair.access_token,
+        'access_expires_at': token_pair.access_expires_at,
+    }
 
 
-@router.put('/{user_id}/password', status_code=status.HTTP_204_NO_CONTENT)
+@router.put('/change-password', status_code=status.HTTP_204_NO_CONTENT)
 async def change_password(
-    user_id: UUID,
     data: ChangePasswordSchema,
+    credentials: JwtAuthorizationCredentials = Security(access_security),
     service: UserService = Depends(get_user_service),
 ) -> None:
-    """Меняет пароль пользователя."""
+    """Меняет пароль текущего пользователя.
+
+    Args:
+        data: Новые данные пароля.
+        credentials: JWT-токен текущего пользователя.
+        service: Сервис пользователей.
+
+    Raises:
+        HTTPException: Если пользователь не найден.
+
+    """
+    user_id = UUID(credentials['sub']['sub'])
     try:
         await service.change_password(user_id=user_id, new_password=data.new_password)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found') from e
-    return None
 
 
 @router.put('/{user_id}/activate', status_code=status.HTTP_204_NO_CONTENT)

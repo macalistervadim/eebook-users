@@ -133,7 +133,7 @@ nav:
               - Загрузчик: api/python/config/loader.md
           - Доменная модель: api/python/domain/model.md
           - Сущности:
-              - Модели: api/python/entity/models.md
+              - Модели: api/python/schemas/models.md
           - Точки входа:
               - FastAPI приложение: api/python/entrypoints/fastapi_app.md
               - API эндпоинты: api/python/entrypoints/api/endpoints.md

@@ -13,4 +13,7 @@ RUN uv pip install --system --no-cache-dir -e .
 COPY src /app/src
 COPY tests /app/tests
 
-CMD ["uv", "run", "uvicorn", "src.entrypoints.fastapi_app:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.entrypoints.create_app_sync:create_app_sync", \
+     "--factory", \
+     "--host", "0.0.0.0", \
+     "--port", "8000"]
