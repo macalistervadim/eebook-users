@@ -28,6 +28,11 @@ class LoginSchema(BaseModel):
     password: str
 
 
-class UserWithTokens(BaseModel):
+class AccessTokenSchema(BaseModel):
+    access_token: str
+    access_expires_at: datetime
+
+
+class UserWithTokensSchema(BaseModel):
     user: UserResponseSchema
-    tokens: TokenPair
+    access_token: AccessTokenSchema

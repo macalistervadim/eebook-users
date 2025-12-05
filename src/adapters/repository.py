@@ -2,10 +2,10 @@ import abc
 import datetime
 import uuid
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.adapters.orm import users
+from src.adapters.orm import users, refresh_tokens
 from src.domain.model import User
 from src.schemas.internal.auth import RefreshToken
 
@@ -245,8 +245,16 @@ class SqlAlchemyRefreshTokenRepository(AbstractRefreshTokenRepository):
         self.session = session
 
     async def add(self, token: RefreshToken) -> None:
-        self.session.add(token)
-        await self.session.flush()
+        stmt = insert(refresh_tokens).values(
+            id=token.id,
+            user_id=token.user_id,
+            jti=str(token.jti),
+            fingerprint=token.fingerprint,
+            created_at=token.created_at,
+            expires_at=token.expires_at,
+            is_revoked=token.is_revoked,
+        )
+        await self.session.execute(stmt)
 
     async def get_by_id(self, token_id: uuid.UUID) -> RefreshToken | None:
         stmt = select(RefreshToken).where(RefreshToken.id == token_id)

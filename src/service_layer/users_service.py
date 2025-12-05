@@ -202,7 +202,8 @@ class UserService(ABCUserService):
         email: str,
         username: str,
         password: str,
-    ) -> User:
+        fingerprint: str,
+    ) -> tuple[User, TokenPair]:
         hashed = self.hasher.hash_password(password)
         now = self.time_provider.now()
 
@@ -221,7 +222,14 @@ class UserService(ABCUserService):
         async with self.uow as uow:
             await uow.users.add(user)
             await uow.commit()
-        return user
+
+            token_pair = await self.auth_service.create_token_pair(
+                uow=uow,
+                user_id=user.id,
+                fingerprint=fingerprint,
+            )
+
+            return user, token_pair
 
     async def remove_user(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:

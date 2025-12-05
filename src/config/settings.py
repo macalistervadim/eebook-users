@@ -10,6 +10,7 @@ _settings: 'Settings | None' = None
 class Settings(BaseSettings):
     """Pydantic-модель конфигурации приложения."""
 
+    DEBUG: bool
     FASTAPI_SECRET: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str

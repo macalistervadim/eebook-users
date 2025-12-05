@@ -47,11 +47,9 @@ class JWTAuthService(ABCAuthService):
     ) -> TokenPair:
         access, refresh = self._jwt.create_tokens(user_id)
 
-        # Извлекаем JTI из refresh-токена
         refresh_payload = self._jwt.decode_token(refresh, 'refresh')
         jti = refresh_payload['jti']
 
-        # Создаём refresh-токен в БД
         now = self._time_provider.now()
         refresh_token = RefreshToken(
             id=uuid.uuid4(),

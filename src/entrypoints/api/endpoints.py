@@ -1,19 +1,16 @@
-import hashlib
 import logging
 from uuid import UUID
 
-from asyncpg.pgproto.pgproto import timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request, Security, status
 from fastapi_jwt import JwtAccessBearer, JwtAuthorizationCredentials
-from pydantic import EmailStr
 from starlette.responses import JSONResponse, Response
 
 from src.config.settings import Settings, get_settings
-from src.schemas.api.auth import LoginSchema, UserWithTokens
+from src.schemas.api.auth import AccessTokenSchema, LoginSchema, UserWithTokensSchema
 from src.schemas.api.users import ChangePasswordSchema, UserCreateSchema, UserResponseSchema
-from src.service_layer.auth_service import JWTAuthService
-from src.service_layer.dependencies import get_auth_service, get_user_service
+from src.service_layer.dependencies import get_user_service
 from src.service_layer.users_service import UserService
+from src.service_layer.utils import get_fingerprint
 
 router = APIRouter(prefix='/api/v1/users', tags=['users'])
 
@@ -32,24 +29,35 @@ async def health(settings: Settings = settings_dependency) -> JSONResponse:
     return JSONResponse(content=content, status_code=status.HTTP_200_OK)
 
 
-@router.post('/register', response_model=UserWithTokens, status_code=status.HTTP_201_CREATED)
-async def register_user(
-    user_data: UserCreateSchema,
+@router.post('/register', status_code=status.HTTP_201_CREATED, response_model=UserWithTokensSchema)
+async def register(
+    register_data: UserCreateSchema,
+    request: Request,
+    response: Response,
     service: UserService = Depends(get_user_service),
-    auth_service: JWTAuthService = Depends(get_auth_service),
-) -> UserWithTokens:
-    """Создаёт нового пользователя и сразу выдаёт токены."""
-    user = await service.register_user(
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-        email=user_data.email,
-        username=user_data.username,
-        password=user_data.password,
+    settings: Settings = settings_dependency,
+) -> UserWithTokensSchema:
+    fingerprint = get_fingerprint(request)
+
+    user, token_pair = await service.register_user(
+        first_name=register_data.first_name,
+        last_name=register_data.last_name,
+        email=register_data.email,
+        username=register_data.username,
+        password=register_data.password,
+        fingerprint=fingerprint,
     )
 
-    token_pair = auth_service.create_token_pair(user.id)
+    response.set_cookie(
+        key='refresh_token_id',
+        value=token_pair.refresh_token,
+        httponly=True,
+        secure=True if not settings.DEBUG else False,
+        samesite='lax',
+        max_age=7 * 24 * 60 * 60,
+    )
 
-    return UserWithTokens(
+    return UserWithTokensSchema(
         user=UserResponseSchema(
             id=user.id,
             first_name=user.first_name,
@@ -59,40 +67,37 @@ async def register_user(
             is_active=user.is_active,
             is_verified=user.is_verified,
         ),
-        tokens=token_pair,
+        access_token=AccessTokenSchema(
+            access_token=token_pair.access_token,
+            access_expires_at=token_pair.access_expires_at,
+        ),
     )
 
 
 access_security = JwtAccessBearer(secret_key='dsafsdfs')
 
 
-@router.post('/login')
+@router.post('/login', response_model=AccessTokenSchema)
 async def login(
     login_data: LoginSchema,
     request: Request,
     response: Response,
     service: UserService = Depends(get_user_service),
-):
-    ip = request.client.host
-    ua = request.headers.get('user-agent', '')
-    fingerprint = f'{ip}:{hashlib.sha256(ua.encode()).hexdigest()[:16]}'
+    settings: Settings = settings_dependency,
+) -> AccessTokenSchema:
+    fingerprint = get_fingerprint(request)
 
     token_pair = await service.login(login_data.email, login_data.password, fingerprint)
 
-    # Кладём ID refresh-токена в httpOnly куку
     response.set_cookie(
         key='refresh_token_id',
         value=token_pair.refresh_token,
         httponly=True,
-        secure=True,
+        secure=True if not settings.DEBUG else False,
         samesite='strict',
-        max_age=int(timedelta(minutes=10)),
+        max_age=7 * 24 * 60 * 60,
     )
-
-    return {
-        'access_token': token_pair.access_token,
-        'access_expires_at': token_pair.access_expires_at,
-    }
+    return AccessTokenSchema(token_pair.access_token, token_pair.access_expires_at)
 
 
 @router.put('/change-password', status_code=status.HTTP_204_NO_CONTENT)
@@ -117,105 +122,3 @@ async def change_password(
         await service.change_password(user_id=user_id, new_password=data.new_password)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found') from e
-
-
-@router.put('/{user_id}/activate', status_code=status.HTTP_204_NO_CONTENT)
-async def activate_user(user_id: UUID, service: UserService = Depends(get_user_service)) -> None:
-    """Активирует пользователя."""
-    await service.activate_user(user_id)
-    return None
-
-
-@router.put('/{user_id}/deactivate', status_code=status.HTTP_204_NO_CONTENT)
-async def deactivate_user(user_id: UUID, service: UserService = Depends(get_user_service)) -> None:
-    """Деактивирует пользователя."""
-    await service.deactivate_user(user_id)
-    return None
-
-
-@router.put('/{user_id}/verify-email', status_code=status.HTTP_204_NO_CONTENT)
-async def verify_email(user_id: UUID, service: UserService = Depends(get_user_service)) -> None:
-    """Подтверждает email пользователя."""
-    await service.verify_email(user_id)
-    return None
-
-
-@router.get('/', response_model=list[UserResponseSchema])
-async def list_users(
-    only_active: bool = False,
-    service: UserService = Depends(get_user_service),
-) -> list[UserResponseSchema]:
-    """Возвращает список пользователей."""
-    users = await service.list_users(only_active=only_active)
-    return [
-        UserResponseSchema(
-            id=user.id,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            email=user.email,
-            username=user.username,
-            is_active=user.is_active,
-            is_verified=user.is_verified,
-        )
-        for user in users
-    ]
-
-
-@router.get('/{user_id}', response_model=UserResponseSchema)
-async def get_user_by_id(
-    user_id: UUID,
-    service: UserService = Depends(get_user_service),
-) -> UserResponseSchema:
-    """Возвращает пользователя по ID."""
-    user = await service.get_user_by_id(user_id)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
-    return UserResponseSchema(
-        id=user.id,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        username=user.username,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-    )
-
-
-@router.get('/by-email/', response_model=UserResponseSchema)
-async def get_user_by_email(
-    email: EmailStr,
-    service: UserService = Depends(get_user_service),
-) -> UserResponseSchema:
-    """Возвращает пользователя по email."""
-    user = await service.get_user_by_email(email)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
-    return UserResponseSchema(
-        id=user.id,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        username=user.username,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-    )
-
-
-@router.get('/by-username/', response_model=UserResponseSchema)
-async def get_user_by_username(
-    username: str,
-    service: UserService = Depends(get_user_service),
-) -> UserResponseSchema:
-    """Возвращает пользователя по username."""
-    user = await service.get_user_by_username(username)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
-    return UserResponseSchema(
-        id=user.id,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        username=user.username,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-    )
