@@ -5,12 +5,10 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
+from src.adapters.abc_classes import ABCUsersRepository, AbstractRefreshTokenRepository
 from src.adapters.factory import (
     ABCRefreshTokenRepositoryFactory,
     ABCUsersRepositoryFactory,
-)
-from src.adapters.repository import (
-    ABCUsersRepository,
 )
 
 
@@ -21,10 +19,11 @@ class AbstractUnitOfWork(abc.ABC):
 
     Атрибуты:
         users: Репозиторий для работы с пользователями.
+        refresh_tokens: Репозиторий для работы с auth-токенами.
     """
 
     users: ABCUsersRepository
-    refresh_tokens: ABCRefreshTokenRepositoryFactory
+    refresh_tokens: AbstractRefreshTokenRepository
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
         """Вход в контекстный менеджер.
@@ -95,7 +94,8 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
         Args:
             session_factory: Фабрика для создания асинхронных сессий SQLAlchemy.
-            repo_factory: Фадрика создания репозитория для работы с данными
+            repo_factory: Фадрика создания репозитория для работы с данными.
+            refresh_token_repo_factory: Фабрика создания репозитория для работы с auth-токенами.
 
         """
         self.session_factory = session_factory

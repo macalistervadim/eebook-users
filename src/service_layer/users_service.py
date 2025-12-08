@@ -11,10 +11,10 @@ from src.service_layer.uow import AbstractUnitOfWork
 
 
 class ABCUserService(abc.ABC):
-    """Абстрактный базовый класс сервиса пользователей.
+    """Абстрактный сервис для работы с пользователями.
 
-    Определяет интерфейс для работы с пользователями,
-    который должен быть реализован в конкретных классах-наследниках.
+    Определяет интерфейс для операций с пользователями,
+    включая регистрацию, вход, управление статусом и получение информации.
     """
 
     @abc.abstractmethod
@@ -25,8 +25,9 @@ class ABCUserService(abc.ABC):
         email: str,
         username: str,
         password: str,
-    ) -> User:
-        """Создаёт нового пользователя и сохраняет его в репозиторий.
+        fingerprint: str,
+    ) -> tuple[User, TokenPair]:
+        """Создаёт нового пользователя и выдаёт пару токенов.
 
         Args:
             first_name: Имя пользователя.
@@ -34,47 +35,67 @@ class ABCUserService(abc.ABC):
             email: Email пользователя.
             username: Логин пользователя.
             password: Пароль пользователя.
+            fingerprint: Уникальный идентификатор устройства/браузера.
 
         Returns:
-            User: Созданный объект пользователя.
+            Tuple[User, TokenPair]: Созданный пользователь и JWT-пара.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def login(self, email: str, password: str) -> bool:
-        """Проверяет логин пользователя и обновляет время последнего входа.
+    async def login(
+        self,
+        email: str,
+        password: str,
+        fingerprint: str,
+    ) -> TokenPair | None:
+        """Аутентифицирует пользователя и выдаёт JWT-пару.
 
         Args:
             email: Email пользователя.
             password: Пароль пользователя.
+            fingerprint: Уникальный идентификатор устройства/браузера.
 
         Returns:
-            bool: True, если аутентификация успешна, иначе False.
+            TokenPair | None: Пара токенов или None при неуспехе.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
-        """Меняет пароль пользователя.
+    async def remove_user(self, user_id: uuid.UUID) -> None:
+        """Удаляет пользователя по ID.
 
         Args:
             user_id: ID пользователя.
-            new_password: Новый пароль.
 
         Raises:
-            ValueError: Если пользователь с указанным ID не найден.
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
+
+    # @abc.abstractmethod
+    # async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
+    #     """Меняет пароль пользователя.
+    #
+    #     Args:
+    #         user_id: ID пользователя.
+    #         new_password: Новый пароль.
+    #
+    #     Raises:
+    #         ValueError: Если пользователь не найден.
+    #         NotImplementedError: Если метод не реализован.
+    #
+    #     """
+    #     raise NotImplementedError
 
     @abc.abstractmethod
     async def activate_user(self, user_id: uuid.UUID) -> None:
@@ -84,7 +105,8 @@ class ABCUserService(abc.ABC):
             user_id: ID пользователя.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            ValueError: Если пользователь не найден.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -97,7 +119,8 @@ class ABCUserService(abc.ABC):
             user_id: ID пользователя.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            ValueError: Если пользователь не найден.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -110,7 +133,8 @@ class ABCUserService(abc.ABC):
             user_id: ID пользователя.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            ValueError: Если пользователь не найден.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -123,10 +147,10 @@ class ABCUserService(abc.ABC):
             email: Email пользователя.
 
         Returns:
-            User | None: Найденный объект пользователя или None.
+            User | None: Пользователь или None.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -139,10 +163,10 @@ class ABCUserService(abc.ABC):
             user_id: ID пользователя.
 
         Returns:
-            User | None: Найденный объект пользователя или None.
+            User | None: Пользователь или None.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -155,10 +179,10 @@ class ABCUserService(abc.ABC):
             username: Логин пользователя.
 
         Returns:
-            User | None: Найденный объект пользователя или None.
+            User | None: Пользователь или None.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -171,10 +195,10 @@ class ABCUserService(abc.ABC):
             only_active: Если True, возвращает только активных пользователей.
 
         Returns:
-            list[User]: Список пользователей.
+            List[User]: Список пользователей.
 
         Raises:
-            NotImplementedError: Если метод не переопределён в подклассе.
+            NotImplementedError: Если метод не реализован.
 
         """
         raise NotImplementedError
@@ -265,15 +289,15 @@ class UserService(ABCUserService):
             await uow.commit()
             return token_pair
 
-    async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
-        hashed = self.hasher.hash_password(new_password)
-        async with self.uow as uow:
-            user = await uow.users.get_by_id(user_id)
-            if not user:
-                raise ValueError('User not found')
-            user.change_password(hashed)
-            await uow.users.update(user)
-            await uow.commit()
+    # async def change_password(self, user_id: uuid.UUID, new_password: str) -> None:
+    #     hashed = self.hasher.hash_password(new_password)
+    #     async with self.uow as uow:
+    #         user = await uow.users.get_by_id(user_id)
+    #         if not user:
+    #             raise ValueError('User not found')
+    #         user.change_password(hashed)
+    #         await uow.users.update(user)
+    #         await uow.commit()
 
     async def activate_user(self, user_id: uuid.UUID) -> None:
         async with self.uow as uow:

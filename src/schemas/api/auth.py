@@ -15,7 +15,7 @@ class TokenPair(BaseModel):
         'json_schema_extra': {
             'example': {
                 'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-                'refresh_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+                'refresh_token': 'refresh_token_id...',
                 'access_expires_at': '2025-11-18T14:30:00+00:00',
                 'refresh_expires_at': '2025-12-03T12:00:00+00:00',
             },

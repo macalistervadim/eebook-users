@@ -1,6 +1,6 @@
 import logging
 
-from src.adapters.orm import metadata
+from src.adapters.orm import metadata, start_mappers
 from src.config.loader import SettingsLoader
 from src.config.settings import Settings, setup_settings
 from src.exceptions import (
@@ -15,13 +15,21 @@ logger = logging.getLogger(__name__)
 
 def bootstrap() -> Settings:
     try:
-        configure_logging()
-        loader = SettingsLoader()
-        loader.load()  # загружаем env / секреты
-        settings = Settings()  # создаём Pydantic объект
-        setup_settings(settings)
+        configure_logging(level='INFO')
 
+        loader = SettingsLoader()
+        loader.load()
+        settings = Settings()  # type: ignore
+
+        if settings.DEBUG:
+            configure_logging(level='DEBUG')
+        else:
+            configure_logging(level='INFO')
+
+        setup_settings(settings)
+        start_mappers()
         init_engine_and_session()
+
         logger.info('Bootstrap успешно инициализировал компоненты')
         return settings
     except Exception as e:

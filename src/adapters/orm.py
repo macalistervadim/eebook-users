@@ -15,6 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import registry
 
 from src.domain.model import User
+from src.schemas.internal.auth import RefreshToken
 
 metadata = MetaData()
 
@@ -53,3 +54,4 @@ refresh_tokens = Table(
 def start_mappers():
     mapper_registry = registry()
     mapper_registry.map_imperatively(User, users)
+    mapper_registry.map_imperatively(RefreshToken, refresh_tokens)

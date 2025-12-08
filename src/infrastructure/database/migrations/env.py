@@ -4,8 +4,9 @@ from sqlalchemy import pool, create_engine
 from alembic import context
 
 from src.adapters.orm import metadata
+from src.bootstrap import bootstrap
 from src.config.loader import SettingsLoader
-from src.service_layer.dependencies import get_settings
+from src.config.settings import get_settings
 
 config = context.config
 if config.config_file_name is not None:
@@ -16,8 +17,7 @@ target_metadata = metadata
 
 async def init_settings_and_get_uri() -> str:
     """Подгружает секреты из Vault и возвращает PostgreSQL URI."""
-    loader = SettingsLoader()
-    await loader.load()
+    bootstrap()
     settings = get_settings()
     # Alembic не поддерживает async драйвер, поэтому убираем "+asyncpg"
     return settings.postgres_uri.replace('+asyncpg', '')

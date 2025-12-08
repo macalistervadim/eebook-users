@@ -2,10 +2,9 @@ import abc
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.adapters.abc_classes import ABCUsersRepository, AbstractRefreshTokenRepository
 from src.adapters.interfaces import IPasswordHasher
 from src.adapters.repository import (
-    ABCUsersRepository,
-    AbstractRefreshTokenRepository,
     SqlAlchemyRefreshTokenRepository,
     SQLAlchemyUsersRepository,
 )

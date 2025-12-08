@@ -1,14 +1,16 @@
 import logging
-from uuid import UUID
+import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Security, status
-from fastapi_jwt import JwtAccessBearer, JwtAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi_jwt import JwtAccessBearer
 from starlette.responses import JSONResponse, Response
 
 from src.config.settings import Settings, get_settings
 from src.schemas.api.auth import AccessTokenSchema, LoginSchema, UserWithTokensSchema
-from src.schemas.api.users import ChangePasswordSchema, UserCreateSchema, UserResponseSchema
-from src.service_layer.dependencies import get_user_service
+from src.schemas.api.users import UserCreateSchema, UserResponseSchema
+from src.service_layer.auth_service import JWTAuthService
+from src.service_layer.dependencies import get_auth_service, get_uow, get_user_service
+from src.service_layer.uow import AbstractUnitOfWork
 from src.service_layer.users_service import UserService
 from src.service_layer.utils import get_fingerprint
 
@@ -88,6 +90,8 @@ async def login(
     fingerprint = get_fingerprint(request)
 
     token_pair = await service.login(login_data.email, login_data.password, fingerprint)
+    if token_pair is None:
+        raise HTTPException(status_code=401, detail='No token pair generated')
 
     response.set_cookie(
         key='refresh_token_id',
@@ -97,28 +101,94 @@ async def login(
         samesite='strict',
         max_age=7 * 24 * 60 * 60,
     )
-    return AccessTokenSchema(token_pair.access_token, token_pair.access_expires_at)
+    return AccessTokenSchema(
+        access_token=token_pair.access_token,
+        access_expires_at=token_pair.access_expires_at,
+    )
 
 
-@router.put('/change-password', status_code=status.HTTP_204_NO_CONTENT)
-async def change_password(
-    data: ChangePasswordSchema,
-    credentials: JwtAuthorizationCredentials = Security(access_security),
-    service: UserService = Depends(get_user_service),
-) -> None:
-    """Меняет пароль текущего пользователя.
+# @router.put('/change-password', status_code=status.HTTP_204_NO_CONTENT)
+# async def change_password(
+#     data: ChangePasswordSchema,
+#     credentials: JwtAuthorizationCredentials = Security(access_security),
+#     service: UserService = Depends(get_user_service),
+# ) -> None:
+#     """Меняет пароль текущего пользователя.
+#
+#     Args:
+#         data: Новые данные пароля.
+#         credentials: JWT-токен текущего пользователя.
+#         service: Сервис пользователей.
+#
+#     Raises:
+#         HTTPException: Если пользователь не найден.
+#
+#     """
+#     user_id = UUID(credentials['sub']['sub'])
+#     try:
+#         await service.change_password(user_id=user_id, new_password=data.new_password)
+#     except ValueError as e:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found') from e
 
-    Args:
-        data: Новые данные пароля.
-        credentials: JWT-токен текущего пользователя.
-        service: Сервис пользователей.
 
-    Raises:
-        HTTPException: Если пользователь не найден.
+@router.post('/logout')
+async def logout(
+    request: Request,
+    response: Response,
+    auth_service: JWTAuthService = Depends(get_auth_service),
+    uow: AbstractUnitOfWork = Depends(get_uow),
+):
+    refresh_token_id = request.cookies.get('refresh_token_id')
+    if not refresh_token_id:
+        raise HTTPException(401, 'Missing refresh token')
 
-    """
-    user_id = UUID(credentials['sub']['sub'])
     try:
-        await service.change_password(user_id=user_id, new_password=data.new_password)
+        token_id = uuid.UUID(refresh_token_id)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found') from e
+        raise HTTPException(400, 'Invalid token ID') from e
+
+    async with uow:
+        success = await auth_service.revoke_by_id(uow, token_id)
+        if not success:
+            # Можно логгировать, но не ошибку — токен мог уже быть отозван
+            pass
+
+    response.delete_cookie('refresh_token_id')
+    return {'ok': True}
+
+
+@router.post('/refresh', response_model=AccessTokenSchema)
+async def refresh(
+    request: Request,
+    response: Response,
+    service: UserService = Depends(get_user_service),
+    settings: Settings = settings_dependency,
+):
+    refresh_token_id = request.cookies.get('refresh_token_id')
+    if not refresh_token_id:
+        raise HTTPException(401, 'Missing refresh token')
+
+    fingerprint = get_fingerprint(request)
+
+    async with service.uow as uow:
+        new_pair = await service.auth_service.refresh_tokens(
+            uow=uow,
+            refresh_token_id=refresh_token_id,
+            current_fingerprint=fingerprint,
+        )
+        if not new_pair:
+            raise HTTPException(401, 'Invalid or revoked refresh token')
+
+        # Обновляем куку
+        response.set_cookie(
+            key='refresh_token_id',
+            value=new_pair.refresh_token,
+            httponly=True,
+            secure=True if not settings.DEBUG else False,
+            samesite='strict',
+            max_age=7 * 86400,
+        )
+        return AccessTokenSchema(
+            access_token=new_pair.access_token,
+            access_expires_at=new_pair.access_expires_at,
+        )
