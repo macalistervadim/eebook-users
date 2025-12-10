@@ -1,15 +1,17 @@
 import abc
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
 )
 
-from src.adapters.abc_classes import ABCUsersRepository, AbstractRefreshTokenRepository
+from src.adapters.abc_repository import ABCUsersRepository, AbstractRefreshTokenRepository
 from src.adapters.factory import (
     ABCRefreshTokenRepositoryFactory,
     ABCUsersRepositoryFactory,
 )
+from src.domain.exceptions.exceptions import EmailAlreadyRegisteredError, UsernameAlreadyTakenError
 
 
 class AbstractUnitOfWork(abc.ABC):
@@ -83,6 +85,11 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
     Обеспечивает управление сессиями базы данных и транзакциями
     с использованием SQLAlchemy.
     """
+    UNIQUE_CONSTRAINT_MAP = {
+        "users_email_key": EmailAlreadyRegisteredError,
+        "users_username_key": UsernameAlreadyTakenError,
+    }
+
 
     def __init__(
         self,
@@ -141,7 +148,22 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             SQLAlchemyError: Если произошла ошибка при фиксации транзакции.
 
         """
-        await self.session.commit()
+
+        try:
+            await self.session.commit()
+        except IntegrityError as exc:
+            self._handle_integrity_error(exc)
+            raise
+
+    def _handle_integrity_error(self, exc: IntegrityError):
+        msg = str(exc.orig)
+
+        for constraint, error_cls in self.UNIQUE_CONSTRAINT_MAP.items():
+            if constraint in msg:
+                raise error_cls()
+
+        raise exc
+
 
     async def rollback(self) -> None:
         """Выполняет откат текущей транзакции.

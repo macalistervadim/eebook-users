@@ -1,11 +1,12 @@
 import abc
 import uuid
 
-from fastapi import HTTPException, status
-
 from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider
 from src.adapters.interfaces import IPasswordHasher
+from src.domain.exceptions.exceptions import EmailAlreadyRegisteredError, UsernameAlreadyTakenError, UserNotFoundError, \
+    InvalidCredentialsError
 from src.domain.model import User
+
 from src.schemas.api.auth import TokenPair
 from src.service_layer.uow import AbstractUnitOfWork
 
@@ -228,22 +229,30 @@ class UserService(ABCUserService):
         password: str,
         fingerprint: str,
     ) -> tuple[User, TokenPair]:
-        hashed = self.hasher.hash_password(password)
-        now = self.time_provider.now()
-
-        user = User(
-            user_id=None,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            username=username,
-            hashed_password=hashed,
-            created_at=now,
-            updated_at=now,
-            last_login_at=now,
-        )
-
         async with self.uow as uow:
+            email = email.lower().strip()
+            
+            existing = await uow.users.get_by_email(email)
+            if existing:
+                raise EmailAlreadyRegisteredError(email)
+            if username and await uow.users.get_by_username(username):
+                raise UsernameAlreadyTakenError(username)
+
+            hashed = self.hasher.hash_password(password)
+            now = self.time_provider.now()
+
+            user = User(
+                user_id=None,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                username=username,
+                hashed_password=hashed,
+                created_at=now,
+                updated_at=now,
+                last_login_at=now,
+            )
+            
             await uow.users.add(user)
             await uow.commit()
 
@@ -263,18 +272,12 @@ class UserService(ABCUserService):
     async def login(self, email: str, password: str, fingerprint: str) -> TokenPair | None:
         async with self.uow as uow:
             user = await uow.users.get_by_email(email)
-
+       
             if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail='Неверный логин или пароль',
-                )
+                raise InvalidCredentialsError()
 
             if not self.hasher.verify_password(password, user.hashed_password):
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail='Неверный логин или пароль',
-                )
+                raise InvalidCredentialsError()
 
             user.update_login_time(self.time_provider.now())
             await uow.users.update(user)

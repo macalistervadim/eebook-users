@@ -4,7 +4,7 @@ import uuid
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.adapters.abc_classes import ABCUsersRepository, AbstractRefreshTokenRepository
+from src.adapters.abc_repository import ABCUsersRepository, AbstractRefreshTokenRepository
 from src.adapters.orm import refresh_tokens, users
 from src.domain.model import User
 from src.schemas.internal.auth import RefreshToken

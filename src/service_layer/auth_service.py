@@ -47,8 +47,8 @@ class JWTAuthService(ABCAuthService):
         fingerprint: str,
     ) -> TokenPair:
         access, refresh = self._jwt.create_tokens(user_id)
-        if not access or refresh:
-            raise ValueError('tokens not generated')
+        # if not access or refresh:
+        #     raise ValueError('tokens not generated')
 
         refresh_payload = self._jwt.decode_token(refresh, 'refresh')
         if refresh_payload:

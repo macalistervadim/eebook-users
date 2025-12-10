@@ -6,6 +6,7 @@ from fastapi_jwt import JwtAccessBearer
 from starlette.responses import JSONResponse, Response
 
 from src.config.settings import Settings, get_settings
+from src.entrypoints.api.exceptions import ApiError
 from src.schemas.api.auth import AccessTokenSchema, LoginSchema, UserWithTokensSchema
 from src.schemas.api.users import UserCreateSchema, UserResponseSchema
 from src.service_layer.auth_service import JWTAuthService
@@ -31,7 +32,14 @@ async def health(settings: Settings = settings_dependency) -> JSONResponse:
     return JSONResponse(content=content, status_code=status.HTTP_200_OK)
 
 
-@router.post('/register', status_code=status.HTTP_201_CREATED, response_model=UserWithTokensSchema)
+@router.post(
+    '/register', 
+    status_code=status.HTTP_201_CREATED, 
+    response_model=UserWithTokensSchema,
+    responses={400: {"model": ApiError, "description": "Доменные ошибки"},
+               500: {"model": ApiError, "description": "Непредвиденная ошибка"}
+    },
+)
 async def register(
     register_data: UserCreateSchema,
     request: Request,
@@ -79,7 +87,13 @@ async def register(
 access_security = JwtAccessBearer(secret_key='dsafsdfs')
 
 
-@router.post('/login', response_model=AccessTokenSchema)
+@router.post(
+    '/login',
+    response_model=AccessTokenSchema,
+    responses={400: {"model": ApiError, "description": "Доменные ошибки"},
+               500: {"model": ApiError, "description": "Непредвиденная ошибка"}
+    },
+)
 async def login(
     login_data: LoginSchema,
     request: Request,
@@ -90,8 +104,6 @@ async def login(
     fingerprint = get_fingerprint(request)
 
     token_pair = await service.login(login_data.email, login_data.password, fingerprint)
-    if token_pair is None:
-        raise HTTPException(status_code=401, detail='No token pair generated')
 
     response.set_cookie(
         key='refresh_token_id',
