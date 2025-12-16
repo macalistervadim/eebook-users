@@ -30,11 +30,11 @@ def init_engine_and_session() -> None:
     try:
         _engine = create_async_engine(
             settings.postgres_uri,
-            pool_size=5,
-            max_overflow=10,
+            pool_size=10,
+            max_overflow=20,
             pool_timeout=30,
             pool_pre_ping=True,
-            pool_recycle=300,
+            pool_recycle=0,
             connect_args={'command_timeout': 10},
         )
         _session_factory = async_sessionmaker(

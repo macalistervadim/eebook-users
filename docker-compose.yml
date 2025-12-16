@@ -16,7 +16,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-
+    networks:
+      - users_net
+  
   app:
     build: .
     depends_on:
@@ -37,7 +39,10 @@ services:
       interval: 15s
       timeout: 5s
       retries: 3
-      
+    networks:
+      - users_net
+      - vault_net
+
   redis:
     image: redis:8.0-alpine
     restart: always
@@ -46,6 +51,8 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - redis:/data
+    networks:
+      - users_net
       
 
 secrets:
@@ -58,6 +65,7 @@ volumes:
     driver: local
 
 networks:
-  default:
-    external:
-      name: eebook
+  users_net:
+    driver: bridge
+  vault_net:
+    external: true

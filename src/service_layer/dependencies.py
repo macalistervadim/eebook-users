@@ -48,7 +48,7 @@ async def get_time_provider() -> ABCTimeProvider:
 async def get_jwt_backend():
     return JwtTokenAdapter(
         secret_key='123',
-        access_expires_delta=timedelta(minutes=15),
+        access_expires_delta=timedelta(days=7),
         refresh_expires_delta=timedelta(days=7),
         time_provider=await get_time_provider(),
     )
