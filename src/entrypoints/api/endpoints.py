@@ -2,18 +2,24 @@ import logging
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi_jwt import JwtAccessBearer
+from sqlalchemy import UUID
 from starlette.responses import JSONResponse, Response
 
 from src.config.settings import Settings, get_settings
 from src.entrypoints.api.exceptions import ApiError
 from src.schemas.api.auth import AccessTokenSchema, LoginSchema, UserWithTokensSchema
-from src.schemas.api.users import UserCreateSchema, UserResponseSchema
+from src.schemas.api.users import (
+    ProfileSchema,
+    UserCreateSchema,
+    UserResponseSchema,
+    UserSubscriptionSchema,
+)
 from src.service_layer.auth_service import JWTAuthService
 from src.service_layer.dependencies import get_auth_service, get_uow, get_user_service
 from src.service_layer.uow import AbstractUnitOfWork
 from src.service_layer.users_service import UserService
 from src.service_layer.utils import get_fingerprint
+from src.utils.get_current_user import get_current_user_id
 
 router = APIRouter(prefix='/api/v1/users', tags=['users'])
 
@@ -32,12 +38,33 @@ async def health(settings: Settings = settings_dependency) -> JSONResponse:
     return JSONResponse(content=content, status_code=status.HTTP_200_OK)
 
 
+@router.get(
+    '/me',
+    response_model=ProfileSchema,
+)
+async def get_me(
+    user_id: UUID = Depends(get_current_user_id),
+    uow: AbstractUnitOfWork = Depends(get_uow),
+):
+    async with uow:
+        user_entity = await uow.users.get_by_id(user_id)
+        subscription = await uow.user_subscriptions.get_by_user_id(user_id)
+
+    return ProfileSchema(
+        user=UserResponseSchema.from_domain(user_entity),
+        user_subscription=(
+            UserSubscriptionSchema.from_domain(subscription) if subscription else None
+        ),
+    )
+
+
 @router.post(
-    '/register', 
-    status_code=status.HTTP_201_CREATED, 
+    '/register',
+    status_code=status.HTTP_201_CREATED,
     response_model=UserWithTokensSchema,
-    responses={400: {"model": ApiError, "description": "Доменные ошибки"},
-               500: {"model": ApiError, "description": "Непредвиденная ошибка"}
+    responses={
+        400: {'model': ApiError, 'description': 'Доменные ошибки'},
+        500: {'model': ApiError, 'description': 'Непредвиденная ошибка'},
     },
 )
 async def register(
@@ -84,14 +111,12 @@ async def register(
     )
 
 
-access_security = JwtAccessBearer(secret_key='dsafsdfs')
-
-
 @router.post(
     '/login',
     response_model=AccessTokenSchema,
-    responses={400: {"model": ApiError, "description": "Доменные ошибки"},
-               500: {"model": ApiError, "description": "Непредвиденная ошибка"}
+    responses={
+        400: {'model': ApiError, 'description': 'Доменные ошибки'},
+        500: {'model': ApiError, 'description': 'Непредвиденная ошибка'},
     },
 )
 async def login(

@@ -6,10 +6,17 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.adapters.abc_repository import ABCUsersRepository, AbstractRefreshTokenRepository
+from src.adapters.abc_repository import (
+    ABCUsersRepository,
+    ABCUsersSubscriptionRepository,
+    AbstractRefreshTokenRepository,
+    AbstractUserAuthStateRepository,
+)
 from src.adapters.factory import (
     ABCRefreshTokenRepositoryFactory,
+    ABCUserAuthStateRepositoryFactory,
     ABCUsersRepositoryFactory,
+    ABCUsersSubscriptionRepositoryFactory,
 )
 from src.domain.exceptions.exceptions import EmailAlreadyRegisteredError, UsernameAlreadyTakenError
 
@@ -26,6 +33,8 @@ class AbstractUnitOfWork(abc.ABC):
 
     users: ABCUsersRepository
     refresh_tokens: AbstractRefreshTokenRepository
+    user_subscriptions: ABCUsersSubscriptionRepository
+    user_auth_state: AbstractUserAuthStateRepository
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
         """Вход в контекстный менеджер.
@@ -85,17 +94,19 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
     Обеспечивает управление сессиями базы данных и транзакциями
     с использованием SQLAlchemy.
     """
-    UNIQUE_CONSTRAINT_MAP = {
-        "users_email_key": EmailAlreadyRegisteredError,
-        "users_username_key": UsernameAlreadyTakenError,
-    }
 
+    UNIQUE_CONSTRAINT_MAP = {
+        'users_email_key': EmailAlreadyRegisteredError,
+        'users_username_key': UsernameAlreadyTakenError,
+    }
 
     def __init__(
         self,
         session_factory: async_sessionmaker[AsyncSession],
         repo_factory: ABCUsersRepositoryFactory,
         refresh_token_repo_factory: ABCRefreshTokenRepositoryFactory,
+        user_auth_state_repo_factory: ABCUserAuthStateRepositoryFactory,
+        user_subscriptions_repo_factory: ABCUsersSubscriptionRepositoryFactory,
     ) -> None:
         """Инициализация SqlAlchemyUnitOfWork.
 
@@ -103,11 +114,14 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             session_factory: Фабрика для создания асинхронных сессий SQLAlchemy.
             repo_factory: Фадрика создания репозитория для работы с данными.
             refresh_token_repo_factory: Фабрика создания репозитория для работы с auth-токенами.
+            user_subscriptions_repo_factory: Фабрика создания репозитория для работы с пользовательскими подписками.
 
         """
         self.session_factory = session_factory
         self.repo_factory = repo_factory
         self._refresh_token_repo_factory = refresh_token_repo_factory
+        self._user_auth_state_repo_factory = user_auth_state_repo_factory
+        self.user_subscriptions_repo_factory = user_subscriptions_repo_factory
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
         """Вход в контекстный менеджер.
@@ -121,6 +135,8 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session: AsyncSession = self.session_factory()
         self.users = self.repo_factory.create(self.session)
         self.refresh_tokens = self._refresh_token_repo_factory.create(self.session)
+        self.user_auth_state = self._user_auth_state_repo_factory.create(self.session)
+        self.user_subscriptions = self.user_subscriptions_repo_factory.create(self.session)
         return await super().__aenter__()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -148,7 +164,6 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             SQLAlchemyError: Если произошла ошибка при фиксации транзакции.
 
         """
-
         try:
             await self.session.commit()
         except IntegrityError as exc:
@@ -163,7 +178,6 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
                 raise error_cls()
 
         raise exc
-
 
     async def rollback(self) -> None:
         """Выполняет откат текущей транзакции.

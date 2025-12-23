@@ -2,7 +2,7 @@ import abc
 import datetime
 import uuid
 
-from src.domain.model import User
+from src.domain.model import User, UserAuthState, UserSubscription
 from src.schemas.internal.auth import RefreshToken
 
 
@@ -75,22 +75,6 @@ class ABCUsersRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def list_all(self, *, only_active: bool = False) -> list[User]:
-        """Возвращает список всех пользователей.
-
-        Args:
-            only_active: Если True, возвращает только активных пользователей.
-
-        Returns:
-            list[User]: Список пользователей.
-
-        Raises:
-            NotImplementedError: Если метод не переопределен в подклассе.
-
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
     async def update(self, user: User) -> None:
         """Обновляет данные пользователя в репозитории.
 
@@ -132,3 +116,28 @@ class AbstractRefreshTokenRepository(abc.ABC):
 
     @abc.abstractmethod
     async def revoke_all_for_user(self, user_id: uuid.UUID, now: datetime.datetime) -> None: ...
+
+
+class ABCUsersSubscriptionRepository(abc.ABC):
+    @abc.abstractmethod
+    async def add(self, user_subscription: UserSubscription) -> None: ...
+
+    @abc.abstractmethod
+    async def get_by_user_id(self, user_id: uuid.UUID) -> UserSubscription | None: ...
+
+    @abc.abstractmethod
+    async def get_by_id(self, user_sub_id: uuid.UUID) -> UserSubscription | None: ...
+
+
+class AbstractUserAuthStateRepository(abc.ABC):
+    @abc.abstractmethod
+    async def get_by_user_id(self, user_id: uuid.UUID) -> UserAuthState | None:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def create(self, state: UserAuthState) -> None:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def save(self, state: UserAuthState) -> None:
+        raise NotImplementedError

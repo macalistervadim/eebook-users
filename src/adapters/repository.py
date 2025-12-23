@@ -4,9 +4,15 @@ import uuid
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.adapters.abc_repository import ABCUsersRepository, AbstractRefreshTokenRepository
-from src.adapters.orm import refresh_tokens, users
-from src.domain.model import User
+from src.adapters.abc_repository import (
+    ABCUsersRepository,
+    ABCUsersSubscriptionRepository,
+    AbstractRefreshTokenRepository,
+    AbstractUserAuthStateRepository,
+)
+from src.adapters.orm import refresh_tokens, user_auth_state, users
+from src.adapters.orm import user_subscription as user_sub_table
+from src.domain.model import User, UserAuthState, UserSubscription
 from src.schemas.internal.auth import RefreshToken
 
 
@@ -30,8 +36,8 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             last_name=user.last_name,
             email=user.email,
             username=user.username,
+            role=user.role,
             hashed_password=user.hashed_password,
-            is_active=user.is_active,
             is_verified=user.is_verified,
             created_at=user.created_at,
             updated_at=user.updated_at,
@@ -54,13 +60,6 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
         row = result.first()
         return self._row_to_user(row) if row else None
 
-    async def list_all(self, *, only_active: bool = False) -> list[User]:
-        stmt = select(users)
-        if only_active:
-            stmt = stmt.where(users.c.is_active.is_(True))
-        result = await self.session.execute(stmt)
-        return [self._row_to_user(row) for row in result.fetchall()]
-
     async def update(self, user: User) -> None:
         stmt = (
             update(users)
@@ -71,9 +70,9 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
                 email=user.email,
                 username=user.username,
                 hashed_password=user.hashed_password,
-                is_active=user.is_active,
                 is_verified=user.is_verified,
                 updated_at=user.updated_at,
+                role=user.role,
                 last_login_at=user.last_login_at,
             )
         )
@@ -104,7 +103,7 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             email=r.email,
             username=r.username,
             hashed_password=r.hashed_password,
-            is_active=r.is_active,
+            role=r.role,
             is_verified=r.is_verified,
             created_at=r.created_at,
             updated_at=r.updated_at,
@@ -159,3 +158,98 @@ class SqlAlchemyRefreshTokenRepository(AbstractRefreshTokenRepository):
             )
         )
         await self.session.execute(stmt)
+
+
+class SqlAlchemyUsersSubscriptionRepository(ABCUsersSubscriptionRepository):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add(self, user_subscription: UserSubscription) -> None:
+        stmt = insert(user_sub_table).values(
+            id=user_subscription.id,
+            user_id=user_subscription.user_id,
+            plan=user_subscription.plan,
+            started_at=user_subscription.started_at,
+            expires_at=user_subscription.expires_at,
+            is_active=user_subscription.is_active,
+        )
+        await self.session.execute(stmt)
+
+    async def get_by_user_id(self, user_id: uuid.UUID) -> UserSubscription | None:
+        result = await self.session.execute(
+            select(user_sub_table).where(user_sub_table.c.user_id == user_id),
+        )
+        row = result.first()
+        return self._row_to_user(row) if row else None
+
+    async def get_by_id(self, user_sub_id: uuid.UUID) -> UserSubscription | None:
+        result = await self.session.execute(
+            select(user_sub_table).where(user_sub_table.c.id == user_sub_id),
+        )
+        row = result.first()
+        return self._row_to_user(row) if row else None
+
+    def _row_to_user(self, row) -> UserSubscription:
+        """Конвертирует строку результата SQLAlchemy в доменную модель UserSubscription.
+
+        Args:
+            row: Строка результата запроса SQLAlchemy.
+
+        Returns:
+                Экземпляр доменной модели UserSubscription.
+
+        Note:
+            Внутренний метод, не предназначен для использования извне.
+
+        """
+        r = row[0] if isinstance(row, tuple) else row
+        return UserSubscription(
+            subscription_id=r.id,
+            user_id=r.user_id,
+            plan=r.plan,
+            started_at=r.started_at,
+            expires_at=r.expires_at,
+            is_active=r.is_active,
+        )
+
+
+class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_by_user_id(self, user_id: uuid.UUID) -> UserAuthState | None:
+        stmt = select(user_auth_state).where(user_auth_state.c.user_id == user_id)
+        result = await self.session.execute(stmt)
+        row = result.first()
+
+        if not row:
+            return None
+
+        data = row._mapping
+        return UserAuthState(
+            user_id=data['user_id'],
+            failed_attempts=data['failed_attempts'],
+            locked_until=data['locked_until'],
+            last_failed_at=data['last_failed_at'],
+        )
+
+    async def create(self, state: UserAuthState) -> None:
+        await self.session.execute(
+            insert(user_auth_state).values(
+                user_id=state.user_id,
+                failed_attempts=state.failed_attempts,
+                locked_until=state.locked_until,
+                last_failed_at=state.last_failed_at,
+            ),
+        )
+
+    async def save(self, state: UserAuthState) -> None:
+        await self.session.execute(
+            update(user_auth_state)
+            .where(user_auth_state.c.user_id == state.user_id)
+            .values(
+                failed_attempts=state.failed_attempts,
+                locked_until=state.locked_until,
+                last_failed_at=state.last_failed_at,
+            ),
+        )

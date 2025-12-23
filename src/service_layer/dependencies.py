@@ -3,13 +3,17 @@ from datetime import timedelta
 
 from redis.asyncio import Redis
 
-from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider, ABCTokenStore
+from src.adapters.abc_classes import ABCTimeProvider, ABCTokenStore
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
 from src.adapters.factory import (
     ABCRefreshTokenRepositoryFactory,
+    ABCUserAuthStateRepositoryFactory,
     ABCUsersRepositoryFactory,
+    ABCUsersSubscriptionRepositoryFactory,
     RefreshTokenRepositoryFactory,
+    SqlAlchemyUserAuthStateRepositoryFactory,
     SQLAlchemyUsersRepositoryFactory,
+    SQLAlchemyUsersSubscriptionRepositoryFactory,
 )
 from src.adapters.interfaces import IPasswordHasher
 from src.adapters.password_hasher import Argon2PasswordHasher
@@ -30,7 +34,17 @@ async def get_uow() -> AbstractUnitOfWork:
         session_factory=session_factory,
         repo_factory=await get_repo_factory(),
         refresh_token_repo_factory=await get_refresh_token_repo_factory(),
+        user_subscriptions_repo_factory=await get_user_sub_repo_factory(),
+        user_auth_state_repo_factory=await get_user_auth_state_repo_factory(),
     )
+
+
+async def get_user_auth_state_repo_factory() -> ABCUserAuthStateRepositoryFactory:
+    return SqlAlchemyUserAuthStateRepositoryFactory()
+
+
+async def get_user_sub_repo_factory() -> ABCUsersSubscriptionRepositoryFactory:
+    return SQLAlchemyUsersSubscriptionRepositoryFactory()
 
 
 async def get_repo_factory() -> ABCUsersRepositoryFactory:
@@ -68,11 +82,17 @@ async def get_refresh_token_repo_factory() -> ABCRefreshTokenRepositoryFactory:
     return RefreshTokenRepositoryFactory()
 
 
-async def get_auth_service() -> ABCAuthService:
+async def get_auth_service() -> JWTAuthService:
+    _MAX_LOGIN_ATTEMPTS = 5
+    _LOCK_TIME = timedelta(minutes=15)
+
     return JWTAuthService(
         jwt_backend=await get_jwt_backend(),
         token_store=await get_token_store(),
         time_provider=await get_time_provider(),
+        hasher=await get_hasher(),
+        max_attempts=_MAX_LOGIN_ATTEMPTS,
+        lock_time=_LOCK_TIME,
     )
 
 

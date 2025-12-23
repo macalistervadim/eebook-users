@@ -1,9 +1,16 @@
 import logging
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
-from src.adapters.abc_classes import ABCAuthService, ABCTimeProvider, ABCTokenStore
+from src.adapters.abc_classes import ABCTimeProvider, ABCTokenStore
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
+from src.adapters.interfaces import IPasswordHasher
+from src.domain.exceptions.exceptions import (
+    InvalidCredentialsError,
+    MaxLoginAttemptsExceeded,
+    UserLockedError,
+)
+from src.domain.model import UserAuthState
 from src.infrastructure.logging.helpers.auth_helper import auth_log
 from src.schemas.api.auth import TokenPair
 from src.schemas.internal.auth import RefreshToken, TokenPayload, TokenType
@@ -13,7 +20,7 @@ from src.utils.auth_events import AuthEvent
 logger = logging.getLogger(__name__)
 
 
-class JWTAuthService(ABCAuthService):
+class JWTAuthService:
     """Сервис аутентификации, реализующий полную JWT-логику.
 
     Возможности:
@@ -35,10 +42,16 @@ class JWTAuthService(ABCAuthService):
         jwt_backend: JwtTokenAdapter,
         token_store: ABCTokenStore,
         time_provider: ABCTimeProvider,
+        hasher: IPasswordHasher,
+        max_attempts: int,
+        lock_time: timedelta,
     ):
         self._jwt = jwt_backend
         self._store = token_store
         self._time_provider = time_provider
+        self._hasher = hasher
+        self.max_attempts = max_attempts
+        self.lock_time = lock_time
 
     async def create_token_pair(
         self,
@@ -193,4 +206,59 @@ class JWTAuthService(ABCAuthService):
             uow=uow,
             user_id=token.user_id,
             fingerprint=current_fingerprint,
+        )
+
+    async def login(
+        self,
+        *,
+        uow: AbstractUnitOfWork,
+        email: str,
+        password: str,
+        fingerprint: str,
+    ) -> TokenPair:
+        now = self._time_provider.now()
+
+        user = await uow.users.get_by_email(email.lower().strip())
+        if not user:
+            raise InvalidCredentialsError()
+
+        # базовые user-проверки
+        user.can_login()
+
+        # auth state
+        auth_state = await uow.user_auth_state.get_by_user_id(user.id)
+        if not auth_state:
+            auth_state = UserAuthState(user.id)
+            await uow.user_auth_state.create(auth_state)
+
+        if auth_state.is_locked(now):
+            raise UserLockedError(retry_after=auth_state.locked_until - now)
+
+        if not self._hasher.verify_password(password, user.hashed_password):
+            try:
+                remaining = auth_state.register_failed_attempt(
+                    now=now,
+                    max_attempts=self.max_attempts,
+                    lock_time=self.lock_time,
+                )
+            except MaxLoginAttemptsExceeded:
+                await uow.user_auth_state.save(auth_state)
+                raise
+
+            await uow.user_auth_state.save(auth_state)
+
+            raise InvalidCredentialsError(
+                remaining_attempts=remaining,
+            )
+
+        # успех
+        user.update_last_login_time(now)
+
+        await uow.user_auth_state.save(auth_state)
+        await uow.users.update(user)
+
+        return await self.create_token_pair(
+            uow=uow,
+            user_id=user.id,
+            fingerprint=fingerprint,
         )
