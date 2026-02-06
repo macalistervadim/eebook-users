@@ -4,17 +4,8 @@ from typing import Any, Protocol
 class ISecretsProvider(Protocol):
     """Контракт для любого хранилища секретов."""
 
-    def get_secret(self, path: str, key: str | None = None) -> dict[str, Any]:
-        """Получить значение секрета по пути и ключу.
-
-        Args:
-            path: Путь к секрету в хранилище
-            key: Ключ секрета (опционально)
-
-        Returns:
-            Значение секрета или None, если не найдено
-
-        """
+    def get_secrets(self) -> dict[str, Any]:
+        """Вернуть набор секретов в виде key-value."""
         ...
 
 

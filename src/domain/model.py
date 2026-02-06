@@ -22,7 +22,8 @@ class UserAuthState:
     def __init__(
         self,
         user_id: uuid.UUID,
-        failed_attempts: int = 0,
+        failed_attempts: int,
+        lock_count: int,
         locked_until: datetime.datetime | None = None,
         last_failed_at: datetime.datetime | None = None,
     ) -> None:
@@ -30,15 +31,18 @@ class UserAuthState:
         self.failed_attempts = failed_attempts
         self.locked_until = locked_until
         self.last_failed_at = last_failed_at
+        self.lock_count = lock_count
 
     def is_locked(self, now: datetime.datetime) -> bool:
         return self.locked_until is not None and self.locked_until > now
 
     def register_failed_attempt(
         self,
+        *,
         now: datetime.datetime,
         max_attempts: int,
-        lock_time: datetime.timedelta,
+        base_lock_time: datetime.timedelta,
+        max_lock_time: datetime.timedelta,
     ) -> int:
         if self.locked_until and self.locked_until <= now:
             self.failed_attempts = 0
@@ -50,7 +54,14 @@ class UserAuthState:
         remaining = max_attempts - self.failed_attempts
 
         if remaining <= 0:
+            self.lock_count += 1
+
+            lock_seconds = base_lock_time.total_seconds() * (2 ** (self.lock_count - 1))
+            lock_seconds = min(lock_seconds, max_lock_time.total_seconds())
+
+            lock_time = datetime.timedelta(seconds=lock_seconds)
             self.locked_until = now + lock_time
+
             raise MaxLoginAttemptsExceeded(
                 max_attempts=max_attempts,
                 retry_after=lock_time,
@@ -60,7 +71,9 @@ class UserAuthState:
 
     def register_success(self, now: datetime.datetime) -> None:
         self.failed_attempts = 0
+        self.lock_count = 0
         self.locked_until = None
+        self.last_failed_at = None
 
 
 class UserSubscription:

@@ -24,7 +24,6 @@ class UserResponseSchema(BaseModel):
     role: UserRole
     created_at: datetime
     username: str
-    is_active: bool
     is_verified: bool
 
     @classmethod
@@ -37,7 +36,6 @@ class UserResponseSchema(BaseModel):
             role=user.role,
             username=user.username,
             created_at=user.created_at,
-            is_active=user.is_active,
             is_verified=user.is_verified,
         )
 

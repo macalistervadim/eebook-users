@@ -56,6 +56,7 @@ user_auth_state = Table(
     ),
     Column('failed_attempts', Integer, nullable=False, default=0),
     Column('locked_until', DateTime(timezone=True), nullable=True),
+    Column('lock_count', Integer, nullable=False, default=0),
     Column('last_failed_at', DateTime(timezone=True), nullable=True),
     Column('updated_at', DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
 )

@@ -101,8 +101,9 @@ async def register(
             last_name=user.last_name,
             email=user.email,
             username=user.username,
-            is_active=user.is_active,
             is_verified=user.is_verified,
+            role=user.role,
+            created_at=user.created_at,
         ),
         access_token=AccessTokenSchema(
             access_token=token_pair.access_token,

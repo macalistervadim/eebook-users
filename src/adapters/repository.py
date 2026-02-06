@@ -231,6 +231,7 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
             failed_attempts=data['failed_attempts'],
             locked_until=data['locked_until'],
             last_failed_at=data['last_failed_at'],
+            lock_count=data['lock_count'],
         )
 
     async def create(self, state: UserAuthState) -> None:
@@ -240,6 +241,7 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
                 failed_attempts=state.failed_attempts,
                 locked_until=state.locked_until,
                 last_failed_at=state.last_failed_at,
+                lock_count=state.lock_count,
             ),
         )
 
@@ -251,5 +253,6 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
                 failed_attempts=state.failed_attempts,
                 locked_until=state.locked_until,
                 last_failed_at=state.last_failed_at,
+                lock_count=state.lock_count,
             ),
         )

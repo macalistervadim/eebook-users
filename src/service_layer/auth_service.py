@@ -222,13 +222,15 @@ class JWTAuthService:
         if not user:
             raise InvalidCredentialsError()
 
-        # базовые user-проверки
         user.can_login()
 
-        # auth state
         auth_state = await uow.user_auth_state.get_by_user_id(user.id)
         if not auth_state:
-            auth_state = UserAuthState(user.id)
+            auth_state = UserAuthState(
+                user.id,
+                failed_attempts=0,
+                lock_count=0,
+            )  # todo: why hardcode?
             await uow.user_auth_state.create(auth_state)
 
         if auth_state.is_locked(now):
@@ -239,7 +241,8 @@ class JWTAuthService:
                 remaining = auth_state.register_failed_attempt(
                     now=now,
                     max_attempts=self.max_attempts,
-                    lock_time=self.lock_time,
+                    base_lock_time=self.lock_time,
+                    max_lock_time=timedelta(days=14),
                 )
             except MaxLoginAttemptsExceeded:
                 await uow.user_auth_state.save(auth_state)
@@ -251,7 +254,8 @@ class JWTAuthService:
                 remaining_attempts=remaining,
             )
 
-        # успех
+        auth_state.register_success(now)
+
         user.update_last_login_time(now)
 
         await uow.user_auth_state.save(auth_state)

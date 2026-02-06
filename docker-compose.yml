@@ -29,11 +29,8 @@ services:
       - ./src:/app/src
       - ./tests:/app/tests
       - ./alembic.ini:/app/alembic.ini:ro
-    secrets:
-      - vault_token
-    environment:
-      VAULT_ADDR: http://vault-prod:8200
-      VAULT_TOKEN_FILE: /run/secrets/vault_token
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/users/health"]
       interval: 15s
@@ -41,7 +38,6 @@ services:
       retries: 3
     networks:
       - users_net
-      - vault_net
 
   redis:
     image: redis:8.0-alpine
@@ -53,11 +49,7 @@ services:
       - redis:/data
     networks:
       - users_net
-      
-
-secrets:
-  vault_token:
-    file: ./secret-token.txt
+    
 
 volumes:
   pgdata:
