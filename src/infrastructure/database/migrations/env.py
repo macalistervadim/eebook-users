@@ -3,8 +3,8 @@ from logging.config import fileConfig
 from sqlalchemy import pool, create_engine
 from alembic import context
 
-from src.adapters.orm import metadata
-from src.bootstrap import bootstrap
+from src.app_factory import bootstrap
+from src.infrastructure.database.orm import metadata
 from src.config.loader import SettingsLoader
 from src.config.settings import get_settings
 

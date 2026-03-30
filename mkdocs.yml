@@ -1,41 +1,44 @@
-site_name: eebook
-site_description: Документация проекта eebook-users
-site_author: macalistervadim
-site_url: https://macalistervadim.github.io/eebook-users/
+site_name: eebook-users
+site_description: Внутренняя документация для разработки eebook-users
+site_author: eebook.org
+site_url: !ENV [ SITE_URL, "https://eebook-users-bbc525.gitlab.io/" ]
 
-repo_url: https://github.com/macalistervadim/eebook-users
-repo_name: macalistervadim/eebook-users
+repo_url: https://github.com/eebook-org/eebook-users
+repo_name: eebook-org/eebook-users
 edit_uri: edit/main/docs/
 
 copyright: >
-  Copyright © 2023 — 2025 <a href="https://github.com/macalistervadim" target="_blank">Macalister Vadim</a>
+  Copyright © 2025 — 2026 <a href="https://github.com/eebook-org" target="_blank">eebook.org</a>
 
 theme:
   name: material
   custom_dir: docs/overrides
   language: ru
+  logo: assets/eebook-icon_amber@2x.png
   features:
     - navigation.top
     - navigation.tabs
     - navigation.sections
     - navigation.instant
-    - navigation.expand
     - navigation.instant.progress
-    - content.action.edit
-    - content.action.view
+    - navigation.expand
+    - navigation.tracking
+    - navigation.indexes
     - content.code.copy
-    - content.footer
+    - content.code.annotate
+    - content.tabs.link
 
   palette:
     - scheme: default
-      primary: black
-      accent: light blue
+      primary: orange
+      accent: deep orange
       toggle:
         icon: material/weather-night
         name: Тёмная тема
+
     - scheme: slate
-      primary: black
-      accent: light blue
+      primary: orange
+      accent: deep orange
       toggle:
         icon: material/weather-sunny
         name: Светлая тема
@@ -49,68 +52,61 @@ extra:
     Автор: {{ git-revision-author }}
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/macalistervadim
+      link: https://github.com/eebook-org
       name: GitHub
     - icon: material/email
       link: mailto:macalistervadim@ya.ru
       name: Email
   generator: false
-  consent:
-    title: 🍪 Cookies
-    description: >
-      Мы используем cookies для улучшения качества документации.
-    actions:
-      - accept
-      - reject
-  feedback:
-    title: Было ли это полезно?
-    ratings:
-      - icon: material/thumb-up-outline
-        name: Да, всё понятно
-        data: 1
-        note: 🎉 Спасибо за отзыв!
-      - icon: material/thumb-down-outline
-        name: Можно улучшить
-        data: 0
-        note: 🙏 Помоги нам улучшить статью — создай issue на GitHub.
-
-extra_css:
-  - css/landing.css
+  version:
+    provider: mike
 
 markdown_extensions:
   - admonition
   - codehilite
   - toc:
       permalink: true
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.highlight
   - pymdownx.emoji
   - attr_list
   - footnotes
   - md_in_html
   - pymdownx.details
-  - pymdownx.superfences
-  - pymdownx.highlight
   - pymdownx.tabbed
-  - admonition
-  - attr_list
 
 plugins:
   - search
   - git-revision-date-localized:
-      enable_creation_date: true
+      enable_creation_date: false
       fallback_to_build_date: true
+      enable_git_follow: false
       type: date
       locale: ru
       timezone: Europe/Moscow
   - mkdocstrings:
       handlers:
         python:
+          paths:
+            - .
+            - src
           options:
             show_source: true
             docstring_style: google
-            search_path:
-              - src
+  - mermaid2:
+      arguments:
+        theme: base
+        themeVariables:
+          primaryColor: '#f59e0b'
+          primaryTextColor: '#ffffff'
+          primaryBorderColor: '#ea580c'
+          lineColor: '#9a3412'
+          secondaryColor: '#fb923c'
+          tertiaryColor: '#fff7ed'
 
 nav:
   - Главная: index.md

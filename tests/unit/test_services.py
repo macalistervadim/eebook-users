@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 
 from src.domain.model import User
-from src.service_layer.users_service import UserService
+from src.application.user_service import UserService
 
 
 @pytest.mark.asyncio

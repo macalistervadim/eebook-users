@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from redis.asyncio import Redis
 
-from src.adapters.abc_classes import ABCTokenStore
+from src.infrastructure.auth.abc import ABCTokenStore
 from src.infrastructure.logging.helpers.auth_helper import auth_log
 from src.utils.auth_events import AuthEvent
 

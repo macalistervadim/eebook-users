@@ -1,0 +1,30 @@
+[run]
+branch = True
+source = src
+omit =
+    */__init__.py
+    src/exceptions.py
+    */src/exceptions.py
+    src/app_factory.py
+    src/entrypoints/*
+    src/infrastructure/database/migrations/*
+    src/infrastructure/database/engine.py
+    src/infrastructure/database/exceptions.py
+    src/infrastructure/logging/*
+    src/infrastructure/middleware/*
+    src/infrastructure/lifespan.py
+    */src/infrastructure/lifespan.py
+    src/config/loader.py
+    src/config/settings.py
+    src/config/exceptions.py
+    src/interfaces/api/dependencies.py
+
+[report]
+show_missing = True
+skip_covered = False
+precision = 2
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if TYPE_CHECKING:
+    @abc.abstractmethod

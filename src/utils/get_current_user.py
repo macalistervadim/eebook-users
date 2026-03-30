@@ -1,19 +1,28 @@
 import logging
 from uuid import UUID
 
-from fastapi import Security
-from fastapi_jwt import JwtAccessBearer, JwtAuthorizationCredentials
+from fastapi import Depends, Request
+from fastapi import HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.domain.exceptions.exceptions import InvalidCredentialsError
+from src.application.auth_service import JWTAuthService
+from src.application.dependencies import get_auth_service
 
-access_security = JwtAccessBearer(secret_key='123')
 logger = logging.getLogger(__name__)
+access_security = HTTPBearer(auto_error=False)
 
 
-def get_current_user_id(
-    credentials: JwtAuthorizationCredentials = Security(access_security),
+async def get_current_user_id(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(access_security),
+    auth_service: JWTAuthService = Depends(get_auth_service),
 ) -> UUID:
-    try:
-        return UUID(credentials['sub'])
-    except Exception:
-        raise InvalidCredentialsError()
+    if not credentials or credentials.scheme.lower() != 'bearer':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token')
+
+    payload = await auth_service.validate_access_token(credentials.credentials)
+    if not payload:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token')
+
+    request.state.user_id = str(payload.subject)
+    return payload.subject

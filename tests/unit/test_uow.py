@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from src.service_layer.uow import SqlAlchemyUnitOfWork
+from src.application.uow import SqlAlchemyUnitOfWork
 from tests.conftest import FakeRepoFactory
 
 

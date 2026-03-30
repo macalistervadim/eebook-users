@@ -15,7 +15,6 @@ from src.domain.exceptions.exceptions import (
     UserDisabledError,
 )
 from src.schemas.internal.role import UserRole
-from src.schemas.internal.subscription import SubscriptionPlan
 
 
 class UserAuthState:
@@ -74,40 +73,6 @@ class UserAuthState:
         self.lock_count = 0
         self.locked_until = None
         self.last_failed_at = None
-
-
-class UserSubscription:
-    """Доменная сущность подписки пользователя.
-
-    Не знает ничего о платежах, БД или API.
-    Содержит только бизнес-логику валидности.
-    """
-
-    def __init__(
-        self,
-        subscription_id: uuid.UUID,
-        user_id: uuid.UUID,
-        plan: SubscriptionPlan,
-        started_at: datetime.datetime,
-        expires_at: datetime.datetime | None,
-        is_active: bool,
-    ) -> None:
-        self.id = subscription_id
-        self.user_id = user_id
-        self.plan = plan
-        self.started_at = started_at
-        self.expires_at = expires_at
-        self.is_active = is_active
-
-    def is_valid(self, now: datetime.datetime) -> bool:
-        """Проверить, активна ли подписка на текущий момент."""
-        if not self.is_active:
-            return False
-
-        if self.expires_at and self.expires_at <= now:
-            return False
-
-        return True
 
 
 class User:

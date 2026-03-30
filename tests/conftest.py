@@ -5,9 +5,9 @@ import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from src.adapters.factory import ABCUsersRepositoryFactory
-from src.adapters.orm import metadata
-from src.adapters.repository import SQLAlchemyUsersRepository
+from src.infrastructure.database.orm import metadata
+from src.infrastructure.database.repository.factory import ABCUsersRepositoryFactory
+from src.infrastructure.database.repository.users import SQLAlchemyUsersRepository
 from src.adapters.vault import VaultClient
 from src.domain.model import User
 
@@ -35,7 +35,7 @@ async def async_session(async_session_factory):
 
 @pytest_asyncio.fixture
 async def repo(async_session, hasher):
-    return SQLAlchemyUsersRepository(async_session, hasher)
+    return SQLAlchemyUsersRepository(async_session)
 
 
 @pytest.fixture

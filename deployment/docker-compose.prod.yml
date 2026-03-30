@@ -1,0 +1,30 @@
+name: eebook-users-prod
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    volumes:
+      - app_logs:/app/logs
+    networks:
+      eebook_shared_net:
+        aliases:
+          - users
+    entrypoint: ['sh', '/app/deployment/entrypoints/app.sh']
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:${API_PORT}/api/v1/users/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  app_logs:
+
+networks:
+  eebook_shared_net:
+    external: true

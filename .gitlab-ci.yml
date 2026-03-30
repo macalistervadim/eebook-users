@@ -1,0 +1,66 @@
+stages:
+  - quality
+  - deploy
+
+default:
+  image: python:3.13-slim
+  cache:
+    key:
+      files:
+        - uv.lock
+        - pyproject.toml
+    paths:
+      - .venv/
+      - .cache/uv/
+      - .cache/pre-commit/
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates
+    - python -m pip install --upgrade pip uv
+    - uv sync --group dev
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+precommit:
+  stage: quality
+  script:
+    - SKIP=mypy uv run pre-commit run --all-files --show-diff-on-failure
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+
+mypy:
+  stage: quality
+  script:
+    - uv run mypy --config-file mypy.ini src
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+
+coverage:
+  stage: quality
+  script:
+    - uv run pytest --cov --cov-config=.coveragerc --cov-report=term-missing --cov-fail-under=70
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+
+pages:
+  stage: deploy
+  image: python:3.13-slim
+  variables:
+    GIT_DEPTH: '0'
+    SITE_URL: '$CI_PAGES_URL'
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git
+    - pip install -U pip
+    - pip install mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin 'mkdocstrings[python]'
+  script:
+    - mkdocs build --clean --site-dir public
+  artifacts:
+    paths:
+      - public

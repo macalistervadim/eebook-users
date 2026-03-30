@@ -1,9 +1,10 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.2"
+    rev: "v0.15.7"
     hooks:
       - id: ruff
         args: ["--config=pyproject.toml"]
+        exclude: ^docs/
 
   - repo: local
     hooks:
@@ -18,15 +19,17 @@ repos:
     rev: 1.8.6
     hooks:
       - id: bandit
-        args: [ "-r", "src/", "--config=pyproject.toml" ]
+        args: ["-r", "src/", "--config=pyproject.toml"]
         pass_filenames: false
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: check-yaml
+        exclude: ^mkdocs\.yml$
       - id: check-json
       - id: check-toml
+      - id: check-merge-conflict
 
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
@@ -36,16 +39,10 @@ repos:
         files: ^src/
         exclude: 'src/infrastructure/database/migrations/.*'
 
-
   - repo: local
     hooks:
-        - id: pytest
-          name: pytest
-          entry: pytest
-          language: system
-          pass_filenames: false
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
-    hooks:
-      - id: check-merge-conflict
+      - id: coverage
+        name: coverage>=70
+        entry: uv run pytest --cov --cov-config=.coveragerc --cov-report=term-missing --cov-fail-under=70
+        language: system
+        pass_filenames: false

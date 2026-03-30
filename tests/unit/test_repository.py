@@ -2,8 +2,7 @@ import uuid
 import pytest
 import datetime
 
-from src.adapters.repository import SQLAlchemyUsersRepository
-from src.domain.model import User, IPasswordHasher
+from src.infrastructure.database.repository.users import SQLAlchemyUsersRepository
 
 
 @pytest.mark.asyncio

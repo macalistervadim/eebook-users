@@ -3,7 +3,6 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt as pyjwt
-from fastapi_jwt import JwtAccessBearer
 
 from src.adapters.abc_classes import ABCTimeProvider
 
@@ -11,9 +10,8 @@ from src.adapters.abc_classes import ABCTimeProvider
 class JwtTokenAdapter:
     """Адаптер для работы с JWT-токенами.
 
-    Реализует паттерн «Адаптер» (GoF): инкапсулирует
-    fastapi_jwt и предоставляет стабильный интерфейс
-    для application layer.
+    Реализует паттерн «Адаптер» (GoF) и предоставляет
+    стабильный интерфейс для application layer.
 
     - генерацию JTI (уникальный идентификатор токена);
     - независимое создание access и refresh токена;
@@ -22,8 +20,9 @@ class JwtTokenAdapter:
     - извлечение времени истечения токена.
 
     Args:
-        secret_key: Секретный ключ для подписи JWT.
-        algorithm: Алгоритм подписи (по умолчанию HS256).
+        signing_key: Ключ для подписи JWT (секрет для HS256, private key для RS256).
+        verification_key: Ключ для проверки подписи (по умолчанию signing_key).
+        algorithm: Алгоритм подписи.
         access_expires_delta: Срок жизни access-токена.
         refresh_expires_delta: Срок жизни refresh-токена.
         time_provider: Поставщик времени
@@ -32,24 +31,36 @@ class JwtTokenAdapter:
 
     def __init__(
         self,
-        secret_key: str,
+        signing_key: str,
         time_provider: ABCTimeProvider,
+        verification_key: str | None = None,
         algorithm: str = 'HS256',
         access_expires_delta: timedelta = timedelta(minutes=15),
         refresh_expires_delta: timedelta = timedelta(days=15),
     ):
-        self._secret_key = secret_key
+        self._signing_key = signing_key
+        self._verification_key = verification_key or signing_key
         self._algorithm = algorithm
         self._access_expires_delta = access_expires_delta
         self._refresh_expires_delta = refresh_expires_delta
         self._time_provider = time_provider
-        self._fastapi_jwt = JwtAccessBearer(
-            secret_key=secret_key,
-            algorithm=algorithm,
-            access_expires_delta=access_expires_delta,
-            refresh_expires_delta=refresh_expires_delta,
-            auto_error=False,
-        )
+
+    def _build_payload(
+        self,
+        subject: uuid.UUID,
+        token_type: str,
+        ttl: timedelta,
+    ) -> dict[str, Any]:
+        now = self._time_provider.now()
+        expires_at = now + ttl
+        return {
+            'sub': str(subject),
+            'jti': str(uuid.uuid4()),
+            'iat': int(now.timestamp()),
+            'nbf': int(now.timestamp()),
+            'exp': int(expires_at.timestamp()),
+            'type': token_type,
+        }
 
     def create_tokens(self, subject: uuid.UUID) -> tuple[str, str]:
         """Создать пару access/refresh токенов.
@@ -64,26 +75,27 @@ class JwtTokenAdapter:
             RuntimeError: Если не удалось сгенерировать токены.
 
         """
-        now = self._time_provider.now()
+        access_payload = self._build_payload(
+            subject=subject,
+            token_type='access',
+            ttl=self._access_expires_delta,
+        )
+        refresh_payload = self._build_payload(
+            subject=subject,
+            token_type='refresh',
+            ttl=self._refresh_expires_delta,
+        )
 
-        access_jti = uuid.uuid4()
-        refresh_jti = uuid.uuid4()
-
-        access_payload = {
-            'sub': str(subject),
-            'jti': str(access_jti),
-            'iat': int(now.timestamp()),
-        }
-
-        refresh_payload = {
-            'sub': str(subject),
-            'jti': str(refresh_jti),
-            'iat': int(now.timestamp()),
-            'refresh': True,
-        }
-
-        access_token = self._fastapi_jwt.create_access_token(subject=access_payload)
-        refresh_token = self._fastapi_jwt.create_refresh_token(subject=refresh_payload)
+        access_token = pyjwt.encode(
+            payload=access_payload,
+            key=self._signing_key,
+            algorithm=self._algorithm,
+        )
+        refresh_token = pyjwt.encode(
+            payload=refresh_payload,
+            key=self._signing_key,
+            algorithm=self._algorithm,
+        )
 
         return access_token, refresh_token
 
@@ -106,12 +118,12 @@ class JwtTokenAdapter:
         try:
             payload = pyjwt.decode(
                 token,
-                self._secret_key,
+                self._verification_key,
                 algorithms=[self._algorithm],
-                options={'require': ['exp', 'iat', 'jti']},
+                options={'require': ['exp', 'iat', 'nbf', 'jti', 'sub', 'type']},
             )
 
-            subject = payload.get('subject')
+            subject = payload.get('sub')
             if not subject:
                 return None
 
