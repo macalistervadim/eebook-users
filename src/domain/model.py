@@ -23,6 +23,7 @@ class UserAuthState:
         user_id: uuid.UUID,
         failed_attempts: int,
         lock_count: int,
+        token_version: int = 0,
         locked_until: datetime.datetime | None = None,
         last_failed_at: datetime.datetime | None = None,
     ) -> None:
@@ -31,6 +32,7 @@ class UserAuthState:
         self.locked_until = locked_until
         self.last_failed_at = last_failed_at
         self.lock_count = lock_count
+        self.token_version = token_version
 
     def is_locked(self, now: datetime.datetime) -> bool:
         return self.locked_until is not None and self.locked_until > now
@@ -73,6 +75,10 @@ class UserAuthState:
         self.lock_count = 0
         self.locked_until = None
         self.last_failed_at = None
+
+    def bump_token_version(self) -> int:
+        self.token_version += 1
+        return self.token_version
 
 
 class User:

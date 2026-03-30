@@ -120,6 +120,7 @@ class UserService:
             user.change_password(hashed, self.time_provider.now())
 
             await uow.users.update(user)
+            await self.auth_service.invalidate_user_sessions(uow=uow, user_id=user_id)
             await uow.commit()
 
     async def verify_email(self, user_id: uuid.UUID) -> None:

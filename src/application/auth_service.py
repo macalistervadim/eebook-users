@@ -12,7 +12,6 @@ from src.domain.exceptions.exceptions import (
     UserLockedError,
 )
 from src.domain.model import UserAuthState
-from src.infrastructure.auth.abc import ABCTokenStore
 from src.infrastructure.logging.helpers.auth_helper import auth_log
 from src.interfaces.api.schemas import TokenPair
 from src.schemas.internal.auth import RefreshToken, TokenPayload, TokenType
@@ -27,18 +26,32 @@ class JWTAuthService:
     def __init__(
         self,
         jwt_backend: JwtTokenAdapter,
-        token_store: ABCTokenStore,
         time_provider: ABCTimeProvider,
         hasher: IPasswordHasher,
         max_attempts: int,
         lock_time: timedelta,
     ):
         self._jwt = jwt_backend
-        self._store = token_store
         self._time_provider = time_provider
         self._hasher = hasher
         self.max_attempts = max_attempts
         self.lock_time = lock_time
+
+    async def _get_or_create_auth_state(
+        self,
+        uow: AbstractUnitOfWork,
+        user_id: uuid.UUID,
+    ) -> UserAuthState:
+        auth_state = await uow.user_auth_state.get_by_user_id(user_id)
+        if auth_state is None:
+            auth_state = UserAuthState(
+                user_id=user_id,
+                failed_attempts=0,
+                lock_count=0,
+                token_version=0,
+            )
+            await uow.user_auth_state.create(auth_state)
+        return auth_state
 
     async def create_token_pair(
         self,
@@ -46,7 +59,11 @@ class JWTAuthService:
         user_id: uuid.UUID,
         fingerprint: str,
     ) -> TokenPair:
-        access, refresh = self._jwt.create_tokens(user_id)
+        auth_state = await self._get_or_create_auth_state(uow=uow, user_id=user_id)
+        access, refresh = self._jwt.create_tokens(
+            subject=user_id,
+            token_version=auth_state.token_version,
+        )
 
         refresh_payload = self._jwt.decode_token(refresh, 'refresh')
         if refresh_payload is None:
@@ -93,7 +110,11 @@ class JWTAuthService:
     def refresh_expires_delta(self) -> timedelta:
         return self._jwt.refresh_expires_delta
 
-    async def validate_access_token(self, token: str) -> TokenPayload | None:
+    async def validate_access_token(
+        self,
+        uow: AbstractUnitOfWork,
+        token: str,
+    ) -> TokenPayload | None:
         payload = self._jwt.decode_token(token, 'access')
         if not payload:
             return None
@@ -102,13 +123,38 @@ class JWTAuthService:
         if expires_at is None:
             return None
 
+        user_id = uuid.UUID(payload['sub'])
+        user = await uow.users.get_by_id(user_id)
+        if user is None or user.is_disabled:
+            return None
+
+        auth_state = await uow.user_auth_state.get_by_user_id(user_id)
+        if auth_state is None:
+            return None
+
+        token_version = payload['token_version']
+        if token_version != auth_state.token_version:
+            return None
+
         return TokenPayload(
-            subject=uuid.UUID(payload['sub']),
+            subject=user_id,
             jti=uuid.UUID(payload['jti']),
+            token_version=token_version,
             issued_at=datetime.fromtimestamp(payload['iat'], tz=UTC),
             expires_at=expires_at,
             token_type=TokenType.ACCESS,
         )
+
+    async def invalidate_user_sessions(
+        self,
+        uow: AbstractUnitOfWork,
+        user_id: uuid.UUID,
+    ) -> None:
+        now = self._time_provider.now()
+        auth_state = await self._get_or_create_auth_state(uow=uow, user_id=user_id)
+        auth_state.bump_token_version()
+        await uow.user_auth_state.save(auth_state)
+        await uow.refresh_tokens.revoke_all_for_user(user_id, now)
 
     async def revoke_by_id(
         self,
@@ -129,7 +175,6 @@ class JWTAuthService:
 
         token.revoke(now)
         await uow.refresh_tokens.update(token)
-        await self._store.revoke(str(token.jti), token.expires_at - now)
 
         auth_log(
             AuthEvent.REFRESH_REVOKE_SUCCESS,
@@ -171,7 +216,7 @@ class JWTAuthService:
             return None
 
         if token.fingerprint != current_fingerprint:
-            await uow.refresh_tokens.revoke_all_for_user(token.user_id, now)
+            await self.invalidate_user_sessions(uow=uow, user_id=token.user_id)
             await uow.commit()
 
             auth_log(
@@ -214,10 +259,7 @@ class JWTAuthService:
 
         user.can_login()
 
-        auth_state = await uow.user_auth_state.get_by_user_id(user.id)
-        if not auth_state:
-            auth_state = UserAuthState(user.id, failed_attempts=0, lock_count=0)
-            await uow.user_auth_state.create(auth_state)
+        auth_state = await self._get_or_create_auth_state(uow=uow, user_id=user.id)
 
         if auth_state.is_locked(now):
             raise UserLockedError(retry_after=auth_state.locked_until - now)

@@ -48,6 +48,7 @@ class JwtTokenAdapter:
     def _build_payload(
         self,
         subject: uuid.UUID,
+        token_version: int,
         token_type: str,
         ttl: timedelta,
     ) -> dict[str, Any]:
@@ -59,10 +60,11 @@ class JwtTokenAdapter:
             'iat': int(now.timestamp()),
             'nbf': int(now.timestamp()),
             'exp': int(expires_at.timestamp()),
+            'token_version': token_version,
             'type': token_type,
         }
 
-    def create_tokens(self, subject: uuid.UUID) -> tuple[str, str]:
+    def create_tokens(self, subject: uuid.UUID, token_version: int) -> tuple[str, str]:
         """Создать пару access/refresh токенов.
 
         Args:
@@ -77,11 +79,13 @@ class JwtTokenAdapter:
         """
         access_payload = self._build_payload(
             subject=subject,
+            token_version=token_version,
             token_type='access',
             ttl=self._access_expires_delta,
         )
         refresh_payload = self._build_payload(
             subject=subject,
+            token_version=token_version,
             token_type='refresh',
             ttl=self._refresh_expires_delta,
         )
@@ -120,7 +124,7 @@ class JwtTokenAdapter:
                 token,
                 self._verification_key,
                 algorithms=[self._algorithm],
-                options={'require': ['exp', 'iat', 'nbf', 'jti', 'sub', 'type']},
+                options={'require': ['exp', 'iat', 'nbf', 'jti', 'sub', 'token_version', 'type']},
             )
 
             subject = payload.get('sub')
@@ -129,6 +133,10 @@ class JwtTokenAdapter:
 
             token_type = payload.get('type')
             if token_type not in ('access', 'refresh'):
+                return None
+
+            token_version = payload.get('token_version')
+            if not isinstance(token_version, int) or token_version < 0:
                 return None
 
             if token_type != expected_type:

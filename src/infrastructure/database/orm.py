@@ -49,6 +49,7 @@ user_auth_state = Table(
         primary_key=True,
     ),
     Column('failed_attempts', Integer, nullable=False, default=0),
+    Column('token_version', Integer, nullable=False, default=0, server_default='0'),
     Column('locked_until', DateTime(timezone=True), nullable=True),
     Column('lock_count', Integer, nullable=False, default=0),
     Column('last_failed_at', DateTime(timezone=True), nullable=True),

@@ -13,6 +13,7 @@ class TokenType(enum.Enum):
 class TokenPayload:
     subject: uuid.UUID
     jti: uuid.UUID
+    token_version: int
     issued_at: datetime
     expires_at: datetime
     token_type: TokenType

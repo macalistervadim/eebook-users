@@ -149,6 +149,7 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
         return UserAuthState(
             user_id=data['user_id'],
             failed_attempts=data['failed_attempts'],
+            token_version=data['token_version'],
             locked_until=data['locked_until'],
             last_failed_at=data['last_failed_at'],
             lock_count=data['lock_count'],
@@ -159,6 +160,7 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
             insert(user_auth_state).values(
                 user_id=state.user_id,
                 failed_attempts=state.failed_attempts,
+                token_version=state.token_version,
                 locked_until=state.locked_until,
                 last_failed_at=state.last_failed_at,
                 lock_count=state.lock_count,
@@ -171,6 +173,7 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
             .where(user_auth_state.c.user_id == state.user_id)
             .values(
                 failed_attempts=state.failed_attempts,
+                token_version=state.token_version,
                 locked_until=state.locked_until,
                 last_failed_at=state.last_failed_at,
                 lock_count=state.lock_count,

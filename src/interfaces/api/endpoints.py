@@ -178,6 +178,27 @@ async def logout(
     return {'ok': True}
 
 
+@router.post('/logout-all')
+async def logout_all(
+    response: Response,
+    user_id: uuid.UUID = Depends(get_current_user_id),
+    auth_service: JWTAuthService = Depends(get_auth_service),
+    uow: AbstractUnitOfWork = Depends(get_uow),
+    settings: Settings = settings_dependency,
+):
+    async with uow:
+        await auth_service.invalidate_user_sessions(uow=uow, user_id=user_id)
+
+    response.delete_cookie(
+        key=REFRESH_COOKIE_NAME,
+        path='/',
+        secure=not settings.DEBUG,
+        httponly=True,
+        samesite='strict',
+    )
+    return {'ok': True}
+
+
 @router.post('/refresh', response_model=AccessTokenSchema)
 async def refresh(
     request: Request,

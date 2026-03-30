@@ -1,8 +1,8 @@
 import logging
 from datetime import timedelta
+from typing import AsyncIterator
 
 from httpx import AsyncClient
-from redis.asyncio import Redis
 
 from src.adapters.abc_classes import ABCTimeProvider
 from src.adapters.auth.jwt_backend import JwtTokenAdapter
@@ -13,8 +13,6 @@ from src.application.auth_service import JWTAuthService
 from src.application.uow import AbstractUnitOfWork, SqlAlchemyUnitOfWork
 from src.application.user_service import UserService
 from src.config.settings import get_settings
-from src.infrastructure.auth.abc import ABCTokenStore
-from src.infrastructure.auth.token_store import RedisJwtRevocationStore
 from src.infrastructure.clients.subscriptions import SubscriptionsClient
 from src.infrastructure.database.engine import get_session_factory
 from src.infrastructure.database.repository.factory import (
@@ -78,25 +76,19 @@ async def get_jwt_backend() -> JwtTokenAdapter:
     )
 
 
-async def get_token_store() -> ABCTokenStore:
-    settings = get_settings()
-    return RedisJwtRevocationStore(
-        redis=Redis.from_url(
-            settings.REDIS_URL,
-            decode_responses=False,
-            health_check_interval=30,
-        ),
-    )
-
-
 async def get_refresh_token_repo_factory() -> ABCRefreshTokenRepositoryFactory:
     return RefreshTokenRepositoryFactory()
 
 
-async def get_subscriptions_client() -> SubscriptionsClient:
+async def get_subscriptions_client() -> AsyncIterator[SubscriptionsClient]:
     settings = get_settings()
+    base_url = settings.SUBSCRIPTIONS_SERVICE_URL
+    if not base_url:
+        yield SubscriptionsClient(http_client=None)
+        return
+
     async with AsyncClient(
-        base_url=settings.SUBSCRIPTIONS_SERVICE_URL.rstrip('/'),
+        base_url=base_url.rstrip('/'),
         timeout=5.0,
     ) as http_client:
         yield SubscriptionsClient(http_client=http_client)
@@ -106,7 +98,6 @@ async def get_auth_service() -> JWTAuthService:
     settings = get_settings()
     return JWTAuthService(
         jwt_backend=await get_jwt_backend(),
-        token_store=await get_token_store(),
         time_provider=await get_time_provider(),
         hasher=await get_hasher(),
         max_attempts=settings.MAX_LOGIN_ATTEMPTS,

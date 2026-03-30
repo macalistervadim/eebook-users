@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     MAX_LOGIN_ATTEMPTS: int = 5
     LOGIN_LOCK_MINUTES: int = 15
     REDIS_URL: str = 'redis://redis:6379/0'
-    SUBSCRIPTIONS_SERVICE_URL: str = 'http://subscriptions:8000'
+    SUBSCRIPTIONS_SERVICE_URL: str | None = None
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
@@ -67,6 +67,16 @@ class Settings(BaseSettings):
     @classmethod
     def parse_list_settings(cls, value: Any) -> Any:
         return cls._parse_list_env(value)
+
+    @field_validator('SUBSCRIPTIONS_SERVICE_URL', mode='before')
+    @classmethod
+    def parse_optional_service_url(cls, value: Any) -> str | None:
+        if value is None:
+            return None
+        if isinstance(value, str):
+            stripped = value.strip()
+            return stripped or None
+        return str(value)
 
     @property
     def postgres_uri(self) -> str:
