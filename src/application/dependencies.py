@@ -16,12 +16,16 @@ from src.config.settings import get_settings
 from src.infrastructure.clients.subscriptions import SubscriptionsClient
 from src.infrastructure.database.engine import get_session_factory
 from src.infrastructure.database.repository.factory import (
+    ABCEmailVerificationTokenRepositoryFactory,
+    ABCOutboxEventRepositoryFactory,
     ABCRefreshTokenRepositoryFactory,
     ABCUserAuthStateRepositoryFactory,
     ABCUsersRepositoryFactory,
     RefreshTokenRepositoryFactory,
-    SqlAlchemyUserAuthStateRepositoryFactory,
     SQLAlchemyUsersRepositoryFactory,
+    SqlAlchemyEmailVerificationTokenRepositoryFactory,
+    SqlAlchemyOutboxEventRepositoryFactory,
+    SqlAlchemyUserAuthStateRepositoryFactory,
 )
 
 logger = logging.getLogger(__name__)
@@ -33,6 +37,8 @@ async def get_uow() -> AbstractUnitOfWork:
         repo_factory=await get_repo_factory(),
         refresh_token_repo_factory=await get_refresh_token_repo_factory(),
         user_auth_state_repo_factory=await get_user_auth_state_repo_factory(),
+        email_verification_token_repo_factory=await get_email_verification_token_repo_factory(),
+        outbox_event_repo_factory=await get_outbox_event_repo_factory(),
     )
 
 
@@ -80,6 +86,14 @@ async def get_refresh_token_repo_factory() -> ABCRefreshTokenRepositoryFactory:
     return RefreshTokenRepositoryFactory()
 
 
+async def get_email_verification_token_repo_factory() -> ABCEmailVerificationTokenRepositoryFactory:
+    return SqlAlchemyEmailVerificationTokenRepositoryFactory()
+
+
+async def get_outbox_event_repo_factory() -> ABCOutboxEventRepositoryFactory:
+    return SqlAlchemyOutboxEventRepositoryFactory()
+
+
 async def get_subscriptions_client() -> AsyncIterator[SubscriptionsClient]:
     settings = get_settings()
     base_url = settings.SUBSCRIPTIONS_SERVICE_URL
@@ -106,9 +120,13 @@ async def get_auth_service() -> JWTAuthService:
 
 
 async def get_user_service() -> UserService:
+    settings = get_settings()
     return UserService(
         uow=await get_uow(),
         hasher=await get_hasher(),
         time_provider=await get_time_provider(),
         auth_service=await get_auth_service(),
+        email_verification_ttl=timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_TTL_HOURS),
+        frontend_base_url=settings.FRONTEND_BASE_URL,
+        rabbitmq_exchange=settings.RABBITMQ_EXCHANGE,
     )

@@ -5,11 +5,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.adapters.interfaces import IPasswordHasher
 from src.infrastructure.database.repository.abc import (
     ABCUsersRepository,
+    AbstractEmailVerificationTokenRepository,
+    AbstractOutboxEventRepository,
     AbstractRefreshTokenRepository,
     AbstractUserAuthStateRepository,
 )
 from src.infrastructure.database.repository.users import (
     SQLAlchemyUsersRepository,
+    SqlAlchemyEmailVerificationTokenRepository,
+    SqlAlchemyOutboxEventRepository,
     SqlAlchemyRefreshTokenRepository,
     SqlAlchemyUserAuthStateRepository,
 )
@@ -49,3 +53,25 @@ class ABCUserAuthStateRepositoryFactory(abc.ABC):
 class SqlAlchemyUserAuthStateRepositoryFactory(ABCUserAuthStateRepositoryFactory):
     def create(self, session: AsyncSession) -> AbstractUserAuthStateRepository:
         return SqlAlchemyUserAuthStateRepository(session)
+
+
+class ABCEmailVerificationTokenRepositoryFactory(abc.ABC):
+    @abc.abstractmethod
+    def create(self, session: AsyncSession) -> AbstractEmailVerificationTokenRepository:
+        raise NotImplementedError
+
+
+class SqlAlchemyEmailVerificationTokenRepositoryFactory(ABCEmailVerificationTokenRepositoryFactory):
+    def create(self, session: AsyncSession) -> AbstractEmailVerificationTokenRepository:
+        return SqlAlchemyEmailVerificationTokenRepository(session)
+
+
+class ABCOutboxEventRepositoryFactory(abc.ABC):
+    @abc.abstractmethod
+    def create(self, session: AsyncSession) -> AbstractOutboxEventRepository:
+        raise NotImplementedError
+
+
+class SqlAlchemyOutboxEventRepositoryFactory(ABCOutboxEventRepositoryFactory):
+    def create(self, session: AsyncSession) -> AbstractOutboxEventRepository:
+        return SqlAlchemyOutboxEventRepository(session)

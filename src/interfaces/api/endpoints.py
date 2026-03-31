@@ -19,11 +19,14 @@ from src.infrastructure.clients.subscriptions import SubscriptionsClient
 from src.interfaces.api.schemas import (
     AccessTokenSchema,
     ApiError,
+    EmailVerificationRequestSchema,
     LoginSchema,
     ProfileSchema,
+    RegistrationPendingSchema,
+    ResendVerificationEmailSchema,
+    StatusSchema,
     UserCreateSchema,
     UserResponseSchema,
-    UserWithTokensSchema,
 )
 from src.utils.get_current_user import get_current_user_id
 
@@ -72,7 +75,7 @@ async def get_me(
 @router.post(
     '/register',
     status_code=status.HTTP_201_CREATED,
-    response_model=UserWithTokensSchema,
+    response_model=RegistrationPendingSchema,
     responses={
         400: {'model': ApiError, 'description': 'Доменные ошибки'},
         500: {'model': ApiError, 'description': 'Непредвиденная ошибка'},
@@ -80,42 +83,37 @@ async def get_me(
 )
 async def register(
     register_data: UserCreateSchema,
-    request: Request,
-    response: Response,
     service: UserService = Depends(get_user_service),
     settings: Settings = settings_dependency,
-) -> UserWithTokensSchema:
-    fingerprint = get_fingerprint(request)
-    user, token_pair = await service.register_user(
+) -> RegistrationPendingSchema:
+    result = await service.register_user(
         first_name=register_data.first_name,
         last_name=register_data.last_name,
         email=register_data.email,
         username=register_data.username,
         password=register_data.password,
-        fingerprint=fingerprint,
     )
+    if not settings.DEBUG:
+        result.debug_verification_token = None
+    return result
 
-    response.set_cookie(
-        **_build_refresh_cookie_params(settings=settings, auth_service=service.auth_service),
-        value=token_pair.refresh_token,
-    )
 
-    return UserWithTokensSchema(
-        user=UserResponseSchema(
-            id=str(user.id),
-            first_name=user.first_name,
-            last_name=user.last_name,
-            email=user.email,
-            username=user.username,
-            is_verified=user.is_verified,
-            role=str(user.role) if user.role is not None else None,
-            created_at=user.created_at,
-        ),
-        access_token=AccessTokenSchema(
-            access_token=token_pair.access_token,
-            access_expires_at=token_pair.access_expires_at,
-        ),
-    )
+@router.post('/verify-email', response_model=StatusSchema)
+async def verify_email(
+    payload: EmailVerificationRequestSchema,
+    service: UserService = Depends(get_user_service),
+) -> StatusSchema:
+    await service.verify_email_token(payload.token)
+    return StatusSchema(status='verified', message='Email verified successfully')
+
+
+@router.post('/resend-verification-email', status_code=status.HTTP_202_ACCEPTED, response_model=StatusSchema)
+async def resend_verification_email(
+    payload: ResendVerificationEmailSchema,
+    service: UserService = Depends(get_user_service),
+) -> StatusSchema:
+    await service.resend_verification_email(payload.email)
+    return StatusSchema(status='accepted', message='If the account exists, a verification email will be sent')
 
 
 @router.post(

@@ -3,6 +3,7 @@ set -e
 
 APP_HOST="${APP_HOST:-0.0.0.0}"
 APP_PORT="${APP_PORT:-8000}"
+export PYTHONPATH="/app:${PYTHONPATH}"
 
 alembic upgrade head
 

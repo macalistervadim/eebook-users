@@ -56,6 +56,27 @@ class UserCreateSchema(BaseModel):
     password: str
 
 
+class RegistrationPendingSchema(BaseModel):
+    user_id: str
+    email: EmailStr
+    requires_email_verification: bool = True
+    message: str
+    debug_verification_token: str | None = None
+
+
+class EmailVerificationRequestSchema(BaseModel):
+    token: str
+
+
+class ResendVerificationEmailSchema(BaseModel):
+    email: EmailStr
+
+
+class StatusSchema(BaseModel):
+    status: str
+    message: str
+
+
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
@@ -71,8 +92,3 @@ class LoginSchema(BaseModel):
 class AccessTokenSchema(BaseModel):
     access_token: str
     access_expires_at: datetime
-
-
-class UserWithTokensSchema(BaseModel):
-    user: UserResponseSchema
-    access_token: AccessTokenSchema

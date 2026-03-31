@@ -110,3 +110,18 @@ class InvalidUsernameError(DomainError):
 class EmailNotVerifiedError(DomainError):
     code = 'EMAIL_NOT_VERIFIED'
     message = 'Email is not verified'
+
+
+class InvalidEmailVerificationTokenError(DomainError):
+    code = 'INVALID_EMAIL_VERIFICATION_TOKEN'
+    message = 'Email verification token is invalid'
+
+
+class ExpiredEmailVerificationTokenError(DomainError):
+    code = 'EXPIRED_EMAIL_VERIFICATION_TOKEN'
+    message = 'Email verification token is expired'
+
+
+class UsedEmailVerificationTokenError(DomainError):
+    code = 'USED_EMAIL_VERIFICATION_TOKEN'
+    message = 'Email verification token has already been used'

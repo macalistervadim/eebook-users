@@ -1,17 +1,21 @@
 import datetime
 import uuid
+from dataclasses import dataclass
 
 from src.domain.exceptions.exceptions import (
     EmailAlreadyVerifiedError,
     EmailNotVerifiedError,
+    ExpiredEmailVerificationTokenError,
     InvalidCredentialsError,
     InvalidEmailError,
+    InvalidEmailVerificationTokenError,
     InvalidFirstNameError,
     InvalidLastNameError,
     InvalidUsernameError,
     MaxLoginAttemptsExceeded,
     SameEmailError,
     SamePasswordError,
+    UsedEmailVerificationTokenError,
     UserDisabledError,
 )
 from src.schemas.internal.role import UserRole
@@ -180,3 +184,48 @@ class User:
             f'updated_at={self.updated_at!r}, '
             f'last_login_at={self.last_login_at!r})'
         )
+
+
+@dataclass
+class EmailVerificationToken:
+    id: uuid.UUID
+    user_id: uuid.UUID
+    token_hash: str
+    expires_at: datetime.datetime
+    created_at: datetime.datetime
+    used_at: datetime.datetime | None = None
+
+    def ensure_active(self, now: datetime.datetime) -> None:
+        if self.used_at is not None:
+            raise UsedEmailVerificationTokenError()
+        if self.expires_at <= now:
+            raise ExpiredEmailVerificationTokenError()
+
+    def mark_used(self, now: datetime.datetime) -> None:
+        self.ensure_active(now)
+        self.used_at = now
+
+
+@dataclass
+class OutboxEvent:
+    id: uuid.UUID
+    event_type: str
+    routing_key: str
+    payload: str
+    created_at: datetime.datetime
+    published_at: datetime.datetime | None = None
+    error_message: str | None = None
+    attempts: int = 0
+
+    def mark_published(self, now: datetime.datetime) -> None:
+        self.published_at = now
+        self.error_message = None
+
+    def mark_failed(self, error_message: str) -> None:
+        self.attempts += 1
+        self.error_message = error_message
+
+
+def ensure_token_hash(token_hash: str) -> None:
+    if not token_hash:
+        raise InvalidEmailVerificationTokenError()

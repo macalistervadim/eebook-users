@@ -1,10 +1,9 @@
-import logging
 import json
+import logging
 from typing import Annotated, Any, Literal
 
 from pydantic import field_validator
-from pydantic_settings import NoDecode
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +23,13 @@ class Settings(BaseSettings):
     JWT_PUBLIC_KEY: str | None = None
     ACCESS_TOKEN_TTL_MINUTES: int = 15
     REFRESH_TOKEN_TTL_DAYS: int = 15
+    EMAIL_VERIFICATION_TOKEN_TTL_HOURS: int = 24
     MAX_LOGIN_ATTEMPTS: int = 5
     LOGIN_LOCK_MINUTES: int = 15
     REDIS_URL: str = 'redis://redis:6379/0'
+    RABBITMQ_URL: str = 'amqp://guest:guest@rabbitmq:5672/'
+    RABBITMQ_EXCHANGE: str = 'eebook.events'
+    FRONTEND_BASE_URL: str = 'http://localhost:5173'
     SUBSCRIPTIONS_SERVICE_URL: str | None = None
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str

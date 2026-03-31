@@ -12,11 +12,12 @@ from sqlalchemy import (
     MetaData,
     String,
     Table,
+    Text,
     func,
 )
 from sqlalchemy.orm import registry
 
-from src.domain.model import User
+from src.domain.model import EmailVerificationToken, OutboxEvent, User
 from src.schemas.internal.auth import RefreshToken
 from src.schemas.internal.role import UserRole
 
@@ -71,8 +72,38 @@ refresh_tokens = Table(
     Index('ix_refresh_tokens_expires_at', 'expires_at'),
 )
 
+email_verification_tokens = Table(
+    'email_verification_tokens',
+    metadata,
+    Column('id', UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+    Column('user_id', UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False),
+    Column('token_hash', String, nullable=False, unique=True),
+    Column('expires_at', DateTime(timezone=True), nullable=False),
+    Column('created_at', DateTime(timezone=True), server_default=func.now()),
+    Column('used_at', DateTime(timezone=True), nullable=True),
+    Index('ix_email_verification_tokens_user_id', 'user_id'),
+    Index('ix_email_verification_tokens_expires_at', 'expires_at'),
+)
+
+outbox_events = Table(
+    'outbox_events',
+    metadata,
+    Column('id', UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+    Column('event_type', String, nullable=False),
+    Column('routing_key', String, nullable=False),
+    Column('payload', Text, nullable=False),
+    Column('created_at', DateTime(timezone=True), server_default=func.now()),
+    Column('published_at', DateTime(timezone=True), nullable=True),
+    Column('attempts', Integer, nullable=False, server_default='0'),
+    Column('error_message', Text, nullable=True),
+    Index('ix_outbox_events_published_at', 'published_at'),
+    Index('ix_outbox_events_created_at', 'created_at'),
+)
+
 
 def start_mappers():
     mapper_registry = registry()
     mapper_registry.map_imperatively(User, users)
     mapper_registry.map_imperatively(RefreshToken, refresh_tokens)
+    mapper_registry.map_imperatively(EmailVerificationToken, email_verification_tokens)
+    mapper_registry.map_imperatively(OutboxEvent, outbox_events)

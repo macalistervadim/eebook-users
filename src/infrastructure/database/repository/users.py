@@ -4,10 +4,18 @@ import uuid
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.model import User, UserAuthState
-from src.infrastructure.database.orm import refresh_tokens, user_auth_state, users
+from src.domain.model import EmailVerificationToken, OutboxEvent, User, UserAuthState
+from src.infrastructure.database.orm import (
+    email_verification_tokens,
+    outbox_events,
+    refresh_tokens,
+    user_auth_state,
+    users,
+)
 from src.infrastructure.database.repository.abc import (
     ABCUsersRepository,
+    AbstractEmailVerificationTokenRepository,
+    AbstractOutboxEventRepository,
     AbstractRefreshTokenRepository,
     AbstractUserAuthStateRepository,
 )
@@ -28,6 +36,7 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             role=user.role,
             hashed_password=user.hashed_password,
             is_verified=user.is_verified,
+            is_disabled=user.is_disabled,
             created_at=user.created_at,
             updated_at=user.updated_at,
             last_login_at=user.last_login_at,
@@ -60,6 +69,7 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
                 username=user.username,
                 hashed_password=user.hashed_password,
                 is_verified=user.is_verified,
+                is_disabled=user.is_disabled,
                 updated_at=user.updated_at,
                 role=user.role,
                 last_login_at=user.last_login_at,
@@ -81,6 +91,7 @@ class SQLAlchemyUsersRepository(ABCUsersRepository):
             hashed_password=record.hashed_password,
             role=record.role,
             is_verified=record.is_verified,
+            is_disabled=record.is_disabled,
             created_at=record.created_at,
             updated_at=record.updated_at,
             last_login_at=record.last_login_at,
@@ -177,5 +188,115 @@ class SqlAlchemyUserAuthStateRepository(AbstractUserAuthStateRepository):
                 locked_until=state.locked_until,
                 last_failed_at=state.last_failed_at,
                 lock_count=state.lock_count,
+            ),
+        )
+
+
+class SqlAlchemyEmailVerificationTokenRepository(AbstractEmailVerificationTokenRepository):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add(self, token: EmailVerificationToken) -> None:
+        await self.session.execute(
+            insert(email_verification_tokens).values(
+                id=token.id,
+                user_id=token.user_id,
+                token_hash=token.token_hash,
+                expires_at=token.expires_at,
+                created_at=token.created_at,
+                used_at=token.used_at,
+            ),
+        )
+
+    async def get_active_by_token_hash(self, token_hash: str) -> EmailVerificationToken | None:
+        result = await self.session.execute(
+            select(email_verification_tokens).where(email_verification_tokens.c.token_hash == token_hash),
+        )
+        row = result.first()
+        if not row:
+            return None
+
+        data = row._mapping
+        return EmailVerificationToken(
+            id=data['id'],
+            user_id=data['user_id'],
+            token_hash=data['token_hash'],
+            expires_at=data['expires_at'],
+            created_at=data['created_at'],
+            used_at=data['used_at'],
+        )
+
+    async def revoke_active_for_user(self, user_id: uuid.UUID, now: datetime.datetime) -> None:
+        await self.session.execute(
+            update(email_verification_tokens)
+            .where(
+                email_verification_tokens.c.user_id == user_id,
+                email_verification_tokens.c.used_at.is_(None),
+            )
+            .values(used_at=now),
+        )
+
+    async def save(self, token: EmailVerificationToken) -> None:
+        await self.session.execute(
+            update(email_verification_tokens)
+            .where(email_verification_tokens.c.id == token.id)
+            .values(
+                user_id=token.user_id,
+                token_hash=token.token_hash,
+                expires_at=token.expires_at,
+                created_at=token.created_at,
+                used_at=token.used_at,
+            ),
+        )
+
+
+class SqlAlchemyOutboxEventRepository(AbstractOutboxEventRepository):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add(self, event: OutboxEvent) -> None:
+        await self.session.execute(
+            insert(outbox_events).values(
+                id=event.id,
+                event_type=event.event_type,
+                routing_key=event.routing_key,
+                payload=event.payload,
+                created_at=event.created_at,
+                published_at=event.published_at,
+                error_message=event.error_message,
+                attempts=event.attempts,
+            ),
+        )
+
+    async def list_pending(self, limit: int) -> list[OutboxEvent]:
+        result = await self.session.execute(
+            select(outbox_events)
+            .where(outbox_events.c.published_at.is_(None))
+            .order_by(outbox_events.c.created_at.asc())
+            .limit(limit),
+        )
+        rows = result.fetchall()
+        return [
+            OutboxEvent(
+                id=row._mapping['id'],
+                event_type=row._mapping['event_type'],
+                routing_key=row._mapping['routing_key'],
+                payload=row._mapping['payload'],
+                created_at=row._mapping['created_at'],
+                published_at=row._mapping['published_at'],
+                error_message=row._mapping['error_message'],
+                attempts=row._mapping['attempts'],
+            )
+            for row in rows
+        ]
+
+    async def save(self, event: OutboxEvent) -> None:
+        await self.session.execute(
+            update(outbox_events)
+            .where(outbox_events.c.id == event.id)
+            .values(
+                published_at=event.published_at,
+                error_message=event.error_message,
+                attempts=event.attempts,
             ),
         )
